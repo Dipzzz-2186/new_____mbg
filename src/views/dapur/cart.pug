@@ -1,0 +1,151 @@
+extends ../layout
+
+block content
+  style.
+    .sticky-top {
+      z-index: 1020;
+    }
+    .table-hover tbody tr:hover {
+      background-color: rgba(0, 123, 255, 0.05);
+    }
+    .btn-outline-danger:hover {
+      transform: scale(1.1);
+      transition: all 0.2s ease;
+    }
+    .card {
+      border: none;
+      transition: transform 0.2s ease;
+    }
+    .cart-card:hover {
+      transform: translateY(-2px);
+    }
+    .product-icon {
+      width: 60px;
+      height: 60px;
+    }
+
+  .container.py-4
+    // Header Section
+    .d-flex.align-items-center.justify-content-between.mb-4
+      div
+        h2.mb-1
+          i.bi.bi-cart3.me-2
+          | Keranjang Belanja
+        p.text-muted.mb-0 Kelola produk yang akan Anda beli
+      a.btn.btn-outline-primary(href="/market")
+        i.bi.bi-arrow-left.me-2
+        | Lanjut Belanja
+
+    if cart && cart.items && cart.items.length
+      .row
+        // Cart Items Section
+        .col-lg-8.mb-4
+          .card.shadow-sm.cart-card
+            .card-header.bg-white.py-3
+              h5.mb-0
+                i.bi.bi-bag-check.me-2
+                | Produk (#{cart.items.length} item)
+            .card-body.p-0
+              .table-responsive
+                table.table.table-hover.mb-0
+                  thead.table-light
+                    tr
+                      th.ps-4(style="width: 45%") Produk
+                      th.text-center(style="width: 15%") Harga
+                      th.text-center(style="width: 15%") Jumlah
+                      th.text-center(style="width: 15%") Subtotal
+                      th.text-center(style="width: 10%") Aksi
+                  tbody
+                    - let total = 0
+                    each item in cart.items
+                      - let subtotal = item.qty * item.price_at
+                      - total += subtotal
+                      tr.align-middle
+                        td.ps-4
+                          .d-flex.align-items-center
+                            .flex-shrink-0.me-3
+                              .bg-light.rounded.d-flex.align-items-center.justify-content-center.product-icon
+                                i.bi.bi-box-seam.text-muted.fs-4
+                            div
+                              h6.mb-1= item.product_name
+                              small.text-muted SKU: #{item.id}
+                        td.text-center
+                          strong Rp #{Number(item.price_at).toLocaleString('id-ID')}
+                        td.text-center
+                          .d-inline-flex.align-items-center.bg-light.rounded.px-2.py-1
+                            span.badge.bg-primary.rounded-pill= item.qty
+                        td.text-center
+                          strong.text-success Rp #{Number(subtotal).toLocaleString('id-ID')}
+                        td.text-center
+                          form(action="/dapur/cart/remove" method="post" onsubmit="return confirm('Hapus item ini dari keranjang?')")
+                            input(type="hidden" name="item_id" value=item.id)
+                            button.btn.btn-sm.btn-outline-danger.rounded-circle(type="submit" title="Hapus dari keranjang")
+                              i.bi.bi-trash
+
+        // Order Summary Section
+        .col-lg-4
+          .card.shadow-sm.sticky-top(style="top: 20px;")
+            .card-header.bg-primary.text-white.py-3
+              h5.mb-0
+                i.bi.bi-receipt.me-2
+                | Ringkasan Belanja
+            .card-body
+              .d-flex.justify-content-between.mb-3
+                span.text-muted Total Item
+                strong= cart.items.length
+              .d-flex.justify-content-between.mb-3
+                span.text-muted Subtotal
+                span Rp #{Number(total).toLocaleString('id-ID')}
+              hr
+              .d-flex.justify-content-between.mb-4
+                h5.mb-0 Total
+                h5.mb-0.text-success Rp #{Number(total).toLocaleString('id-ID')}
+              
+              form(action="/dapur/checkout" method="post")
+                button.btn.btn-success.btn-lg.w-100.mb-3(type="submit")
+                  i.bi.bi-check-circle.me-2
+                  | Checkout Sekarang
+              
+              .text-center
+                small.text-muted
+                  i.bi.bi-shield-check.me-1
+                  | Transaksi aman dan terpercaya
+
+            .card-footer.bg-light
+              .d-flex.align-items-center.text-muted
+                i.bi.bi-info-circle.me-2
+                small Harga sudah termasuk pajak internal
+
+    else
+      // Empty Cart State
+      .card.shadow-sm.text-center.py-5
+        .card-body
+          .mb-4
+            i.bi.bi-cart-x.text-muted(style="font-size: 5rem;")
+          h4.mb-3 Keranjang Belanja Kosong
+          p.text-muted.mb-4 Belum ada produk yang ditambahkan ke keranjang Anda
+          a.btn.btn-primary.btn-lg.px-5(href="/market")
+            i.bi.bi-shop.me-2
+            | Mulai Belanja
+
+  // Additional Info Section
+  if cart && cart.items && cart.items.length
+    .row.mt-4
+      .col-md-4.mb-3
+        .card.border-0.bg-light.h-100
+          .card-body.text-center
+            i.bi.bi-truck.text-primary.mb-3(style="font-size: 2.5rem;")
+            h6 Pengiriman Internal
+            small.text-muted Proses cepat antar departemen
+      .col-md-4.mb-3
+        .card.border-0.bg-light.h-100
+          .card-body.text-center
+            i.bi.bi-shield-check.text-success.mb-3(style="font-size: 2.5rem;")
+            h6 Transaksi Aman
+            small.text-muted Terjamin dan terverifikasi
+      .col-md-4.mb-3
+        .card.border-0.bg-light.h-100
+          .card-body.text-center
+            i.bi.bi-headset.text-info.mb-3(style="font-size: 2.5rem;")
+            h6 Dukungan 24/7
+            small.text-muted Siap membantu Anda

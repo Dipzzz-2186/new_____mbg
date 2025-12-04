@@ -1,0 +1,203 @@
+extends ../layout
+
+block content
+  //- ===== HERO / BANNER ATAS =====
+  .hero-banner-wrapper.mb-5
+    .hero-banner
+      //- Gambar full, tidak dipotong
+      img.hero-bg(src="/img/sembako.jpg" alt="Sembako segar FreshMart")
+
+      .hero-overlay
+      .hero-content.container
+        .row.align-items-center
+          .col-lg-7.col-md-8
+            h1.hero-title.mb-3
+              | Belanja Bahan Makanan
+              br
+              | Lebih Mudah & Segar
+            p.hero-subtitle.mb-4
+              | Pilih berbagai bahan berkualitas dari vendor terpercaya untuk kebutuhan dapur dan yayasan.
+            .d-flex.flex-wrap.gap-3
+              a.btn.btn-success.btn-lg.shadow(
+                href="#productsSection"
+              )
+                i.bi.bi-bag-check-fill.me-2
+                | Belanja Sekarang
+              if currentUser && currentUser.role === 'vendor'
+                a.btn.btn-outline-light.btn-lg(
+                  href="/vendor/products/new"
+                )
+                  i.bi.bi-plus-circle.me-2
+                  | Tambah Produk
+          .col-lg-5.d-none.d-lg-block
+            .hero-illust.float-animation
+              i.bi.bi-basket2-fill
+
+      a.scroll-down-indicator(href="#productsSection")
+        i.bi.bi-chevron-double-down
+
+  //- ===== HEADER KECIL DI ATAS PRODUK =====
+  .marketplace-header.mb-3
+    .d-flex.justify-content-between.align-items-center.flex-wrap.gap-3.animate-fadeIn
+      div
+        h2.mb-1.fw-bold.text-success(style="font-size: 1.4rem;")
+          i.bi.bi-shop-window.me-2
+          | Semua Produk
+        p.text-muted.mb-0(style="font-size: 0.95rem;")
+          | Temukan bahan yang cocok untuk kebutuhan harian maupun event besar.
+
+  //- ===== PRODUCTS GRID (TARGET SMOOTH SCROLL) =====
+  section#productsSection
+    #productsGrid
+      if products && products.length
+        .row.g-4
+          each p in products
+            .col-lg-3.col-md-4.col-sm-6
+              - var product = p
+              include ../marketplace/_product_card.pug
+      else
+        .card.border-0.shadow.text-center.py-5.animate-fadeIn(style="border-radius: 15px;")
+          .card-body.p-5
+            .mb-4
+              i.bi.bi-basket3.text-success(style="font-size: 5rem; opacity: 0.3;")
+            h4.mt-4.mb-3.fw-bold.text-success Belum Ada Produk
+            p.text-muted.mb-0(style="font-size: 1.1rem;")
+              i.bi.bi-info-circle.me-2
+              | Produk akan ditampilkan di sini
+
+  //- ===== CSS KHUSUS HALAMAN INI =====
+  style.
+    /* HERO FULL BLEED */
+    .hero-banner-wrapper {
+      position: relative;
+      margin-left: 50%;
+      margin-right: 50%;
+      left: -50vw;
+      right: -50vw;
+      width: 100vw;
+    }
+    .hero-banner {
+      position: relative;
+      min-height: 320px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 0 0 24px 24px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.18);
+      background: radial-gradient(circle at top left, #ecfdf5 0, #f9fafb 40%, #e5e7eb 100%);
+    }
+    /* Gambar tidak dipotong */
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;      /* <= ini yang bikin gambar utuh */
+      object-position: center;
+      pointer-events: none;
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(15, 23, 42, 0.72), rgba(15, 23, 42, 0.25), rgba(15, 23, 42, 0.05));
+    }
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      padding-top: 2.5rem;
+      padding-bottom: 2.5rem;
+      color: #f9fafb;
+    }
+    .hero-title {
+      font-size: 2.3rem;
+      font-weight: 800;
+      line-height: 1.25;
+    }
+    .hero-subtitle {
+      font-size: 1.02rem;
+      max-width: 32rem;
+      color: #e5e7eb;
+    }
+    .hero-illust {
+      width: 210px;
+      height: 210px;
+      border-radius: 999px;
+      background: rgba(249, 250, 251, 0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: auto;
+      margin-right: 2rem;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.28);
+    }
+    .hero-illust i {
+      font-size: 4.2rem;
+      color: #10b981;
+    }
+    .scroll-down-indicator {
+      position: absolute;
+      left: 50%;
+      bottom: 10px;
+      transform: translateX(-50%);
+      width: 36px;
+      height: 36px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.75);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #e5e7eb;
+      font-size: 1rem;
+      text-decoration: none;
+      animation: bounce 1.4s infinite;
+    }
+
+    /* PRODUCT CARD */
+    .product-card { border-radius: 12px; overflow: hidden; }
+    .product-card .card-img-top { width: 100%; height: 220px; object-fit: cover; display: block; }
+    .product-card .card-body { padding: 1rem; }
+    .product-card .card-title { font-size: 1.05rem; }
+    .product-card .badge { font-weight: 600; }
+    .product-card img[loading="lazy"] { transition: transform .25s ease; }
+    .product-card:hover img[loading="lazy"] { transform: scale(1.03); }
+
+    /* ANIMATIONS */
+    .animate-fadeIn { animation: fadeIn 0.6s ease-in; }
+    .animate-slideInRight { animation: slideInRight 0.5s ease-out; }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    @keyframes slideInRight {
+      from { transform: translateX(30px); opacity: 0; }
+      to   { transform: translateX(0);    opacity: 1; }
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translate(-50%, 0); }
+      50%      { transform: translate(-50%, -8px); }
+    }
+
+    /* RESPONSIVE HERO */
+    @media (max-width: 768px) {
+      .hero-banner {
+        border-radius: 0 0 18px 18px;
+        min-height: 260px;
+      }
+      .hero-title {
+        font-size: 1.7rem;
+      }
+      .hero-illust {
+        display: none;
+      }
+    }
+    @media (min-width: 1200px) {
+      .product-card .card-img-top { height: 200px; }
+    }
+    @media (max-width: 576px) {
+      .product-card .card-img-top { height: 160px; }
+    }
+    .btn-success:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(25, 135, 84, 0.4) !important;
+    }

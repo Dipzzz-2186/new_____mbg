@@ -1,0 +1,740 @@
+//- src/views/yayasan/pending_orders.pug
+extends ../layout
+
+block content
+  style.
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    /* Header Section - Clean & Minimal */
+    .header-section {
+      background: #ffffff;
+      padding: 40px 0;
+      margin-bottom: 32px;
+      border-bottom: 1px solid #e8e8e8;
+    }
+    
+    .header-icon-box {
+      width: 64px;
+      height: 64px;
+      background: #f8f9fa;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      color: #28a745;
+      border: 1px solid #e8e8e8;
+      transition: all 0.4s ease;
+    }
+    
+    .header-icon-box:hover {
+      background: #28a745;
+      color: white;
+      transform: rotate(10deg) scale(1.1);
+      border-color: #28a745;
+    }
+    
+    .page-title {
+      font-size: 2rem;
+      color: #2c3e50;
+      font-weight: 700;
+      margin-bottom: 6px;
+      letter-spacing: -0.5px;
+    }
+    
+    .page-subtitle {
+      color: #6c757d;
+      font-size: 1rem;
+      margin: 0;
+    }
+
+    /* Stat Cards - Elegant with subtle green */
+    .stat-card {
+      background: #ffffff;
+      border: 1px solid #e8e8e8;
+      border-radius: 16px;
+      padding: 28px;
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, #28a745 0%, #20c997 100%);
+      transform: scaleX(0);
+      transition: transform 0.4s ease;
+    }
+    
+    .stat-card:hover::before {
+      transform: scaleX(1);
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 28px rgba(40, 167, 69, 0.12);
+      border-color: #28a745;
+    }
+    
+    .stat-icon-wrapper {
+      width: 56px;
+      height: 56px;
+      background: #f0f9f3;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: #28a745;
+      margin-bottom: 16px;
+      transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover .stat-icon-wrapper {
+      background: #28a745;
+      color: white;
+      transform: rotate(5deg) scale(1.05);
+    }
+    
+    .stat-label {
+      color: #6c757d;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+    
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #2c3e50;
+      line-height: 1;
+    }
+
+    /* Order Card - Clean & Professional */
+    .order-card {
+      background: #ffffff;
+      border: 1px solid #e8e8e8;
+      border-radius: 16px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      margin-bottom: 24px;
+    }
+    
+    .order-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+      border-color: #d0d0d0;
+    }
+    
+    /* Order Header */
+    .order-header {
+      padding: 28px;
+      background: #fafafa;
+      border-bottom: 1px solid #e8e8e8;
+    }
+    
+    .order-id-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #2c3e50;
+      color: white;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 700;
+      transition: all 0.3s ease;
+    }
+    
+    .order-id-badge:hover {
+      background: #1a252f;
+      transform: scale(1.05);
+    }
+    
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      background: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeaa7;
+    }
+    
+    .order-meta-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: 16px 0;
+    }
+    
+    .meta-item {
+      display: flex;
+      align-items: center;
+      color: #6c757d;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      padding: 8px 0;
+    }
+    
+    .meta-item:hover {
+      color: #28a745;
+      padding-left: 8px;
+    }
+    
+    .meta-item i {
+      color: #28a745;
+      margin-right: 10px;
+      font-size: 18px;
+    }
+    
+    .total-section {
+      margin-top: 20px;
+      padding: 20px;
+      background: linear-gradient(135deg, #f0f9f3 0%, #e8f5eb 100%);
+      border-radius: 12px;
+      border-left: 4px solid #28a745;
+    }
+    
+    .total-label {
+      color: #6c757d;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .total-amount {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #28a745;
+    }
+    
+    /* Action Buttons */
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    
+    .btn-action {
+      border-radius: 10px;
+      padding: 14px 28px;
+      font-weight: 600;
+      font-size: 1rem;
+      border: none;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .btn-action:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    }
+    
+    .btn-approve {
+      background: #28a745;
+      color: white;
+    }
+    
+    .btn-approve:hover {
+      background: #218838;
+    }
+    
+    .btn-reject {
+      background: #dc3545;
+      color: white;
+    }
+    
+    .btn-reject:hover {
+      background: #c82333;
+    }
+
+    /* Order Body - Items Table */
+    .order-body {
+      padding: 28px;
+    }
+    
+    .items-section {
+      background: #fafafa;
+      border-radius: 12px;
+      padding: 24px;
+      border: 1px solid #e8e8e8;
+    }
+    
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #2c3e50;
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid #e8e8e8;
+    }
+    
+    .section-header i {
+      color: #28a745;
+      font-size: 22px;
+    }
+    
+    .items-table {
+      width: 100%;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    
+    .items-table thead th {
+      background: #f8f9fa;
+      padding: 16px 14px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #495057;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border: none;
+      border-bottom: 2px solid #28a745;
+    }
+    
+    .items-table tbody td {
+      padding: 18px 14px;
+      border: none;
+      border-bottom: 1px solid #f0f0f0;
+      vertical-align: middle;
+    }
+    
+    .items-table tbody tr {
+      transition: all 0.3s ease;
+    }
+    
+    .items-table tbody tr:hover {
+      background: #f8fdf9;
+      transform: scale(1.002);
+    }
+    
+    .product-cell {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    
+    .product-icon {
+      width: 44px;
+      height: 44px;
+      background: #f0f9f3;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #28a745;
+      font-size: 18px;
+      flex-shrink: 0;
+      border: 1px solid #e8e8e8;
+      transition: all 0.3s ease;
+    }
+    
+    .items-table tbody tr:hover .product-icon {
+      background: #28a745;
+      color: white;
+      transform: rotate(5deg);
+    }
+    
+    .product-name {
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    
+    .vendor-cell {
+      color: #6c757d;
+      font-size: 0.95rem;
+    }
+    
+    .qty-badge {
+      display: inline-block;
+      background: #e8f5eb;
+      color: #28a745;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      border: 1px solid #d4edda;
+    }
+    
+    .price-cell {
+      color: #6c757d;
+      font-weight: 600;
+    }
+    
+    .subtotal-cell {
+      font-weight: 700;
+      color: #28a745;
+      font-size: 1.05rem;
+    }
+    
+    /* Total Summary */
+    .total-summary {
+      margin-top: 20px;
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      border: 2px solid #e8e8e8;
+    }
+    
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .summary-row:last-child {
+      border-bottom: none;
+      margin-top: 8px;
+      padding-top: 16px;
+      border-top: 2px solid #28a745;
+    }
+    
+    .summary-label {
+      font-size: 1rem;
+      color: #6c757d;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .summary-value {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #2c3e50;
+    }
+    
+    .summary-row:last-child .summary-label {
+      color: #28a745;
+      font-size: 1.1rem;
+    }
+    
+    .summary-row:last-child .summary-value {
+      color: #28a745;
+      font-size: 1.5rem;
+    }
+
+    /* Empty State */
+    .empty-items {
+      text-align: center;
+      padding: 60px 20px;
+      color: #adb5bd;
+    }
+    
+    .empty-items i {
+      font-size: 64px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+    
+    .empty-state-wrapper {
+      padding: 80px 20px;
+      animation: fadeInUp 0.6s ease-out;
+    }
+    
+    .empty-state-card {
+      max-width: 600px;
+      margin: 0 auto;
+      text-align: center;
+      background: white;
+      border-radius: 20px;
+      padding: 60px 40px;
+      border: 1px solid #e8e8e8;
+    }
+    
+    .empty-icon {
+      font-size: 120px;
+      color: #e8e8e8;
+      margin-bottom: 24px;
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    .empty-title {
+      color: #2c3e50;
+      font-weight: 700;
+      font-size: 1.5rem;
+      margin-bottom: 12px;
+    }
+    
+    .empty-text {
+      color: #6c757d;
+      font-size: 1.1rem;
+    }
+
+    /* Animations */
+    .animate-fade-up {
+      animation: fadeInUp 0.6s ease-out;
+    }
+    
+    .animate-slide-left {
+      animation: slideInLeft 0.6s ease-out;
+    }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+      .action-buttons {
+        width: 100%;
+        margin-top: 20px;
+      }
+      
+      .btn-action {
+        flex: 1;
+        justify-content: center;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .page-title {
+        font-size: 1.5rem;
+      }
+      
+      .header-icon-box {
+        width: 56px;
+        height: 56px;
+        font-size: 24px;
+      }
+      
+      .stat-value {
+        font-size: 1.6rem;
+      }
+      
+      .order-header {
+        padding: 20px;
+      }
+      
+      .order-body {
+        padding: 20px;
+      }
+      
+      .total-amount {
+        font-size: 1.6rem;
+      }
+      
+      .items-table {
+        font-size: 0.9rem;
+      }
+      
+      .items-table thead th,
+      .items-table tbody td {
+        padding: 12px 8px;
+      }
+    }
+
+  .container-fluid
+    //- Header Section - Clean & Minimal
+    .header-section.animate-fade-up
+      .row.align-items-center.g-3
+        .col-lg-8
+          .d-flex.align-items-center
+            .header-icon-box.me-3
+              i.bi.bi-clock-history
+            div
+              .page-title Order Menunggu Approval
+              .page-subtitle
+                i.bi.bi-info-circle.me-2
+                | Tinjau dan setujui pesanan dari dapur
+        
+        .col-lg-4.text-lg-end.text-start.mt-lg-0.mt-3
+          a.btn.btn-outline-secondary.btn-lg(href='/yayasan/dashboard')
+            i.bi.bi-arrow-left.me-2
+            | Kembali
+
+    if orders && orders.length
+      //- Stats Section
+      .row.g-4.mb-4
+        .col-md-4.animate-fade-up
+          .stat-card
+            .stat-icon-wrapper
+              i.bi.bi-hourglass-split
+            .stat-label Menunggu Review
+            .stat-value= orders.length
+        
+        .col-md-4.animate-fade-up(style='animation-delay: 0.1s;')
+          .stat-card
+            .stat-icon-wrapper
+              i.bi.bi-basket
+            - var totalItems = orders.reduce((sum, o) => sum + (o.items ? o.items.length : 0), 0)
+            .stat-label Total Items
+            .stat-value= totalItems
+        
+        .col-md-4.animate-fade-up(style='animation-delay: 0.2s;')
+          .stat-card
+            .stat-icon-wrapper
+              i.bi.bi-currency-dollar
+            - var totalValue = orders.reduce((sum, o) => sum + Number(o.total || 0), 0)
+            .stat-label Total Nilai
+            .stat-value= 'Rp ' + totalValue.toLocaleString('id-ID')
+
+      //- Orders List
+      .row
+        .col-12
+          each o, index in orders
+            .order-card.animate-slide-left(style=`animation-delay: ${index * 0.1}s;`)
+              //- Order Header
+              .order-header
+                .row.align-items-center.g-3
+                  .col-lg-7
+                    .d-flex.align-items-center.gap-2.mb-3
+                      .order-id-badge
+                        i.bi.bi-hash
+                        span Order #{o.id}
+                      .status-badge
+                        i.bi.bi-clock-history
+                        span Menunggu
+                    
+                    .order-meta-list
+                      .meta-item
+                        i.bi.bi-shop
+                        div
+                          strong.me-1 Dapur:
+                          span= o.dapur_name || ('Dapur #' + o.user_id)
+                      
+                      .meta-item
+                        i.bi.bi-calendar3
+                        div
+                          strong.me-1 Tanggal:
+                          span= o.created_at
+                    
+                    .total-section
+                      .total-label
+                        i.bi.bi-cash-stack
+                        | Total Pembayaran
+                      .total-amount Rp #{Number(o.total || 0).toLocaleString('id-ID')}
+                  
+                  .col-lg-5.text-lg-end
+                    .action-buttons
+                      form.approve-form(method='post' action=`/yayasan/orders/${o.id}/approve` style='display:inline-block; flex: 1;')
+                        button.btn-action.btn-approve.w-100(type='submit')
+                          i.bi.bi-check-circle
+                          span Approve
+                      
+                      form.reject-form(method='post' action=`/yayasan/orders/${o.id}/reject` style='display:inline-block; flex: 1;' onsubmit=`return confirm('Yakin ingin menolak order #${o.id}?')`)
+                        button.btn-action.btn-reject.w-100(type='submit')
+                          i.bi.bi-x-circle
+                          span Reject
+
+              //- Order Body - Items
+              .order-body
+                if o.items && o.items.length
+                  .items-section
+                    .section-header
+                      i.bi.bi-box-seam
+                      span Detail Produk Pesanan
+                    
+                    .table-responsive
+                      table.items-table
+                        thead
+                          tr
+                            th
+                              i.bi.bi-box.me-2
+                              | Produk
+                            th
+                              i.bi.bi-shop.me-2
+                              | Vendor
+                            th.text-center
+                              i.bi.bi-123.me-2
+                              | Qty
+                            th.text-end
+                              i.bi.bi-cash.me-2
+                              | Harga
+                            th.text-end
+                              i.bi.bi-calculator.me-2
+                              | Subtotal
+                        tbody
+                          - var orderSubtotal = 0
+                          each it in o.items
+                            - var subtotal = (Number(it.price || 0) * Number(it.qty || 0))
+                            - orderSubtotal += subtotal
+                            tr
+                              td
+                                .product-cell
+                                  .product-icon
+                                    i.bi.bi-box-seam
+                                  .product-name= it.product_name
+                              td.vendor-cell= it.vendor_name || ('Vendor #' + (it.vendor_id || 'N/A'))
+                              td.text-center
+                                .qty-badge= it.qty
+                              td.text-end.price-cell Rp #{Number(it.price || 0).toLocaleString('id-ID')}
+                              td.text-end.subtotal-cell Rp #{Number(subtotal || 0).toLocaleString('id-ID')}
+                    
+                    //- Total Summary
+                    .total-summary
+                      .summary-row
+                        .summary-label
+                          i.bi.bi-calculator
+                          span Total Hitung:
+                        .summary-value Rp #{Number(orderSubtotal).toLocaleString('id-ID')}
+                      .summary-row
+                        .summary-label
+                          i.bi.bi-check-circle
+                          span Total Tercatat:
+                        .summary-value Rp #{Number(o.total || 0).toLocaleString('id-ID')}
+                else
+                  .empty-items
+                    i.bi.bi-inbox
+                    p.mb-0 Tidak ada item ditemukan untuk order ini
+    
+    else
+      //- Empty State
+      .empty-state-wrapper
+        .empty-state-card
+          .empty-icon
+            i.bi.bi-inbox
+          h4.empty-title Tidak Ada Order Menunggu
+          p.empty-text Semua order sudah diproses atau belum ada order baru
+          a.btn.btn-success.btn-lg.mt-4(href='/yayasan/dashboard')
+            i.bi.bi-arrow-left.me-2
+            | Kembali ke Dashboard

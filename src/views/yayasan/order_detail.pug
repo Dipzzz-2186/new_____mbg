@@ -1,0 +1,692 @@
+//- src/views/yayasan/order_detail.pug
+extends ../layout
+
+block content
+  style.
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0px);
+      }
+      50% {
+        transform: translateY(-5px);
+      }
+    }
+    
+    .animate-fade-in {
+      animation: fadeInUp 0.6s ease-out;
+    }
+    
+    .animate-slide-in {
+      animation: slideInRight 0.6s ease-out;
+    }
+    
+    .card {
+      border: 1px solid #e8e8e8;
+      transition: all 0.3s ease;
+      background: #ffffff;
+      border-radius: 12px;
+    }
+    
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      border-color: #d0d0d0;
+    }
+    
+    .btn {
+      transition: all 0.3s ease;
+      border-radius: 8px;
+      font-weight: 500;
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+    
+    .btn-success {
+      background: #28a745;
+      border: none;
+    }
+    
+    .btn-success:hover {
+      background: #218838;
+    }
+    
+    .btn-outline-success {
+      border-color: #28a745;
+      color: #28a745;
+    }
+    
+    .btn-outline-success:hover {
+      background-color: #28a745;
+      color: white;
+    }
+    
+    .btn-outline-secondary {
+      border-color: #6c757d;
+      color: #6c757d;
+    }
+    
+    .btn-outline-secondary:hover {
+      background-color: #6c757d;
+      color: white;
+    }
+    
+    .status-badge {
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.3s ease;
+    }
+    
+    .status-badge:hover {
+      transform: scale(1.05);
+    }
+    
+    .info-row {
+      padding: 18px 0;
+      border-bottom: 1px solid #f0f0f0;
+      transition: all 0.3s ease;
+    }
+    
+    .info-row:hover {
+      background-color: #fafafa;
+      padding-left: 12px;
+      border-radius: 8px;
+    }
+    
+    .info-row:last-child {
+      border-bottom: none;
+    }
+    
+    .table {
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    
+    .table thead {
+      background: #f8f9fa;
+      border-bottom: 2px solid #28a745;
+    }
+    
+    .table thead th {
+      color: #495057;
+      font-weight: 600;
+      padding: 16px 12px;
+    }
+    
+    .table tbody tr {
+      transition: all 0.3s ease;
+    }
+    
+    .table tbody tr:hover {
+      background-color: #f8fdf9;
+      transform: scale(1.005);
+    }
+    
+    .vendor-card {
+      border: 1px solid #e8e8e8;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      background: #ffffff;
+    }
+    
+    .vendor-card:hover {
+      border-color: #28a745;
+      box-shadow: 0 6px 16px rgba(40, 167, 69, 0.1);
+      transform: translateX(-3px);
+    }
+    
+    .header-section {
+      background: #ffffff;
+      padding: 35px 0;
+      margin-bottom: 30px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+    
+    .img-thumbnail-custom {
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: 2px solid #e8e8e8;
+      border-radius: 10px;
+    }
+    
+    .img-thumbnail-custom:hover {
+      border-color: #28a745;
+      transform: scale(1.08);
+      box-shadow: 0 6px 16px rgba(40, 167, 69, 0.15);
+    }
+    
+    .icon-box {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      background: #f8f9fa;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #28a745;
+      font-size: 22px;
+      transition: all 0.3s ease;
+      border: 1px solid #e8e8e8;
+    }
+    
+    .icon-box:hover {
+      background: #28a745;
+      color: white;
+      transform: rotate(5deg) scale(1.05);
+      border-color: #28a745;
+    }
+    
+    .icon-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #f0f9f3;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #28a745;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+    
+    .icon-circle:hover {
+      background: #28a745;
+      color: white;
+      transform: rotate(360deg);
+    }
+    
+    .total-amount {
+      background: linear-gradient(135deg, #f0f9f3 0%, #e8f5eb 100%);
+      padding: 24px;
+      border-radius: 12px;
+      border-left: 4px solid #28a745;
+      transition: all 0.3s ease;
+    }
+    
+    .total-amount:hover {
+      border-left-width: 6px;
+      box-shadow: 0 4px 12px rgba(40, 167, 69, 0.12);
+    }
+    
+    .section-title {
+      position: relative;
+      padding-left: 16px;
+      margin-bottom: 24px;
+      color: #2c3e50;
+    }
+    
+    .section-title::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 100%;
+      background: #28a745;
+      border-radius: 2px;
+    }
+    
+    .badge-custom {
+      padding: 6px 14px;
+      border-radius: 16px;
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    
+    .badge-custom:hover {
+      transform: scale(1.08);
+    }
+    
+    .order-number {
+      font-size: 2rem;
+      color: #2c3e50;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+    
+    .order-subtitle {
+      color: #6c757d;
+      font-size: 1rem;
+    }
+    
+    @media (max-width: 768px) {
+      .header-section {
+        padding: 25px 0;
+      }
+      
+      .card {
+        margin-bottom: 20px;
+      }
+      
+      .table {
+        font-size: 14px;
+      }
+      
+      .order-number {
+        font-size: 1.5rem;
+      }
+    }
+
+  .container.py-4
+    //- Header Section - Simple & Clean
+    .header-section.animate-fade-in
+      .row.align-items-center.g-3
+        .col-lg-8
+          .d-flex.align-items-center.mb-2
+            .icon-box.me-3
+              i.bi.bi-receipt-cutoff
+            div
+              .order-number Order ##{order.id}
+              .order-subtitle.mt-1
+                i.bi.bi-shop.me-2
+                | #{order.dapur_name || '-'}
+        
+        .col-lg-4.text-lg-end.text-start.mt-lg-0.mt-3
+          button.btn.btn-outline-secondary.me-2(type='button' onclick='history.back()')
+            i.bi.bi-arrow-left.me-2
+            | Kembali
+
+          if order.status !== 'completed' && order.status === 'approved_yayasan'
+            form.d-inline-block(method='post', action=`/yayasan/orders/${order.id}/complete`)
+              button.btn.btn-success(type='submit')
+                i.bi.bi-check-circle-fill.me-2
+                | Tandai Selesai
+
+    //- Main Content
+    .row.g-4
+      .col-lg-8
+        //- Order Summary Card
+        .card.shadow-sm.mb-4.animate-fade-in
+          .card-body.p-4
+            h4.section-title.fw-bold
+              i.bi.bi-info-circle.me-2
+              | Ringkasan Order
+            
+            .row.g-3.mt-2
+              .col-md-6
+                .info-row
+                  .d-flex.align-items-center
+                    .icon-circle.me-3
+                      i.bi.bi-hash
+                    div
+                      small.text-muted.d-block.mb-1 ID Order
+                      strong.fs-6= order.id
+              
+              .col-md-6
+                .info-row
+                  .d-flex.align-items-center
+                    .icon-circle.me-3
+                      i.bi.bi-calendar-event
+                    div
+                      small.text-muted.d-block.mb-1 Tanggal Dibuat
+                      strong.fs-6= order.created_at
+              
+              .col-12
+                .info-row
+                  .d-flex.align-items-center.justify-content-between
+                    .d-flex.align-items-center
+                      .icon-circle.me-3
+                        i.bi.bi-flag
+                      div
+                        small.text-muted.d-block.mb-1 Status
+                    div
+                      if order.status === 'completed'
+                        span.status-badge(style='background: #28a745; color: white;')
+                          i.bi.bi-check-circle-fill
+                          | SELESAI
+                      else
+                        span.status-badge(style='background: #ffc107; color: #212529;')
+                          i.bi.bi-hourglass-split
+                          | #{order.status.toUpperCase()}
+              
+              .col-12.mt-4
+                .total-amount
+                  .d-flex.align-items-center.justify-content-between
+                    .d-flex.align-items-center
+                      .icon-circle.me-3(style='width: 42px; height: 42px; font-size: 18px; background: #28a745; color: white;')
+                        i.bi.bi-cash-stack
+                      div
+                        small.text-muted.d-block.mb-1 Total Pembayaran
+                        h3.mb-0.fw-bold(style='color: #28a745;')
+                          | Rp #{Number(order.total || 0).toLocaleString('id-ID')}
+                    .icon-circle(style='width: 42px; height: 42px; font-size: 18px; background: #28a745; color: white; animation: float 3s ease-in-out infinite;')
+                      i.bi.bi-check2-circle
+
+        //- Items Card
+        .card.shadow-sm.animate-fade-in(style='animation-delay: 0.15s;')
+          .card-body.p-4
+            h4.section-title.fw-bold
+              i.bi.bi-box-seam.me-2
+              | Daftar Item
+            
+            if items && items.length
+              .table-responsive.mt-3
+                table.table.table-hover.mb-0
+                  thead
+                    tr
+                      th(style='border: none;')
+                        i.bi.bi-box.me-2
+                        | Produk
+                      th(style='border: none;')
+                        i.bi.bi-person-badge.me-2
+                        | Vendor
+                      th.text-center(style='border: none;')
+                        i.bi.bi-123.me-2
+                        | Qty
+                      th.text-end(style='border: none;')
+                        i.bi.bi-currency-dollar.me-2
+                        | Harga
+                      th.text-center(style='border: none;')
+                        i.bi.bi-flag.me-2
+                        | Status
+                  tbody
+                    each it in items
+                      tr
+                        td
+                          .d-flex.align-items-center
+                            .icon-circle.me-2(style='width: 28px; height: 28px; font-size: 13px;')
+                              i.bi.bi-box
+                            strong= it.product_name
+                        td
+                          .d-flex.align-items-center
+                            i.bi.bi-person-circle.me-2(style='color: #28a745; font-size: 18px;')
+                            span= it.vendor_name || ('Vendor #' + it.vendor_id)
+                        td.text-center
+                          span.badge-custom(style='background: #e8f5eb; color: #28a745; border: 1px solid #d4edda;')= it.qty
+                        td.text-end
+                          strong(style='color: #28a745;') Rp #{Number(it.price || 0).toLocaleString('id-ID')}
+                        td.text-center
+                          if it.vendor_status
+                            span.badge-custom(style='background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb;')= it.vendor_status
+                          else
+                            span.text-muted -
+            else
+              .text-center.py-5
+                .icon-circle.mb-3(style='width: 64px; height: 64px; font-size: 28px; margin: 0 auto; background: #f8f9fa; color: #6c757d;')
+                  i.bi.bi-inbox
+                p.text-muted.mb-0 Tidak ada item pada order ini.
+
+      //- Sidebar
+      .col-lg-4
+        .card.shadow-sm.animate-slide-in
+          .card-body.p-4
+            h4.section-title.fw-bold
+              i.bi.bi-truck.me-2
+              | Surat Jalan Vendor
+            
+            if shipmentsByVendor && Object.keys(shipmentsByVendor).length
+              - const vendorIds = Object.keys(shipmentsByVendor);
+              each vId, index in vendorIds
+                - const s = shipmentsByVendor[vId];
+                .vendor-card.mb-3.p-3(style=`animation: fadeInUp 0.6s ease-out ${0.1 * index}s backwards;`)
+                  //- Vendor Header
+                  .d-flex.align-items-center.justify-content-between.mb-3
+                    .d-flex.align-items-center
+                      .icon-circle.me-2(style='width: 32px; height: 32px; font-size: 14px;')
+                        i.bi.bi-building
+                      strong.fs-6= s.vendor_name || ('Vendor #' + s.vendor_id)
+                    
+                    if s.delivery_note_path
+                      span.badge-custom(style='background: #28a745; color: white;')
+                        i.bi.bi-check-circle.me-1
+                        | Selesai
+                    else
+                      span.badge-custom(style='background: #ffc107; color: #212529;')
+                        i.bi.bi-clock.me-1
+                        | Proses
+
+                  //- Delivery Note Available
+                  if s.delivery_note_path
+                    .text-center.mb-3
+                      img.img-thumbnail-custom.ship-thumb(
+                        src=s.delivery_note_path,
+                        alt='Surat Jalan Vendor'
+                        role='button'
+                        tabindex='0'
+                        data-src=s.delivery_note_path
+                        style='max-height:180px; width:auto;'
+                      )
+                    a.btn.btn-success.w-100(
+                      href=s.delivery_note_path
+                      target='_blank'
+                      rel='noopener'
+                      download
+                    )
+                      i.bi.bi-download.me-2
+                      | Download Surat Jalan
+
+
+                  //- Delivery Details
+                  else
+                    .info-row(style='padding: 12px 0;')
+                      .d-flex.align-items-start.mb-2
+                        i.bi.bi-calendar-check.me-2.mt-1(style='color: #28a745;')
+                        div.flex-grow-1
+                          small.text-muted.d-block.mb-1 Tanggal Kirim
+                          strong.small= (s.shipped_at ? (new Date(s.shipped_at)).toLocaleString('id-ID') : '-')
+                    
+                    .info-row(style='padding: 12px 0;')
+                      .d-flex.align-items-start.mb-2
+                        i.bi.bi-person.me-2.mt-1(style='color: #28a745;')
+                        div.flex-grow-1
+                          small.text-muted.d-block.mb-1 Pengirim
+                          strong.small= s.sender_name || '-'
+                    
+                    .info-row(style='padding: 12px 0;')
+                      .d-flex.align-items-start.mb-2
+                        i.bi.bi-telephone.me-2.mt-1(style='color: #28a745;')
+                        div.flex-grow-1
+                          small.text-muted.d-block.mb-1 Kontak
+                          strong.small= s.sender_contact || '-'
+                    
+                    if s.note
+                      .info-row(style='padding: 12px 0;')
+                        .d-flex.align-items-start
+                          i.bi.bi-sticky.me-2.mt-1(style='color: #28a745;')
+                          div.flex-grow-1
+                            small.text-muted.d-block.mb-1 Catatan
+                            p.small.mb-0.text-wrap= s.note
+
+                    //- Attachment
+                    if s.attachment_path
+                      .mt-3.pt-3(style='border-top: 1px solid #e8e8e8;')
+                        .d-flex.align-items-center.mb-3
+                          i.bi.bi-paperclip.me-2(style='color: #28a745; font-size: 16px;')
+                          strong.small Lampiran
+                        
+                        - var aPath = String(s.attachment_path || '');
+                        - var aLower = aPath.toLowerCase();
+                        
+                        if aLower.endsWith('.pdf')
+                          a.btn.btn-outline-success.btn-sm.w-100(
+                            href=s.attachment_path
+                            target='_blank'
+                            rel='noopener'
+                          ) 
+                            i.bi.bi-file-earmark-pdf-fill.me-2
+                            | Buka PDF
+                        else
+                          .text-center.mb-2
+                            img.img-thumbnail-custom.ship-thumb(
+                              src=s.attachment_path,
+                              alt='Lampiran'
+                              role='button'
+                              tabindex='0'
+                              data-src=s.attachment_path
+                              style='height:90px; width:130px; object-fit:cover;'
+                            )
+                          a.btn.btn-success.btn-sm.w-100(
+                            href=s.attachment_path
+                            target='_blank'
+                            rel='noopener'
+                            download
+                          )
+                            i.bi.bi-download.me-2
+                            | Download
+                    else
+                      .text-center.py-3.mt-2(style='background: #fafafa; border-radius: 8px; border: 1px dashed #e0e0e0;')
+                        i.bi.bi-inbox(style='font-size: 28px; color: #adb5bd;')
+                        p.small.text-muted.mb-0.mt-2 Tidak ada lampiran
+
+            else
+              .text-center.py-5
+                .icon-circle.mb-3(style='width: 64px; height: 64px; font-size: 28px; margin: 0 auto; background: #f8f9fa; color: #6c757d;')
+                  i.bi.bi-truck
+                p.text-muted.mb-0 Belum ada informasi pengiriman
+
+  //- Modals
+  .modal.fade#sigPreviewModal(tabindex='-1' aria-hidden='true')
+    .modal-dialog.modal-dialog-centered.modal-lg
+      .modal-content(style='border: none; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.15);')
+        .modal-header(style='border-bottom: 1px solid #e8e8e8; padding: 20px 24px;')
+          h5.modal-title#sigPreviewTitle(style='color: #2c3e50; font-weight: 600;')
+            i.bi.bi-image.me-2
+            | Tanda Tangan
+          button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+        .modal-body.text-center.p-4
+          img#sigPreviewImg(src='' alt='Preview tanda tangan' style='max-width:100%; height:auto; border-radius:12px; box-shadow:0 4px 16px rgba(0,0,0,0.1);')
+        .modal-footer(style='border-top: 1px solid #e8e8e8; padding: 16px 24px;')
+          a#sigDownload.btn.btn-success(href='#' target='_blank' rel='noopener')
+            i.bi.bi-download.me-2
+            | Download
+          button.btn.btn-outline-secondary(type='button' data-bs-dismiss='modal') Tutup
+
+  .modal.fade#shipPreviewModal(tabindex='-1' aria-hidden='true')
+    .modal-dialog.modal-dialog-centered.modal-lg
+      .modal-content(style='border: none; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.15);')
+        .modal-header(style='border-bottom: 1px solid #e8e8e8; padding: 20px 24px;')
+          h5.modal-title#shipPreviewTitle(style='color: #2c3e50; font-weight: 600;')
+            i.bi.bi-image.me-2
+            | Lampiran Surat Jalan
+          button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+        .modal-body.text-center.p-4
+          img#shipPreviewImg(src='' alt='Preview lampiran' style='max-width:100%; height:auto; border-radius:12px; box-shadow:0 4px 16px rgba(0,0,0,0.1); display:none;')
+          p#shipPreviewPdfNotice.small.text-muted(style='display:none;')
+            i.bi.bi-file-earmark-pdf.me-2
+            | File PDF akan dibuka di tab baru
+        .modal-footer(style='border-top: 1px solid #e8e8e8; padding: 16px 24px;')
+          a#shipDownload.btn.btn-success(href='#' target='_blank' rel='noopener' style='display:none;')
+            i.bi.bi-download.me-2
+            | Download
+          button.btn.btn-outline-secondary(type='button' data-bs-dismiss='modal') Tutup
+
+  script.
+    (function(){
+      document.addEventListener('DOMContentLoaded', function(){
+        var sigModalEl = document.getElementById('sigPreviewModal');
+        if (sigModalEl) {
+          var bsSigModal = new bootstrap.Modal(sigModalEl, {});
+          var sigImgEl = document.getElementById('sigPreviewImg');
+          var sigDlBtn = document.getElementById('sigDownload');
+          var sigTitle = document.getElementById('sigPreviewTitle');
+
+          function openSigPreview(src, label){
+            if(!src) return;
+            sigImgEl.src = src;
+            sigDlBtn.href = src;
+            sigTitle.textContent = label || 'Tanda Tangan';
+            bsSigModal.show();
+          }
+
+          document.querySelectorAll('.view-sig').forEach(function(btn){
+            btn.addEventListener('click', function(e){
+              var src = btn.getAttribute('data-src') || '';
+              var label = btn.getAttribute('data-label') || 'Tanda Tangan';
+              openSigPreview(src, label);
+            });
+            btn.addEventListener('keydown', function(e){
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault(); btn.click();
+              }
+            });
+          });
+          document.querySelectorAll('img.sig-thumb').forEach(function(img){
+            img.addEventListener('click', function(){
+              var src = img.getAttribute('data-src') || img.src || '';
+              var label = img.getAttribute('alt') || 'Tanda Tangan';
+              openSigPreview(src, label);
+            });
+          });
+        }
+
+        var shipModalEl = document.getElementById('shipPreviewModal');
+        if (shipModalEl) {
+          var bsShipModal = new bootstrap.Modal(shipModalEl, {});
+          var shipImgEl = document.getElementById('shipPreviewImg');
+          var shipDlBtn = document.getElementById('shipDownload');
+          var shipPdfNotice = document.getElementById('shipPreviewPdfNotice');
+          var shipTitle = document.getElementById('shipPreviewTitle');
+
+          function openShipPreview(src, label){
+            if(!src) return;
+            shipTitle.textContent = label || 'Lampiran';
+            shipDlBtn.href = src;
+            var lower = src.toLowerCase();
+            if (lower.endsWith('.pdf')) {
+              shipImgEl.style.display = 'none';
+              shipPdfNotice.style.display = 'block';
+              shipDlBtn.style.display = 'inline-block';
+              window.open(src, '_blank');
+              bsShipModal.show();
+            } else {
+              shipImgEl.src = src;
+              shipImgEl.style.display = 'block';
+              shipPdfNotice.style.display = 'none';
+              shipDlBtn.style.display = 'inline-block';
+              bsShipModal.show();
+            }
+          }
+
+          document.querySelectorAll('.view-ship').forEach(function(btn){
+            btn.addEventListener('click', function(){
+              var src = btn.getAttribute('data-src') || '';
+              var label = btn.getAttribute('data-label') || 'Lampiran';
+              openShipPreview(src, label);
+            });
+          });
+          document.querySelectorAll('img.ship-thumb').forEach(function(img){
+            img.addEventListener('click', function(){
+              var src = img.getAttribute('data-src') || img.src || '';
+              var label = img.getAttribute('alt') || 'Lampiran';
+              openShipPreview(src, label);
+            });
+            img.addEventListener('keydown', function(e){
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault(); img.click();
+              }
+            });
+          });
+        }
+      });
+    })();

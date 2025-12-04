@@ -1,0 +1,381 @@
+doctype html
+html(lang="id")
+  head
+    meta(charset="utf-8")
+    meta(name="viewport" content="width=device-width,initial-scale=1")
+    title= title || 'FreshMart - Marketplace Bahan Makanan'
+       //- Bootstrap CDN
+    link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-" crossorigin="anonymous")
+    //- Bootstrap Icons
+    link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css")
+    link(rel="stylesheet" href="/css/site.css")
+    style.
+      :root {
+        --primary-green: #10b981;
+        --dark-green: #059669;
+        --light-green: #d1fae5;
+        --accent-green: #34d399;
+        --text-dark: #1f2937;
+        --text-light: #6b7280;
+        --bg-light: #f9fafb;
+      }
+      
+      * {
+        transition: all 0.3s ease;
+     }
+      
+      body {
+        background: linear-gradient(135deg, #f9fafb 0%, #ecfdf5 100%);
+        min-height: 100vh;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        color: var(--text-dark);
+      }
+      
+      /* Navbar Animations */
+      .navbar {
+        background: rgba(255, 255, 255, 0.95) !important;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        animation: slideDown 0.5s ease-out;
+      }
+      
+      @keyframes slideDown {
+        from {
+          transform: translateY(-100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+      
+      .navbar-brand {
+        font-weight: 700;
+        color: var(--primary-green) !important;
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      
+      .navbar-brand:hover {
+        transform: scale(1.05);
+        color: var(--dark-green) !important;
+      }
+      
+      .nav-link {
+        color: var(--text-dark) !important;
+        font-weight: 500;
+        position: relative;
+        padding: 0.5rem 1rem !important;
+      }
+      
+      .nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        width: 0;
+        height: 3px;
+        background: var(--primary-green);
+        transform: translateX(-50%);
+        transition: width 0.3s ease;
+        border-radius: 2px;
+      }
+      
+      .nav-link:hover::after {
+        width: 80%;
+      }
+      
+      .nav-link:hover {
+        color: var(--primary-green) !important;
+      }
+      
+      /* Container Animations */
+      .container {
+        animation: fadeInUp 0.6s ease-out;
+      }
+      
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      
+      /* Flash Messages */
+      .alert {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        animation: slideInRight 0.5s ease-out;
+        position: relative;
+        overflow: hidden;
+      }
+      
+      @keyframes slideInRight {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+      
+      .alert-success {
+        background: linear-gradient(135deg, var(--light-green) 0%, #a7f3d0 100%);
+        color: var(--dark-green);
+        border-left: 4px solid var(--primary-green);
+      }
+      
+      .alert-danger {
+        background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+        color: #991b1b;
+        border-left: 4px solid #ef4444;
+      }
+      
+      .alert-info {
+        background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+        color: #1e40af;
+        border-left: 4px solid #3b82f6;
+      }
+      
+      /* Buttons */
+      .btn-primary {
+        background: linear-gradient(135deg, var(--primary-green) 0%, var(--dark-green) 100%);
+        border: none;
+        border-radius: 8px;
+        padding: 0.6rem 1.5rem;
+        font-weight: 600;
+        box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.3);
+      }
+      
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.4);
+        background: linear-gradient(135deg, var(--dark-green) 0%, var(--primary-green) 100%);
+      }
+      
+      .btn-outline-primary {
+        border: 2px solid var(--primary-green);
+        color: var(--primary-green);
+        border-radius: 8px;
+        padding: 0.6rem 1.5rem;
+        font-weight: 600;
+      }
+      
+      .btn-outline-primary:hover {
+        background: var(--primary-green);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.3);
+      }
+      
+      /* Cards */
+      .card {
+        border: none;
+        border-radius: 16px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        background: white;
+      }
+      
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      }
+      
+      /* Badge Animations */
+      .badge {
+        animation: pulse 2s ease-in-out infinite;
+        border-radius: 6px;
+        padding: 0.4rem 0.8rem;
+      }
+      
+      @keyframes pulse {
+        0%, 100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.8;
+        }
+      }
+      
+      /* Floating Elements */
+      .float-animation {
+        animation: float 3s ease-in-out infinite;
+      }
+      
+      @keyframes float {
+        0%, 100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+      }
+      
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 10px;
+      }
+      
+      ::-webkit-scrollbar-track {
+        background: var(--bg-light);
+      }
+      
+      ::-webkit-scrollbar-thumb {
+        background: var(--accent-green);
+        border-radius: 5px;
+      }
+      
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--primary-green);
+      }
+      
+      /* Loading Spinner */
+      .spinner-border-green {
+        border-color: var(--light-green);
+        border-right-color: var(--primary-green);
+      }
+      
+      /* Form Controls */
+      .form-control:focus,
+      .form-select:focus {
+        border-color: var(--primary-green);
+        box-shadow: 0 0 0 0.25rem rgba(16, 185, 129, 0.15);
+      }
+      
+      /* Footer */
+      footer {
+        background: linear-gradient(135deg, var(--dark-green) 0%, var(--primary-green) 100%);
+        color: white;
+        padding: 2rem 0;
+        margin-top: 4rem;
+      }
+      
+      /* Decorative Elements */
+      .bg-pattern {
+        background-image: 
+          radial-gradient(circle at 20% 50%, rgba(16, 185, 129, 0.05) 0%, transparent 50%),
+          radial-gradient(circle at 80% 80%, rgba(52, 211, 153, 0.05) 0%, transparent 50%);
+      }
+  body.bg-pattern
+    include ./partials/navbar.pug
+
+    .container.mt-4
+      include ./partials/flash.pug
+      block content
+
+    script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-" crossorigin="anonymous")
+    script.
+      // Smooth scroll
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        });
+      });
+      
+      // Auto dismiss alerts
+      setTimeout(() => {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+          const bsAlert = new bootstrap.Alert(alert);
+          setTimeout(() => bsAlert.close(), 3000);
+        });
+      }, 100);
+
+      // ===== LIVE SEARCH MARKETPLACE =====
+      (function () {
+        const searchInput = document.getElementById('navSearch');
+        const productsGrid = document.getElementById('productsGrid');
+        if (!searchInput || !productsGrid) return;
+
+        let typingTimer;
+        const debounceMs = 350;
+
+        searchInput.addEventListener('input', function () {
+          clearTimeout(typingTimer);
+          typingTimer = setTimeout(runSearch, debounceMs);
+        });
+
+        async function runSearch() {
+          const query = searchInput.value.trim();
+
+          try {
+            const res = await fetch('/market/live-search?q=' + encodeURIComponent(query));
+            const data = await res.json();
+            renderProducts(data.products || []);
+          } catch (err) {
+            console.error(err);
+          }
+        }
+
+        function formatPrice(num) {
+          if (num == null) return '-';
+          try {
+            return Number(num).toLocaleString('id-ID');
+          } catch {
+            return num;
+          }
+        }
+
+        function renderProducts(products) {
+          if (!products.length) {
+            productsGrid.innerHTML = `
+              <div class="card border-0 shadow text-center py-5 animate-fadeIn" style="border-radius: 15px;">
+                <div class="card-body p-5">
+                  <div class="mb-4">
+                    <i class="bi bi-basket3 text-success" style="font-size: 5rem; opacity: 0.3;"></i>
+                  </div>
+                  <h4 class="mt-4 mb-3 fw-bold text-success">Produk tidak ditemukan</h4>
+                  <p class="text-muted mb-0" style="font-size: 1.05rem;">
+                    <i class="bi bi-info-circle me-2"></i>
+                    Coba gunakan kata kunci lain.
+                  </p>
+                </div>
+              </div>`;
+            return;
+          }
+
+          const html = [
+            '<div class="row g-4">',
+            ...products.map(p => {
+              const img = p.image_url || p.image_path || p.image || '';
+              const price = formatPrice(p.price);
+              const vendor = p.vendor_name || '';
+              return `
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                  <div class="card product-card h-100">
+                    ${img ? `<img src="${img}" class="card-img-top" loading="lazy" alt="${p.name || ''}">` : ''}
+                    <div class="card-body d-flex flex-column">
+                      <h5 class="card-title mb-1">${p.name || ''}</h5>
+                      ${vendor ? `<p class="text-muted mb-2" style="font-size: .9rem;">${vendor}</p>` : ''}
+                      <div class="mt-auto">
+                        <div class="fw-bold text-success mb-2">Rp ${price}</div>
+                        <a href="/market/product/${p.id}" class="btn btn-sm btn-success w-100">
+                          Tambah ke Keranjang
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              `;
+            }),
+            '</div>'
+          ].join('');
+
+          productsGrid.innerHTML = html;
+        }
+      })();

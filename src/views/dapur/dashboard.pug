@@ -1,0 +1,422 @@
+//- src/views/dapur/dashboard.pug
+extends ../layout
+
+block content
+  .container-fluid.px-4.px-lg-5.py-4.py-lg-5
+    //- Modern Header
+    .dashboard-header.mb-5.pb-4.border-bottom
+      .d-flex.justify-content-between.align-items-center.flex-wrap.gap-3
+        div
+          .d-flex.align-items-center.gap-3.mb-2
+            .icon-header.bg-gradient-primary
+              i.bi.bi-house-door
+            div
+              h2.mb-1.fw-bold Dashboard Dapur
+              p.text-muted.mb-0 Kelola pesanan dan transaksi Anda
+        
+        a.btn.btn-success.btn-lg.px-4.py-3.shadow(href="/market")
+          i.bi.bi-shop.me-2
+          | Buka Marketplace
+
+    //- Stats Overview
+    .row.g-4.mb-5
+      .col-md-6.col-xl-3
+        .stat-card.card.border-0.shadow-sm.h-100
+          .card-body.p-4
+            .d-flex.justify-content-between.align-items-start.mb-3
+              .stat-icon.bg-gradient-primary
+                i.bi.bi-receipt
+              .text-end
+                - const totalOrders = recentOrders ? recentOrders.length : 0
+                h3.mb-0.fw-bold= totalOrders
+                small.text-muted Total Pesanan
+            .progress(style="height: 4px;")
+              .progress-bar.bg-primary(style="width: 100%;")
+      
+      .col-md-6.col-xl-3
+        .stat-card.card.border-0.shadow-sm.h-100
+          .card-body.p-4
+            .d-flex.justify-content-between.align-items-start.mb-3
+              .stat-icon.bg-gradient-warning
+                i.bi.bi-clock-history
+              .text-end
+                - const pendingCount = recentOrders ? recentOrders.filter(o => o.status === 'awaiting_yayasan').length : 0
+                h3.mb-0.fw-bold= pendingCount
+                small.text-muted Menunggu Approval
+            .progress(style="height: 4px;")
+              .progress-bar.bg-warning(style="width: 75%;")
+      
+      .col-md-6.col-xl-3
+        .stat-card.card.border-0.shadow-sm.h-100
+          .card-body.p-4
+            .d-flex.justify-content-between.align-items-start.mb-3
+              .stat-icon.bg-gradient-success
+                i.bi.bi-check-circle
+              .text-end
+                - const completedCount = recentOrders ? recentOrders.filter(o => o.status === 'completed').length : 0
+                h3.mb-0.fw-bold= completedCount
+                small.text-muted Selesai
+            .progress(style="height: 4px;")
+              .progress-bar.bg-success(style="width: 90%;")
+      
+      .col-md-6.col-xl-3
+        .stat-card.card.border-0.shadow-sm.h-100
+          .card-body.p-4
+            .d-flex.justify-content-between.align-items-start.mb-3
+              .stat-icon.bg-gradient-info
+                i.bi.bi-cash-stack
+              .text-end
+                - const totalAmount = recentOrders ? recentOrders.reduce((sum, o) => sum + Number(o.total || 0), 0) : 0
+                h3.mb-0.fw-bold= (totalAmount / 1000000).toFixed(1) + 'M'
+                small.text-muted Total Nilai
+            .progress(style="height: 4px;")
+              .progress-bar.bg-info(style="width: 65%;")
+
+    .row.g-4.g-lg-5
+      //- RECENT ORDERS
+      .col-lg-8
+        .card.border-0.shadow-sm.orders-card
+          .card-header.bg-gradient-header.text-white.border-0.p-4
+            .d-flex.justify-content-between.align-items-center
+              h4.mb-0.fw-semibold
+                i.bi.bi-clock-history.me-2
+                | Riwayat Pesanan
+              if recentOrders && recentOrders.length
+                span.badge.bg-white.text-primary.px-3.py-2= recentOrders.length + ' Pesanan'
+          
+          .card-body.p-4
+            if recentOrders && recentOrders.length
+              .orders-list
+                each o, idx in recentOrders
+                  .order-item.mb-3.p-3.border.rounded-3(data-index=idx)
+                    .d-flex.justify-content-between.align-items-start.mb-3
+                      div
+                        .d-flex.align-items-center.gap-2.mb-2
+                          .order-number.bg-gradient-primary
+                            | ##{o.id}
+                          .fw-bold.fs-5.text-primary
+                            | Rp #{Number(o.total || 0).toLocaleString('id-ID')}
+                        
+                        .d-flex.align-items-center.gap-2.text-muted
+                          i.bi.bi-calendar-event
+                          small= o.created_at
+                      
+                      div
+                        - let statusLabel = '';
+                        - let badgeClass = '';
+                        - let iconClass = '';
+
+                        if o.status === 'awaiting_yayasan'
+                          - statusLabel = 'Menunggu Approval';
+                          - badgeClass = 'bg-warning bg-opacity-10 text-warning';
+                          - iconClass = 'bi-clock';
+                        else if o.status === 'approved_yayasan'
+                          - statusLabel = 'Disetujui Yayasan';
+                          - badgeClass = 'bg-primary bg-opacity-10 text-primary';
+                          - iconClass = 'bi-check-circle';
+                        else if o.status === 'completed'
+                          - statusLabel = 'Selesai';
+                          - badgeClass = 'bg-success bg-opacity-10 text-success';
+                          - iconClass = 'bi-check-circle-fill';
+                        else if o.status === 'rejected_yayasan'
+                          - statusLabel = 'Ditolak';
+                          - badgeClass = 'bg-danger bg-opacity-10 text-danger';
+                          - iconClass = 'bi-x-circle';
+                        else
+                          - statusLabel = 'Pending';
+                          - badgeClass = 'bg-secondary bg-opacity-10 text-secondary';
+                          - iconClass = 'bi-hourglass';
+
+                        span.badge.px-3.py-2(class=badgeClass)
+                          i(class=iconClass).me-1
+                          = statusLabel
+                    
+                      if o.status === 'approved_yayasan'
+                        a.btn.btn-sm.btn-success.flex-fill(href='/dapur/orders/' + o.id + '/ship')
+                          i.bi.bi-truck.me-1
+                          | Kirim Pesanan
+
+              
+              //- Load More
+              if recentOrders.length >= 5
+                .text-center.mt-4.pt-3.border-top
+                  a.btn.btn-outline-primary(href="/dapur/orders")
+                    i.bi.bi-arrow-right-circle.me-2
+                    | Lihat Semua Pesanan
+            else
+              .empty-state.text-center.py-5
+                .empty-icon.mb-4
+                  i.bi.bi-inbox
+                h5.mb-3.fw-normal Belum Ada Pesanan
+                p.text-muted.mb-4 Mulai belanja di marketplace untuk membuat pesanan pertama Anda
+                a.btn.btn-primary.px-4.py-2(href="/market")
+                  i.bi.bi-shop.me-2
+                  | Buka Marketplace
+
+      //- ACCOUNT INFO & QUICK ACTIONS
+      .col-lg-4
+        //- Account Card
+        .card.border-0.shadow-sm.mb-4.account-card
+          .card-body.p-4.bg-gradient-account.text-white.rounded-top
+            .text-center.mb-4
+              .avatar-wrapper.mx-auto.mb-3
+                .avatar-circle.bg-white.text-primary
+                  i.bi.bi-person-fill
+              h5.mb-1.fw-bold= currentUser.name
+              .badge.bg-white.text-primary.px-3.py-2
+                i.bi.bi-shield-check.me-1
+                = currentUser.role
+            
+            .info-grid
+              .info-item.mb-3.p-3.bg-white.bg-opacity-10.rounded-3
+                .d-flex.align-items-center.gap-2
+                  i.bi.bi-envelope.fs-5
+                  div
+                    small.opacity-75.d-block Email
+                    .fw-medium= currentUser.email || 'Belum diatur'
+              
+              .info-item.p-3.bg-white.bg-opacity-10.rounded-3
+                .d-flex.align-items-center.gap-2
+                  i.bi.bi-telephone.fs-5
+                  div
+                    small.opacity-75.d-block Telepon
+                    .fw-medium= currentUser.phone || 'Belum diatur'
+          
+          .card-footer.bg-white.border-0.p-4
+            .d-grid
+              a.btn.btn-primary.py-2(href="/dapur/profile")
+                i.bi.bi-gear.me-2
+                | Pengaturan Akun
+
+        //- Quick Actions Card
+        .card.border-0.shadow-sm.quick-actions-card
+          .card-body.p-4
+            h5.card-title.mb-4.fw-semibold
+              i.bi.bi-lightning-charge.me-2
+              | Aksi Cepat
+            
+            .d-grid.gap-3
+              a.action-btn.btn.btn-outline-success.text-start.p-3(href="/market")
+                .d-flex.align-items-center.gap-3
+                  .action-icon.bg-success.bg-opacity-10
+                    i.bi.bi-shop.text-success
+                  div
+                    .fw-semibold Marketplace
+                    small.text-muted.d-block Belanja produk baru  
+
+  //- Custom Styles
+  style.
+    /* Color Gradients */
+    .bg-gradient-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .bg-gradient-success { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+    .bg-gradient-warning { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+    .bg-gradient-info { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+    .bg-gradient-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .bg-gradient-account { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+    
+    /* Header Icon */
+    .icon-header {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.5rem;
+    }
+    
+    /* Stat Cards */
+    .stat-card {
+      transition: all 0.3s ease;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    
+    .stat-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.12) !important;
+    }
+    
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.3rem;
+    }
+    
+    /* Order Items */
+    .orders-card,
+    .account-card,
+    .quick-actions-card {
+      transition: all 0.3s ease;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    
+    .orders-card.visible,
+    .account-card.visible,
+    .quick-actions-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .order-item {
+      transition: all 0.3s ease;
+      background: white;
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    
+    .order-item.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    
+    .order-item:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      transform: translateX(4px);
+    }
+    
+    .order-number {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+    
+    /* Account Card */
+    .avatar-wrapper {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+    
+    .avatar-circle {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    /* Quick Actions */
+    .action-btn {
+      transition: all 0.2s ease;
+      border-width: 2px;
+    }
+    
+    .action-btn:hover {
+      transform: translateX(4px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    
+    .action-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+    
+    /* Empty State */
+    .empty-icon i {
+      font-size: 5rem;
+      color: #dee2e6;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .icon-header { width: 48px; height: 48px; font-size: 1.3rem; }
+      .stat-icon { width: 42px; height: 42px; font-size: 1.1rem; }
+      .avatar-circle { width: 70px; height: 70px; font-size: 2rem; }
+      .order-number { width: 40px; height: 40px; font-size: 0.85rem; }
+    }
+
+  //- JavaScript
+  script.
+    (function(){
+      document.addEventListener('DOMContentLoaded', function(){
+        // Fade-in animations for stat cards
+        var statCards = document.querySelectorAll('.stat-card');
+        statCards.forEach(function(card, index){
+          setTimeout(function(){
+            card.classList.add('visible');
+          }, index * 100);
+        });
+
+        // Fade-in animations for main cards
+        var mainCards = [
+          document.querySelector('.orders-card'),
+          document.querySelector('.account-card'),
+          document.querySelector('.quick-actions-card')
+        ].filter(Boolean);
+        
+        mainCards.forEach(function(card, index){
+          setTimeout(function(){
+            card.classList.add('visible');
+          }, 400 + (index * 100));
+        });
+
+        // Fade-in animations for order items
+        var orderItems = document.querySelectorAll('.order-item');
+        orderItems.forEach(function(item, index){
+          setTimeout(function(){
+            item.classList.add('visible');
+          }, 700 + (index * 100));
+        });
+
+        // Intersection Observer for scroll animations
+        if ('IntersectionObserver' in window) {
+          var observer = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+              }
+            });
+          }, { threshold: 0.1 });
+
+          // Observe all animated elements
+          statCards.forEach(function(card) { observer.observe(card); });
+          mainCards.forEach(function(card) { observer.observe(card); });
+          orderItems.forEach(function(item) { observer.observe(item); });
+        }
+
+        // Smooth scroll to top button
+        var scrollBtn = document.createElement('button');
+        scrollBtn.innerHTML = '<i class="bi bi-arrow-up"></i>';
+        scrollBtn.className = 'btn btn-primary btn-sm position-fixed bottom-0 end-0 m-4 rounded-circle shadow-lg';
+        scrollBtn.style.cssText = 'width: 48px; height: 48px; opacity: 0; transition: opacity 0.3s; z-index: 1000; display: none;';
+        scrollBtn.onclick = function(){ window.scrollTo({ top: 0, behavior: 'smooth' }); };
+        document.body.appendChild(scrollBtn);
+
+        window.addEventListener('scroll', function(){
+          if(window.scrollY > 400){
+            scrollBtn.style.display = 'block';
+            setTimeout(function(){ scrollBtn.style.opacity = '1'; }, 10);
+          } else {
+            scrollBtn.style.opacity = '0';
+            setTimeout(function(){ scrollBtn.style.display = 'none'; }, 300);
+          }
+        });
+      });
+    })();

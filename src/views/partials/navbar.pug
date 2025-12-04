@@ -1,0 +1,168 @@
+nav.navbar.navbar-expand-lg.navbar-light.sticky-top.shadow-sm(style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);")
+
+  .container-fluid.px-3.px-lg-4
+
+    // BRAND
+    a.navbar-brand.d-flex.align-items-center.fw-bold(href="/market" style="color: #2d6a4f;")
+      .brand-icon-wrapper.me-2(style="background: linear-gradient(135deg, #52b788 0%, #40916c 100%); padding: 8px 12px; border-radius: 12px; box-shadow: 0 2px 8px rgba(82, 183, 136, 0.3);")
+        i.bi.bi-cart-check-fill(style="font-size: 1.3rem; color: white;")
+      span.d-none.d-sm-inline(style="font-size: 1.25rem; letter-spacing: -0.5px;") FreshMart
+
+    // TOGGLER (mobile)
+    button.navbar-toggler.border-0.shadow-none(type="button", data-bs-toggle="collapse", data-bs-target="#mainNav")
+      span.navbar-toggler-icon
+
+    // NAV MENU WRAPPER
+    #mainNav.collapse.navbar-collapse.mt-3.mt-lg-0
+
+      // CENTER — SEARCH BAR
+      form.d-flex.mx-auto.my-2.my-lg-0(
+        method="GET"
+        action="/market"
+        role="search"
+        style="width:100%; max-width:600px;"
+      )
+        .input-group.shadow-sm(style="border-radius: 50px;")
+          span.input-group-text.bg-white.border-0(style="border-radius: 50px 0 0 50px; padding-left: 20px;")
+            i.bi.bi-search(style="color: #52b788;")
+          input#navSearch.form-control.border-0.shadow-none(
+            type="search"
+            name="q"
+            placeholder="Cari produk, kategori atau brand..."
+            value=(typeof searchQuery !== 'undefined' ? searchQuery : '')
+            style="border-radius: 0 50px 50px 0; padding: 12px 20px 12px 8px; font-size: 0.95rem;"
+          )
+
+      // RIGHT — ICONS
+      .d-flex.align-items-center.gap-2.gap-lg-3.ms-lg-3.mt-2.mt-lg-0
+
+        // CART ICON
+        a.nav-icon-wrapper.position-relative.d-flex.align-items-center.justify-content-center(
+          href="/dapur/cart"
+          style="width: 44px; height: 44px; border-radius: 12px; transition: all 0.3s ease; color: #2d6a4f;"
+          onmouseover="this.style.background='#f1faee'; this.style.transform='translateY(-2px)'"
+          onmouseout="this.style.background='transparent'; this.style.transform='translateY(0)'"
+        )
+          i.bi.bi-cart3(style="font-size: 1.4rem;")
+          if typeof cartCount !== 'undefined' && cartCount > 0
+            span.position-absolute.badge.rounded-pill.bg-danger(
+              style="font-size: 0.65rem; top: 4px; right: 4px; padding: 3px 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"
+            )= cartCount
+
+        // USER ICON DROPDOWN
+        .dropdown
+          a#userDropdown.nav-icon-wrapper.d-flex.align-items-center.justify-content-center(
+            href="#"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+            style="width: 44px; height: 44px; border-radius: 12px; transition: all 0.3s ease; color: #2d6a4f;"
+            onmouseover="this.style.background='#f1faee'; this.style.transform='translateY(-2px)'"
+            onmouseout="this.style.background='transparent'; this.style.transform='translateY(0)'"
+          )
+            i.bi.bi-person-circle(style="font-size: 1.4rem;")
+
+          ul.dropdown-menu.dropdown-menu-end.shadow-lg.border-0.mt-2(
+            aria-labelledby="userDropdown"
+            style="border-radius: 12px; min-width: 200px;"
+          )
+            if currentUser
+              li
+                .dropdown-header.d-flex.align-items-center.px-3.py-2(style="background: #f8f9fa; border-radius: 12px 12px 0 0;")
+                  i.bi.bi-person-circle.me-2(style="font-size: 1.5rem; color: #52b788;")
+                  .flex-grow-1
+                    .small.text-muted Logged in as
+                    .fw-semibold.text-dark= currentUser.username || 'User'
+
+              li
+                hr.dropdown-divider.my-2
+
+              li
+                a.dropdown-item.d-flex.align-items-center.px-3.py-2(
+                  href=(currentUser.role === 'dapur' ? "/dapur/dashboard" :
+                        currentUser.role === 'vendor' ? "/vendor/dashboard" :
+                        "/yayasan/dashboard")
+                  style="transition: all 0.2s ease; border-radius: 8px; margin: 0 8px;"
+                  onmouseover="this.style.background='#f1faee'"
+                  onmouseout="this.style.background='transparent'"
+                )
+                  i.bi.bi-speedometer2.me-2(style="color: #52b788;")
+                  | Dashboard
+
+              li
+                hr.dropdown-divider.my-2
+
+              li
+                form(action="/logout" method="POST" style="margin: 0 8px;")
+                  button.dropdown-item.d-flex.align-items-center.px-3.py-2.w-100.text-start(
+                    type="submit"
+                    style="transition: all 0.2s ease; border-radius: 8px; background: transparent; border: none;"
+                    onmouseover="this.style.background='#fee'; this.style.color='#dc3545'"
+                    onmouseout="this.style.background='transparent'; this.style.color='inherit'"
+                  )
+                    i.bi.bi-box-arrow-right.me-2
+                    | Logout
+            else
+              li
+                a.dropdown-item.d-flex.align-items-center.px-3.py-2(
+                  href="/login"
+                  style="transition: all 0.2s ease; border-radius: 8px; margin: 8px;"
+                  onmouseover="this.style.background='#f1faee'"
+                  onmouseout="this.style.background='transparent'"
+                )
+                  i.bi.bi-box-arrow-in-right.me-2(style="color: #52b788;")
+                  | Login
+
+// Optional: Add this CSS for smooth animations
+style.
+  .navbar {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+  
+  #navSearch::placeholder {
+    color: #95a5a6;
+    font-size: 0.9rem;
+  }
+  
+  #navSearch:focus {
+    box-shadow: 0 0 0 3px rgba(82, 183, 136, 0.1) !important;
+  }
+  
+  .nav-icon-wrapper {
+    cursor: pointer;
+  }
+  
+  .dropdown-menu {
+    animation: slideDown 0.3s ease;
+  }
+  
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .brand-icon-wrapper {
+    transition: all 0.3s ease;
+  }
+  
+  .navbar-brand:hover .brand-icon-wrapper {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(82, 183, 136, 0.4);
+  }
+  
+  @media (max-width: 991px) {
+    .navbar-collapse {
+      background: white;
+      padding: 15px;
+      border-radius: 12px;
+      margin-top: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+  }

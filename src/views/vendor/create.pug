@@ -1,0 +1,380 @@
+extends ../layout
+
+block content
+  style.
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+    
+    .form-container {
+      max-width: 720px;
+      margin: 0 auto;
+      animation: slideUp 0.6s ease-out;
+    }
+    
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .card {
+      border-radius: 24px;
+      border: none;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.95);
+    }
+    
+    .card-header {
+      background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+      padding: 2rem;
+      border: none;
+      border-radius: 24px 24px 0 0;
+    }
+    
+    .card-header h4 {
+      font-weight: 700;
+      font-size: 1.75rem;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    
+    .card-body { padding: 2.5rem; }
+    
+    .form-label {
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.95rem;
+    }
+    
+    .form-control, .input-group {
+      border-radius: 12px;
+      border: 2px solid #e5e7eb;
+      font-size: 1rem;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .form-control:focus {
+      border-color: #10b981;
+      box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+      outline: none;
+    }
+    
+    .form-control:hover { border-color: #d1d5db; }
+    
+    .input-group-text {
+      background: #f9fafb;
+      border: 2px solid #e5e7eb;
+      border-right: none;
+      font-weight: 600;
+      color: #6b7280;
+      border-radius: 12px 0 0 12px;
+      transition: all 0.2s ease;
+    }
+    
+    .input-group .form-control {
+      border-left: none;
+      border-radius: 0 12px 12px 0;
+    }
+    
+    .input-group:focus-within .input-group-text {
+      border-color: #10b981;
+      background: #ecfdf5;
+      color: #059669;
+    }
+    
+    .input-group:focus-within .form-control { border-color: #10b981; }
+    
+    textarea.form-control {
+      min-height: 120px;
+      max-height: 300px;
+      resize: vertical;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .file-upload-wrapper { 
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .file-upload-label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      padding: 2rem;
+      border: 3px dashed #d1d5db;
+      border-radius: 12px;
+      background: #f9fafb;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .file-upload-label:hover,
+    .file-upload-label.has-file {
+      border-color: #10b981;
+      background: #ecfdf5;
+    }
+    
+    .file-upload-input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+    
+    .file-info {
+      display: none;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+      padding: 0.75rem;
+      background: #ecfdf5;
+      border-radius: 8px;
+      color: #059669;
+      font-weight: 500;
+    }
+    
+    .file-info.show { display: flex; }
+    
+    .btn {
+      padding: 0.875rem 2rem;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 1rem;
+      border: none;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      cursor: pointer;
+    }
+    
+    .btn-success {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+      color: white;
+    }
+    
+    .btn-success:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.5);
+    }
+    
+    .btn-success:active { transform: translateY(0); }
+    
+    .btn-outline-secondary {
+      border: 2px solid #e5e7eb;
+      color: #6b7280;
+      background: white;
+    }
+    
+    .btn-outline-secondary:hover {
+      background: #f9fafb;
+      border-color: #d1d5db;
+      color: #374151;
+      transform: translateY(-2px);
+    }
+    
+    .form-text {
+      color: #6b7280;
+      font-size: 0.875rem;
+      margin-top: 0.5rem;
+      display: block;
+    }
+    
+    .icon-wrapper {
+      width: 48px;
+      height: 48px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+    
+    .mb-4 { margin-bottom: 1.5rem; }
+    
+    .input-group-lg .form-control,
+    .form-control-lg {
+      padding: 0.875rem 1rem;
+      font-size: 1rem;
+    }
+    
+    @media (max-width: 768px) {
+      body { padding: 1rem; }
+      .card-header { padding: 1.5rem; }
+      .card-header h4 { font-size: 1.5rem; }
+      .card-body { padding: 1.5rem; }
+      .btn { padding: 0.75rem 1.5rem; }
+    }
+
+  .form-container
+    .card
+      .card-header.text-white
+        h4
+          .icon-wrapper
+            i.bi.bi-plus-circle
+          span Tambah Produk Baru
+      
+      .card-body
+        form#productForm(action="/vendor/products/new" method="post" enctype="multipart/form-data")
+          
+          .mb-4
+            label.form-label
+              i.bi.bi-tag
+              | Nama Produk
+            input.form-control.form-control-lg(
+              name="name" 
+              placeholder="Contoh: Beras Premium" 
+              required
+            )
+          
+          .mb-4
+            label.form-label
+              i.bi.bi-grid
+              | Kategori
+            input.form-control.form-control-lg(
+              name="category" 
+              placeholder="Contoh: Sembako, Sayur, Buah"
+            )
+          
+          .row.g-3.mb-4
+            .col-md-4
+              label.form-label
+                i.bi.bi-currency-dollar
+                | Harga
+              .input-group.input-group-lg
+                span.input-group-text Rp
+                input.form-control(
+                  type="number" 
+                  step="0.01" 
+                  name="price" 
+                  placeholder="0" 
+                  required
+                )
+            
+            .col-md-4
+              label.form-label
+                i.bi.bi-rulers
+                | Satuan
+              input.form-control.form-control-lg(
+                name="unit" 
+                placeholder="kg/pcs/liter"
+              )
+            
+            .col-md-4
+              label.form-label
+                i.bi.bi-box
+                | Stok Awal
+              input.form-control.form-control-lg(
+                type="number" 
+                step="0.01" 
+                name="stock" 
+                value="0"
+              )
+          
+          .mb-4
+            label.form-label
+              i.bi.bi-card-text
+              | Deskripsi Produk
+            textarea.form-control(
+              name="description" 
+              rows="4" 
+              placeholder="Jelaskan detail produk Anda..."
+            )
+          
+          .mb-4
+            label.form-label
+              i.bi.bi-image
+              | Gambar Produk
+            .file-upload-wrapper
+              label.file-upload-label#fileLabel(for="fileInput")
+                i.bi.bi-cloud-upload(style="font-size: 2rem; color: #6b7280;")
+                div
+                  div(style="font-weight: 600; color: #374151;") Klik untuk upload gambar
+                  div(style="font-size: 0.875rem; color: #6b7280;") atau drag & drop di sini
+              input.file-upload-input#fileInput(
+                type="file" 
+                name="image" 
+                accept="image/*"
+              )
+            .file-info#fileInfo
+              i.bi.bi-check-circle-fill
+              span#fileName
+            small.form-text Maksimal 5MB, format: JPG, PNG, atau WEBP
+          
+          .d-flex.gap-3.flex-column.flex-sm-row
+            button.btn.btn-success.flex-fill(type="submit")
+              i.bi.bi-check-circle
+              | Simpan Produk
+            a.btn.btn-outline-secondary(href="/vendor/dashboard")
+              i.bi.bi-x-circle
+              | Batal
+
+  script.
+    (function() {
+      const fileInput = document.getElementById('fileInput');
+      const fileLabel = document.getElementById('fileLabel');
+      const fileInfo = document.getElementById('fileInfo');
+      const fileName = document.getElementById('fileName');
+      
+      if (!fileInput || !fileLabel || !fileInfo || !fileName) return;
+      
+      // File change handler
+      fileInput.addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+          fileLabel.classList.add('has-file');
+          fileName.textContent = this.files[0].name;
+          fileInfo.classList.add('show');
+        }
+      });
+      
+      // Drag and drop handlers
+      ['dragover', 'dragenter'].forEach(event => {
+        fileLabel.addEventListener(event, function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          this.style.borderColor = '#10b981';
+          this.style.background = '#ecfdf5';
+        });
+      });
+      
+      ['dragleave', 'dragend'].forEach(event => {
+        fileLabel.addEventListener(event, function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          if (!fileInput.files.length) {
+            this.style.borderColor = '#d1d5db';
+            this.style.background = '#f9fafb';
+          }
+        });
+      });
+      
+      fileLabel.addEventListener('drop', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+          fileInput.files = files;
+          fileInput.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      });
+    })();

@@ -1,0 +1,101 @@
+//- src/views/yayasan/delivery_detail.pug
+extends ../layout
+
+block content
+  .container
+    .d-flex.justify-content-between.align-items-center.mb-4
+      .d-flex.flex-column
+        h3.mb-0 Detail Konfirmasi — Order ##{confirmation.order_id}
+        small.text-muted.mt-1= (confirmation.dapur_name ? 'Diterima oleh: ' + confirmation.dapur_name : '')
+      .text-end
+        a.btn.btn-outline-secondary.me-2(href='/yayasan/delivery-confirmations') ← Kembali
+        a.btn.btn-sm.btn-primary(href=`/yayasan/orders/${confirmation.order_id}`) Lihat Order (Detail)
+
+    .row.g-4
+      .col-lg-8
+        .card.shadow-sm
+          .card-body
+            h5.mb-3 Ringkasan Konfirmasi
+            dl.row.mb-0
+              dt.col-sm-4 Nama penerima:
+              dd.col-sm-8= confirmation.receiver_name || '-'
+              dt.col-sm-4 Waktu tiba:
+              dd.col-sm-8= confirmation.arrived_at || '-'
+              dt.col-sm-4 Catatan:
+              dd.col-sm-8= confirmation.notes || '-'
+              dt.col-sm-4 Dikirim ke Dapur:
+              dd.col-sm-8= confirmation.dapur_name || '-'
+              dt.col-sm-4 Dikonfirmasi pada:
+              dd.col-sm-8= confirmation.created_at || '-'
+              dt.col-sm-4 Total order:
+              dd.col-sm-8 Rp #{ Number(confirmation.order_total || 0).toLocaleString('id-ID') }
+
+      .col-lg-4
+        .card.shadow-sm
+          .card-body
+            h6.mb-3 Surat Jalan
+            if confirmation.delivery_note_path
+              - let sj = String(confirmation.delivery_note_path || '');
+              - let sjLower = sj.toLowerCase();
+
+              if sjLower.endsWith('.pdf')
+                a.btn.btn-outline-primary.btn-sm(href=sj target='_blank')
+                  i.bi.bi-file-earmark-pdf-fill.me-1
+                  | Buka Surat Jalan (PDF)
+              else
+                img.sj-thumb(
+                  src=sj
+                  data-src=sj
+                  alt='Surat Jalan'
+                  role='button'
+                  tabindex='0'
+                  style='width:100%; height:auto; max-height:240px; object-fit:contain; border-radius:6px; box-shadow:0 6px 18px rgba(0,0,0,0.1); cursor:pointer; background:#f8f9fa; padding:4px;'
+                )
+                .d-flex.justify-content-between.mt-2
+                  button.btn.btn-sm.btn-outline-primary.view-sj(type='button', data-src=sj)
+                    i.bi.bi-image.me-1
+                    | Perbesar
+                  a.btn.btn-sm.btn-primary(href=sj target='_blank' download)
+                    i.bi.bi-download.me-1
+                    | Download
+            else
+              small.text-muted Tidak ada surat jalan dari vendor
+
+  //- Modal Preview Image
+  .modal.fade#sjPreviewModal(tabindex='-1' aria-hidden='true')
+    .modal-dialog.modal-dialog-centered.modal-lg
+      .modal-content
+        .modal-header
+          h5.modal-title Surat Jalan
+          button.btn-close(type='button' data-bs-dismiss='modal')
+        .modal-body.text-center
+          img#sjPreviewImg(src='' alt='Surat Jalan' style='max-width:100%; height:auto; border-radius:6px; background:#f8f9fa; padding:4px;')
+        .modal-footer
+          a#sjDownload.btn.btn-sm.btn-primary(href='#' target='_blank')
+            i.bi.bi-download.me-1
+            | Download
+          button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Tutup
+
+  script.
+    document.addEventListener('DOMContentLoaded', function(){
+      var modalEl = document.getElementById('sjPreviewModal');
+      if (!modalEl) return;
+
+      var bsModal = new bootstrap.Modal(modalEl);
+      var imgEl = document.getElementById('sjPreviewImg');
+      var dlBtn = document.getElementById('sjDownload');
+
+      function openPreview(src){
+        imgEl.src = src;
+        dlBtn.href = src;
+        bsModal.show();
+      }
+
+      document.querySelectorAll('.view-sj').forEach(btn=>{
+        btn.addEventListener('click', ()=> openPreview(btn.dataset.src));
+      });
+
+      document.querySelectorAll('.sj-thumb').forEach(img=>{
+        img.addEventListener('click', ()=> openPreview(img.dataset.src));
+      });
+    });

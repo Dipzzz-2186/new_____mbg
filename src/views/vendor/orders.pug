@@ -1,0 +1,821 @@
+//- src/views/vendor/orders.pug
+extends ../layout
+
+block content
+  //- Header Section dengan Gradient Modern
+  .position-relative.mb-4
+    .header-gradient.text-white.rounded-4.p-4.shadow-lg
+      .container-fluid
+        .row.align-items-center.g-3
+          .col-lg-8
+            .d-flex.align-items-center.mb-2
+              .header-icon.me-3
+                i.bi.bi-box-seam
+              div
+                h2.mb-1.fw-bold Pesanan Saya
+                p.mb-0.opacity-85.small Kelola dan lacak pesanan produk Anda dengan mudah
+          .col-lg-4.text-lg-end
+            a.btn.btn-light.btn-lg.shadow-sm(href='/vendor/dashboard')
+              i.bi.bi-arrow-left.me-2
+              | Kembali
+
+  .container-fluid
+    //- Flash Messages Modern
+    if flash && flash.success
+      .alert.alert-success.alert-dismissible.fade.show.shadow-sm.border-0.rounded-4.mb-4(role='alert')
+        .d-flex.align-items-center
+          .alert-icon.me-3
+            i.bi.bi-check-circle-fill
+          .flex-grow-1
+            strong.me-2 Berhasil!
+            = flash.success
+          button.btn-close(type='button' data-bs-dismiss='alert')
+    
+    if flash && flash.error
+      .alert.alert-danger.alert-dismissible.fade.show.shadow-sm.border-0.rounded-4.mb-4(role='alert')
+        .d-flex.align-items-center
+          .alert-icon.me-3
+            i.bi.bi-exclamation-triangle-fill
+          .flex-grow-1
+            strong.me-2 Gagal!
+            = flash.error
+          button.btn-close(type='button' data-bs-dismiss='alert')
+
+    //- Orders List
+    if orders && orders.length
+      //- Summary Stats dengan Animasi
+      .row.g-4.mb-4
+        .col-md-4
+          .stat-card.h-100(data-aos='fade-up' data-aos-delay='0')
+            .stat-card-inner
+              .stat-content
+                .stat-icon
+                  i.bi.bi-cart-check
+                .stat-info
+                  .stat-label Total Pesanan
+                  .stat-value= orders.length
+              .stat-bg-icon
+                i.bi.bi-cart-check
+        
+        .col-md-4
+          .stat-card.h-100(data-aos='fade-up' data-aos-delay='100')
+            .stat-card-inner
+              .stat-content
+                .stat-icon
+                  i.bi.bi-clock-history
+                .stat-info
+                  .stat-label Dalam Persiapan
+                  .stat-value= orders.filter(o => o.vendor_status === 'preparing').length
+              .stat-bg-icon
+                i.bi.bi-clock-history
+        
+        .col-md-4
+          .stat-card.h-100(data-aos='fade-up' data-aos-delay='200')
+            .stat-card-inner
+              .stat-content
+                .stat-icon
+                  i.bi.bi-truck
+                .stat-info
+                  .stat-label Sudah Dikirim
+                  .stat-value= orders.filter(o => o.vendor_status === 'shipped').length
+              .stat-bg-icon
+                i.bi.bi-truck
+
+      //- Orders Grid dengan Card Compact
+      .row.g-4
+        each o, index in orders
+          .col-lg-4.col-md-6(data-aos='fade-up' data-aos-delay=`${index * 50}`)
+            .order-card-compact.shadow-sm.h-100
+              //- Card Header
+              .card-compact-header
+                .d-flex.justify-content-between.align-items-start.mb-2
+                  .order-id-compact
+                    i.bi.bi-hash
+                    span= o.order_id
+                  
+                  - var statusClass = o.vendor_status === 'shipped' ? 'success' : 'warning';
+                  - var statusIcon = o.vendor_status === 'shipped' ? 'truck' : 'clock-history';
+                  .status-pill-compact(class=`status-${statusClass}`)
+                    i.bi(class=`bi-${statusIcon}`)
+                
+                .order-date-compact
+                  i.bi.bi-calendar3.me-1
+                  span= o.created_at
+              
+              //- Card Body
+              .card-compact-body
+                //- Total
+                .total-compact.mb-3
+                  .total-label-compact Total
+                  .total-value-compact Rp #{o.order_total.toLocaleString('id-ID')}
+                
+                //- Items Summary
+                .items-compact
+                  .items-title
+                    i.bi.bi-box.me-1
+                    span #{o.items.length} Item
+                  each it in o.items
+                    .item-compact
+                      .item-name-compact
+                        i.bi.bi-circle-fill.me-2
+                        span= it.product_name
+                      .item-qty-compact #{it.qty}x
+              
+              //- Card Footer
+              .card-compact-footer
+                if o.order_status === 'completed'
+                  .completed-compact
+                    i.bi.bi-check-circle-fill.me-1
+                    span Selesai
+                else
+                  - var disabled = (o.order_status === 'completed' || o.vendor_status === 'shipped') ? 'disabled' : false;
+                  form.vendor-status-form(method='post' action=`/vendor/orders/${o.order_id}/status`)
+                    select.form-select.form-select-sm.mb-2(name='status' data-order-id=o.order_id disabled=disabled)
+                      option(value='preparing' selected=(o.vendor_status==='preparing'))
+                        | 📦 Siapkan
+                      option(value='shipped' selected=(o.vendor_status==='shipped'))
+                        | 🚚 Kirim
+                    button.btn.btn-primary.btn-sm.w-100(type='submit' disabled=disabled)
+                      i.bi.bi-arrow-repeat.me-1
+                      | Update
+                    
+                    if o.vendor_status === 'shipped' && o.order_status !== 'completed' && !o.has_delivery_note
+                      a.btn.btn-outline-success.btn-sm.w-100.mt-2(href=`/vendor/orders/${o.order_id}/sign`)
+                        i.bi.bi-pencil.me-1
+                        | Edit Surat
+    else
+      //- Empty State Elegant
+      .empty-state(data-aos='fade-up')
+        .empty-card
+          .empty-icon
+            i.bi.bi-inbox
+          h4.empty-title Belum Ada Pesanan
+          p.empty-text Saat ini belum ada pesanan yang masuk untuk produk Anda
+          a.btn.btn-primary.btn-lg.mt-3(href='/vendor/dashboard')
+            i.bi.bi-arrow-left.me-2
+            | Kembali ke Dashboard
+
+  //- Modal: Surat Jalan dengan Design Modern
+  .modal.fade#deliveryNoteModal(tabindex='-1' aria-hidden='true')
+    .modal-dialog.modal-lg.modal-dialog-scrollable
+      .modal-content.border-0
+        .modal-header.border-0.pb-2
+          h5.modal-title.fw-bold#deliveryNoteTitle
+            i.bi.bi-file-earmark-text.me-2.text-primary
+            | Surat Jalan Pengiriman
+          button.btn-close(type='button' data-bs-dismiss='modal')
+        
+        form#deliveryNoteForm(method='post' enctype='multipart/form-data')
+          .modal-body.p-4
+            input(type='hidden' name='order_id' id='dn-order-id')
+            
+            //- Section dengan design card
+            .form-section.mb-4
+              .section-header.mb-3
+                i.bi.bi-truck.me-2.text-primary
+                h6.fw-bold.mb-0.d-inline Informasi Pengiriman
+              .section-body
+                .row.g-3
+                  .col-md-6
+                    label.form-label
+                      i.bi.bi-calendar-event.me-2
+                      | Tanggal & Waktu
+                    input.form-control.form-control-lg(type='datetime-local' name='shipped_at' id='dn-shipped-at' required)
+                  .col-md-6
+                    label.form-label
+                      i.bi.bi-car-front.me-2
+                      | No. Plat Kendaraan
+                    input.form-control.form-control-lg(type='text' name='plate_number' id='dn-plate' placeholder='B 1234 ABC' required)
+
+            //- Data Pengirim
+            .form-section.mb-4
+              .section-header.mb-3
+                i.bi.bi-person-badge.me-2.text-primary
+                h6.fw-bold.mb-0.d-inline Data Pengirim
+              .section-body
+                .row.g-3
+                  .col-md-6
+                    label.form-label
+                      i.bi.bi-person.me-2
+                      | Nama Pengirim
+                    input.form-control.form-control-lg(type='text' name='sender_name' id='dn-sender-name' required)
+                  .col-md-6
+                    label.form-label
+                      i.bi.bi-phone.me-2
+                      | Kontak Pengirim
+                    input.form-control.form-control-lg(type='text' name='sender_contact' id='dn-sender-contact' placeholder='0812xxxx' required)
+
+            //- Catatan & Lampiran
+            .form-section.mb-4
+              .section-header.mb-3
+                i.bi.bi-paperclip.me-2.text-primary
+                h6.fw-bold.mb-0.d-inline Catatan & Lampiran
+              .section-body
+                .mb-3
+                  label.form-label
+                    i.bi.bi-chat-left-text.me-2
+                    | Catatan
+                    span.text-muted.small  (opsional)
+                  textarea.form-control(name='note' id='dn-note' rows='3' placeholder='Tambahkan catatan pengiriman...')
+                
+                .mb-0
+                  label.form-label
+                    i.bi.bi-file-earmark-arrow-up.me-2
+                    | Lampiran Surat Jalan
+                    span.text-danger  *
+                  input.form-control.form-control-lg(
+                    type='file'
+                    name='delivery_attachment'
+                    id='dn-attachment'
+                    accept='.jpg,.jpeg,.png,.pdf'
+                    required
+                  )
+                  .form-text
+                    i.bi.bi-info-circle.me-1
+                    | Format: JPG, PNG, atau PDF (Max 5MB)
+
+            //- Tanda Tangan
+            .form-section.mb-0
+              .section-header.mb-3
+                i.bi.bi-pen.me-2.text-primary
+                h6.fw-bold.mb-0.d-inline Tanda Tangan Pengirim
+              .section-body
+                .signature-area
+                  canvas#signature-pad
+                .signature-controls
+                  .text-muted.small
+                    i.bi.bi-hand-index.me-1
+                    | Tanda tangan di area putih di atas
+                  button.btn.btn-outline-danger.btn-sm(type='button' id='dn-clear-signature')
+                    i.bi.bi-eraser.me-2
+                    | Hapus Tanda Tangan
+                input(type='hidden' name='signature_data' id='dn-signature-data')
+
+          .modal-footer.border-0.bg-light
+            button.btn.btn-lg.btn-outline-secondary(type='button' data-bs-dismiss='modal')
+              i.bi.bi-x-circle.me-2
+              | Batal
+            button.btn.btn-lg.btn-primary.px-5(type='submit')
+              i.bi.bi-send-check.me-2
+              | Kirim Surat Jalan
+
+  //- Enhanced Styles
+  style.
+    /* Header Gradient */
+    .header-gradient {
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .header-gradient::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 300px;
+      height: 300px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 50%;
+    }
+    .header-icon {
+      width: 60px;
+      height: 60px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      backdrop-filter: blur(10px);
+    }
+
+    /* Stat Cards - Warna Biru */
+    .stat-card {
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .stat-card:hover {
+      transform: translateY(-8px);
+    }
+    .stat-card-inner {
+      border-radius: 20px;
+      padding: 30px;
+      position: relative;
+      overflow: hidden;
+      height: 100%;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    }
+    .stat-content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .stat-icon {
+      width: 70px;
+      height: 70px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: white;
+      backdrop-filter: blur(10px);
+    }
+    .stat-info {
+      flex: 1;
+    }
+    .stat-label {
+      color: rgba(255,255,255,0.9);
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+    .stat-value {
+      color: white;
+      font-size: 2.5rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+    .stat-bg-icon {
+      position: absolute;
+      right: -30px;
+      bottom: -30px;
+      font-size: 180px;
+      color: rgba(255,255,255,0.1);
+      z-index: 1;
+    }
+
+    /* Order Card Compact */
+    .order-card-compact {
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid #f0f0f0;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .order-card-compact:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.12) !important;
+      border-color: #3b82f6;
+    }
+    
+    .card-compact-header {
+      background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+      padding: 16px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+    .order-id-compact {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+    .status-pill-compact {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+    .status-pill-compact.status-success {
+      background: rgba(59, 130, 246, 0.15);
+      color: #3b82f6;
+    }
+    .status-pill-compact.status-warning {
+      background: rgba(59, 130, 246, 0.15);
+      color: #3b82f6;
+    }
+    .order-date-compact {
+      color: #6b7280;
+      font-size: 0.8rem;
+      margin-top: 8px;
+    }
+    
+    .card-compact-body {
+      padding: 16px;
+      flex: 1;
+    }
+    .total-compact {
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+    }
+    .total-label-compact {
+      color: rgba(255,255,255,0.9);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+    .total-value-compact {
+      color: white;
+      font-size: 1.5rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+    .items-compact {
+      margin-top: 16px;
+    }
+    .items-title {
+      color: #6b7280;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+    .item-compact {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      font-size: 0.85rem;
+      border-bottom: 1px solid #f8f9fa;
+    }
+    .item-compact:last-child {
+      border-bottom: none;
+    }
+    .item-name-compact {
+      display: flex;
+      align-items: center;
+      flex: 1;
+      color: #374151;
+    }
+    .item-name-compact i {
+      font-size: 0.4rem;
+      color: #3b82f6;
+    }
+    .item-qty-compact {
+      background: #f3f4f6;
+      color: #374151;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.8rem;
+    }
+    
+    .card-compact-footer {
+      padding: 16px;
+      background: #f8f9fa;
+      border-top: 2px solid #f0f0f0;
+    }
+    .completed-compact {
+      background: rgba(59, 130, 246, 0.15);
+      color: #3b82f6;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-align: center;
+    }
+    .card-compact-footer .form-select {
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .card-compact-footer .form-select:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    .card-compact-footer .btn {
+      font-size: 0.85rem;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+    .card-compact-footer .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    /* Empty State */
+    .empty-state {
+      padding: 80px 20px;
+    }
+    .empty-card {
+      max-width: 600px;
+      margin: 0 auto;
+      text-align: center;
+      background: white;
+      border-radius: 24px;
+      padding: 60px 40px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    }
+    .empty-icon {
+      font-size: 120px;
+      color: #e5e7eb;
+      margin-bottom: 24px;
+      animation: float 3s ease-in-out infinite;
+    }
+    .empty-title {
+      color: #374151;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .empty-text {
+      color: #6b7280;
+      font-size: 1.1rem;
+      margin-bottom: 0;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+
+    /* Modal Sections - Fix Scroll */
+    .modal-content {
+      border-radius: 24px;
+      max-height: 90vh;
+    }
+    .modal-body {
+      max-height: calc(90vh - 180px);
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .form-section {
+      background: #f8f9fa;
+      border-radius: 16px;
+      padding: 20px;
+    }
+    .section-header {
+      color: #374151;
+      margin-bottom: 16px;
+    }
+    .section-body {
+      /* Removed padding since it's in form-section now */
+    }
+    .form-control, .form-select {
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 12px 16px;
+    }
+    .form-control:focus, .form-select:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    .form-label {
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 8px;
+    }
+
+    /* Signature Area */
+    .signature-area {
+      background: white;
+      border: 3px dashed #e5e7eb;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    #signature-pad {
+      width: 100%;
+      height: 200px;
+      cursor: crosshair;
+      background: white;
+      border-radius: 8px;
+      display: block;
+    }
+    .signature-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Alert Icons */
+    .alert-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+    .alert-success .alert-icon {
+      background: rgba(59, 130, 246, 0.1);
+      color: #3b82f6;
+    }
+    .alert-danger .alert-icon {
+      background: rgba(59, 130, 246, 0.1);
+      color: #3b82f6;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header-gradient {
+        padding: 24px 20px !important;
+      }
+      .stat-card-inner {
+        padding: 20px;
+      }
+      .stat-value {
+        font-size: 2rem;
+      }
+      .order-card-compact {
+        margin-bottom: 16px;
+      }
+      .total-value-compact {
+        font-size: 1.3rem;
+      }
+    }
+
+  //- JavaScript
+  script.
+    (function(){
+      document.addEventListener('DOMContentLoaded', function(){
+        var deliveryModalEl = document.getElementById('deliveryNoteModal');
+        if (!deliveryModalEl) return;
+        var deliveryModal = new bootstrap.Modal(deliveryModalEl, { backdrop: true });
+        var dnForm = document.getElementById('deliveryNoteForm');
+        var dnOrderId = document.getElementById('dn-order-id');
+        var dnShippedAt = document.getElementById('dn-shipped-at');
+        var dnTitle = document.getElementById('deliveryNoteTitle');
+
+        var sigCanvas = document.getElementById('signature-pad');
+        var sigInput = document.getElementById('dn-signature-data');
+        var sigClearBtn = document.getElementById('dn-clear-signature');
+        var sigCtx = sigCanvas ? sigCanvas.getContext('2d') : null;
+        var drawing = false;
+        var hasDrawn = false;
+        var lastPos = { x: 0, y: 0 };
+
+        function resizeSignatureCanvas(){
+          if (!sigCanvas || !sigCtx) return;
+          var rect = sigCanvas.getBoundingClientRect();
+          if (!rect.width || !rect.height) return;
+          sigCanvas.width = rect.width;
+          sigCanvas.height = rect.height;
+          sigCtx.lineWidth = 2;
+          sigCtx.lineCap = 'round';
+          sigCtx.strokeStyle = '#000';
+          sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
+          hasDrawn = false;
+          if (sigInput) sigInput.value = '';
+        }
+
+        function getPos(e){
+          var rect = sigCanvas.getBoundingClientRect();
+          return {
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top
+          };
+        }
+
+        function startDraw(e){
+          if (!sigCanvas || !sigCtx) return;
+          e.preventDefault();
+          e.stopPropagation();
+          drawing = true;
+          hasDrawn = true;
+          lastPos = getPos(e);
+        }
+
+        function draw(e){
+          if (!drawing || !sigCanvas || !sigCtx) return;
+          e.preventDefault();
+          e.stopPropagation();
+          var pos = getPos(e);
+          sigCtx.beginPath();
+          sigCtx.moveTo(lastPos.x, lastPos.y);
+          sigCtx.lineTo(pos.x, pos.y);
+          sigCtx.stroke();
+          lastPos = pos;
+        }
+
+        function endDraw(e){
+          if (!drawing) return;
+          e.stopPropagation();
+          drawing = false;
+        }
+
+        if (sigCanvas && sigCtx) {
+          deliveryModalEl.addEventListener('shown.bs.modal', function(){
+            resizeSignatureCanvas();
+          });
+          window.addEventListener('resize', function(){
+            resizeSignatureCanvas();
+          });
+          sigCanvas.addEventListener('pointerdown', startDraw);
+          sigCanvas.addEventListener('pointermove', draw);
+          sigCanvas.addEventListener('pointerup', endDraw);
+          sigCanvas.addEventListener('pointerleave', endDraw);
+          if (sigClearBtn) {
+            sigClearBtn.addEventListener('click', function(){
+              sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
+              hasDrawn = false;
+              if (sigInput) sigInput.value = '';
+            });
+          }
+        }
+
+        function nowLocalInputValue() {
+          var d = new Date();
+          var pad = function(n){ return n.toString().padStart(2,'0'); };
+          var yyyy = d.getFullYear();
+          var mm = pad(d.getMonth()+1);
+          var dd = pad(d.getDate());
+          var hh = pad(d.getHours());
+          var mi = pad(d.getMinutes());
+          return yyyy + '-' + mm + '-' + dd + 'T' + hh + ':' + mi;
+        }
+
+        document.querySelectorAll('form.vendor-status-form').forEach(function(form){
+          form.addEventListener('submit', function(ev){
+            ev.preventDefault();
+            var sel = form.querySelector('select[name="status"]');
+            var value = sel ? sel.value : null;
+            var orderId = sel ? sel.getAttribute('data-order-id') : null;
+            if (value === 'shipped') {
+              dnOrderId.value = orderId;
+              dnShippedAt.value = nowLocalInputValue();
+              dnTitle.innerHTML = '<i class="bi bi-file-earmark-text me-2 text-primary"></i>Surat Jalan — Order #' + orderId;
+              if (sigCanvas && sigCtx) {
+                sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
+                hasDrawn = false;
+                if (sigInput) sigInput.value = '';
+              }
+              deliveryModal.show();
+            } else {
+              fetch(form.action, {
+                method: 'POST',
+                headers: { 'Accept': 'application/json' },
+                body: new URLSearchParams(new FormData(form))
+              }).then(function(resp){
+                var ct = resp.headers.get('content-type') || '';
+                if (resp.ok) {
+                  if (ct.indexOf('application/json') !== -1) {
+                    return resp.json().then(function(){ location.reload(); });
+                  }
+                  location.reload();
+                  return;
+                }
+                return resp.text().then(function(t){ throw new Error(t || 'Network error'); });
+              }).catch(function(err){
+                alert('Gagal mengubah status: ' + (err.message || err));
+              });
+            }
+          });
+        });
+
+        dnForm.addEventListener('submit', function(ev){
+          ev.preventDefault();
+          if (sigCanvas && sigInput) {
+            if (!hasDrawn) {
+              alert('Mohon isi tanda tangan pengirim terlebih dahulu.');
+              return;
+            }
+            try {
+              sigInput.value = sigCanvas.toDataURL('image/png');
+            } catch (e) {
+              console.error('toDataURL error:', e);
+              alert('Gagal mengambil tanda tangan. Coba lagi.');
+              return;
+            }
+          }
+          var fd = new FormData(dnForm);
+          var orderId = fd.get('order_id');
+          var submitBtn = dnForm.querySelector('button[type="submit"]');
+          var originalText = submitBtn.innerHTML;
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Mengirim...';
+          fetch('/vendor/orders/' + encodeURIComponent(orderId) + '/ship', {
+            method: 'POST',
+            body: fd
+          }).then(function(resp){
+            if (resp.ok) return resp.json();
+            return resp.text().then(function(t){ throw new Error(t||'Server error'); });
+          }).then(function(json){
+            if (json && json.success) {
+              deliveryModal.hide();
+              location.reload();
+            } else {
+              alert('Gagal submit surat jalan: ' + (json && json.error ? json.error : 'Unknown'));
+              submitBtn.disabled = false;
+              submitBtn.innerHTML = originalText;
+            }
+          }).catch(function(err){
+            alert('Gagal submit surat jalan: ' + (err.message || err));
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+          });
+        });
+      });
+    })(); 

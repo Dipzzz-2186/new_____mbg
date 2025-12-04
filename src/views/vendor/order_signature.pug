@@ -1,0 +1,207 @@
+//- src/views/vendor/order_signature.pug
+extends ../layout
+
+block content
+  .mb-3.d-flex.justify-content-between.align-items-center
+    h3.mb-0 Tanda Tangan Dapur — Order ##{order.id}
+    a.btn.btn-outline-primary(href='/vendor/orders') ← Kembali
+
+  if flash && flash.success
+    .alert.alert-success= flash.success
+  if flash && flash.error
+    .alert.alert-danger= flash.error
+
+  .card
+    .card-body
+      p.mb-1
+        | Dapur: 
+        b= order.dapur_name || 'Dapur'
+      p.text-muted.mb-3
+        | Total Order: Rp #{order.total.toLocaleString ? order.total.toLocaleString('id-ID') : order.total}
+
+      // ⬇️ TAMBAH enctype UNTUK FILE
+      form(method='post' action=`/vendor/orders/${order.id}/sign` enctype='multipart/form-data')
+        .row.g-3
+          .col-md-6
+            .mb-3
+              label.form-label(for='arrived_at') Waktu Barang Diterima
+              input.form-control(type='datetime-local' name='arrived_at' id='arrived_at' required)
+
+          .col-md-6
+            .mb-3
+              label.form-label(for='receiver_name') Nama Penerima (Pihak Dapur)
+              input.form-control(type='text' name='receiver_name' id='receiver_name' required)
+
+          .col-12
+            .mb-3
+              label.form-label(for='notes') Catatan untuk Yayasan (opsional)
+              textarea.form-control(name='notes' id='notes' rows='3')
+
+          // ⬇️ FOTO BUKTI (KIRI) — PREVIEW BESAR
+          .col-md-6
+            .mb-3
+              label.form-label(for='proof_file') Foto Bukti Penerimaan
+              input#proof_file.form-control(
+                type='file'
+                name='proof_file'
+                accept='image/*'
+                capture='environment'
+              )
+              small.form-text.text-muted
+                | Bisa ambil dari kamera atau galeri.
+              .mt-2
+                img#proof_preview(
+                  src=''
+                  alt='Preview foto bukti'
+                  style='width:100%; max-height:260px; object-fit:cover; border:1px solid #ccc; border-radius:6px; display:none;'
+                )
+
+          // ⬇️ TTD PENERIMA (KANAN) — BUAT KOTAK LEBIH KECIL
+          .col-md-6
+            .mb-2
+              label.form-label Tanda Tangan Pihak Dapur
+              .border.rounded.p-2.bg-light
+                canvas#sig-pad(
+                  style='width:100%; height:140px; touch-action:none; cursor:crosshair; background:#fff;'
+                )
+              small.form-text.text-muted
+                | Minta pihak dapur menandatangani di area ini.
+              input(type='hidden' name='signature_data' id='sig-data')
+              button.btn.btn-sm.btn-outline-secondary.mt-2(type='button' id='sig-clear') Hapus Tanda Tangan
+
+        .mt-3
+          button.btn.btn-secondary(type='button' onclick='history.back()') Batal
+          button.btn.btn-success.ms-2(type='submit') Simpan Surat Jalan
+
+  script.
+    (function(){
+      document.addEventListener('DOMContentLoaded', function(){
+        var arrivedInput = document.getElementById('arrived_at');
+        if (arrivedInput) {
+          var now = new Date();
+
+          // Format YYYY-MM-DDTHH:MM
+          var yyyy = now.getFullYear();
+          var mm = String(now.getMonth() + 1).padStart(2, '0');
+          var dd = String(now.getDate()).padStart(2, '0');
+          var hh = String(now.getHours()).padStart(2, '0');
+          var min = String(now.getMinutes()).padStart(2, '0');
+
+          arrivedInput.value = `${yyyy}-${mm}-${dd}T${hh}:${min}`;
+        }
+
+        var canvas = document.getElementById('sig-pad');
+        var hiddenInput = document.getElementById('sig-data');
+        var clearBtn = document.getElementById('sig-clear');
+
+        // ⬇️ FOTO BUKTI
+        var proofInput = document.getElementById('proof_file');
+        var proofPreview = document.getElementById('proof_preview');
+
+        if (proofInput && proofPreview) {
+          proofInput.addEventListener('change', function(){
+            var file = proofInput.files && proofInput.files[0];
+            if (!file) {
+              proofPreview.style.display = 'none';
+              proofPreview.src = '';
+              return;
+            }
+            var reader = new FileReader();
+            reader.onload = function(e){
+              proofPreview.src = e.target.result;
+              proofPreview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+          });
+        }
+
+        if (!canvas || !hiddenInput) return;
+
+        var ctx = canvas.getContext('2d');
+
+        var drawing = false;
+        var hasDrawn = false;
+        var lastPos = {x:0, y:0};
+
+        function resizeCanvas(){
+          var rect = canvas.getBoundingClientRect();
+          if (!rect.width || !rect.height) return;
+          canvas.width = rect.width;
+          canvas.height = rect.height;
+          ctx.lineWidth = 2;
+          ctx.lineCap = 'round';
+          ctx.strokeStyle = '#000';
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          hasDrawn = false;
+          hiddenInput.value = '';
+        }
+
+        function getPos(e){
+          var rect = canvas.getBoundingClientRect();
+          return {
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top
+          };
+        }
+
+        function startDraw(e){
+          e.preventDefault();
+          canvas.setPointerCapture(e.pointerId);
+          drawing = true;
+          hasDrawn = true;
+          lastPos = getPos(e);
+        }
+
+        function draw(e){
+          if (!drawing) return;
+          e.preventDefault();
+          var pos = getPos(e);
+          ctx.beginPath();
+          ctx.moveTo(lastPos.x, lastPos.y);
+          ctx.lineTo(pos.x, pos.y);
+          ctx.stroke();
+          lastPos = pos;
+        }
+
+        function endDraw(e){
+          if (!drawing) return;
+          drawing = false;
+          try { canvas.releasePointerCapture(e.pointerId); } catch(_){}
+        }
+
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        canvas.addEventListener('pointerdown', startDraw);
+        canvas.addEventListener('pointermove', draw);
+        canvas.addEventListener('pointerup', endDraw);
+        canvas.addEventListener('pointerleave', endDraw);
+
+        if (clearBtn){
+          clearBtn.addEventListener('click', function(){
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            hasDrawn = false;
+            hiddenInput.value = '';
+          });
+        }
+
+        // sebelum submit, isi hidden input dengan dataURL
+        var form = canvas.closest('form');
+        if (form){
+          form.addEventListener('submit', function(e){
+            if (!hasDrawn){
+              alert('Mohon minta pihak dapur menandatangani terlebih dahulu.');
+              e.preventDefault();
+              return;
+            }
+            try {
+              hiddenInput.value = canvas.toDataURL('image/png');
+            } catch(err){
+              console.error(err);
+              alert('Gagal mengambil tanda tangan. Coba lagi.');
+              e.preventDefault();
+            }
+          });
+        }
+      });
+    })();

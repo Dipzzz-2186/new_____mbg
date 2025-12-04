@@ -1,0 +1,32 @@
+extends ../layout
+
+block content
+  .container.py-4
+    .row.justify-content-center
+      .col-md-7
+        .card
+          .card-header
+            h5.mb-0 Lengkapi Data Dapur
+          .card-body
+            if flash && flash.error
+              .alert.alert-danger= flash.error
+            if flash && flash.success
+              .alert.alert-success= flash.success
+
+            form(method="post" action="/dapur/profile/complete" novalidate)
+              //- CSRF token (jika app pake)
+              if typeof csrfToken !== 'undefined'
+                input(type="hidden" name="_csrf" value=csrfToken)
+
+              .mb-3
+                label.form-label(for="phone") Nomor Telepon
+                input.form-control#phone(type="text" name="phone" required value=(user && user.phone) placeholder="0812xxxx")
+                small.text-muted.ms-1 Contoh: 081234567890
+
+              .mb-3
+                label.form-label(for="address") Alamat Lengkap
+                textarea.form-control#address(name="address" rows="5" required)= (user && user.address) || ''
+
+              .d-flex.justify-content-between.align-items-center
+                a.btn.btn-outline-secondary(href="/market") Batal
+                button.btn.btn-primary(type="submit") Simpan & Kembali ke Market

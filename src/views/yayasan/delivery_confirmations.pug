@@ -1,0 +1,658 @@
+//- src/views/yayasan/delivery_confirmations.pug
+extends ../layout
+
+block content
+  style.
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    
+    @keyframes shimmer {
+      0% { background-position: -1000px 0; }
+      100% { background-position: 1000px 0; }
+    }
+
+    /* Header Section - Clean & Minimal */
+    .delivery-header {
+      background: #ffffff;
+      padding: 40px 0;
+      margin-bottom: 40px;
+      border-bottom: 1px solid #e8e8e8;
+      animation: fadeInUp 0.6s ease-out;
+    }
+    
+    .header-icon-box {
+      width: 64px;
+      height: 64px;
+      background: #f8f9fa;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      color: #28a745;
+      border: 1px solid #e8e8e8;
+      transition: all 0.4s ease;
+      flex-shrink: 0;
+    }
+    
+    .header-icon-box:hover {
+      background: #28a745;
+      color: white;
+      transform: rotate(10deg) scale(1.1);
+      border-color: #28a745;
+    }
+    
+    .page-title {
+      font-size: 2rem;
+      color: #2c3e50;
+      font-weight: 700;
+      margin-bottom: 6px;
+      letter-spacing: -0.5px;
+    }
+    
+    .page-subtitle {
+      color: #6c757d;
+      font-size: 1rem;
+      margin: 0;
+    }
+
+    /* Confirmation Card */
+    .confirmation-card {
+      background: #ffffff;
+      border: 1px solid #e8e8e8;
+      border-radius: 16px;
+      padding: 28px;
+      margin-bottom: 24px;
+      transition: all 0.3s ease;
+      animation: fadeInUp 0.6s ease-out;
+    }
+    
+    .confirmation-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+      border-color: #28a745;
+    }
+    
+    /* Order Header */
+    .order-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .order-icon {
+      width: 48px;
+      height: 48px;
+      background: #f0f9f3;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #28a745;
+      font-size: 20px;
+      flex-shrink: 0;
+      border: 1px solid #e8e8e8;
+      transition: all 0.3s ease;
+    }
+    
+    .confirmation-card:hover .order-icon {
+      background: #28a745;
+      color: white;
+      transform: rotate(5deg);
+    }
+    
+    .order-id {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #2c3e50;
+      margin: 0;
+    }
+    
+    .order-total {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #28a745;
+      margin-left: auto;
+    }
+    
+    /* Order Meta */
+    .order-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      color: #6c757d;
+      font-size: 0.95rem;
+      margin-bottom: 20px;
+    }
+    
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .meta-item i {
+      color: #28a745;
+    }
+    
+    .meta-divider {
+      width: 4px;
+      height: 4px;
+      background: #d0d0d0;
+      border-radius: 50%;
+    }
+    
+    /* Details List */
+    .details-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 20px 0;
+    }
+    
+    .detail-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid #f8f9fa;
+      transition: all 0.3s ease;
+    }
+    
+    .detail-item:hover {
+      background: #fafafa;
+      padding-left: 12px;
+      border-radius: 8px;
+    }
+    
+    .detail-item:last-child {
+      border-bottom: none;
+    }
+    
+    .detail-icon {
+      width: 32px;
+      height: 32px;
+      background: #f0f9f3;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #28a745;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    
+    .detail-label {
+      font-weight: 600;
+      color: #495057;
+      min-width: 120px;
+    }
+    
+    .detail-value {
+      color: #6c757d;
+      flex: 1;
+    }
+    
+    /* Delivery Note Preview */
+    .delivery-note-section {
+      background: #fafafa;
+      border-radius: 12px;
+      padding: 20px;
+      border: 1px solid #e8e8e8;
+    }
+    
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #2c3e50;
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 16px;
+    }
+    
+    .section-header i {
+      color: #28a745;
+      font-size: 18px;
+    }
+    
+    .delivery-note-preview {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    
+    .sj-thumb-pic {
+      max-height: 180px;
+      width: auto;
+      max-width: 100%;
+      object-fit: contain;
+      border-radius: 12px;
+      border: 2px solid #e8e8e8;
+      background: white;
+      padding: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+    
+    .sj-thumb-pic:hover {
+      border-color: #28a745;
+      transform: scale(1.05);
+      box-shadow: 0 8px 20px rgba(40, 167, 69, 0.15);
+    }
+    
+    .preview-hint {
+      color: #6c757d;
+      font-size: 0.85rem;
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    
+    /* Buttons */
+    .btn-custom {
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      border: none;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .btn-custom:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    }
+    
+    .btn-primary-custom {
+      background: #28a745;
+      color: white;
+    }
+    
+    .btn-primary-custom:hover {
+      background: #218838;
+    }
+    
+    .btn-outline-custom {
+      background: white;
+      color: #6c757d;
+      border: 2px solid #e8e8e8;
+    }
+    
+    .btn-outline-custom:hover {
+      background: #fafafa;
+      border-color: #28a745;
+      color: #28a745;
+    }
+    
+    .btn-info-custom {
+      background: #4361ee;
+      color: white;
+    }
+    
+    .btn-info-custom:hover {
+      background: #3f37c9;
+    }
+    
+    /* Action Buttons Group */
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    
+    /* Empty State */
+    .empty-state-card {
+      background: #ffffff;
+      border: 1px solid #e8e8e8;
+      border-radius: 20px;
+      padding: 80px 40px;
+      text-align: center;
+      animation: fadeInUp 0.6s ease-out;
+    }
+    
+    .empty-icon {
+      font-size: 120px;
+      color: #e8e8e8;
+      margin-bottom: 24px;
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    .empty-title {
+      color: #2c3e50;
+      font-weight: 700;
+      font-size: 1.5rem;
+      margin-bottom: 12px;
+    }
+    
+    .empty-text {
+      color: #6c757d;
+      font-size: 1rem;
+      margin: 0;
+    }
+    
+    /* Modal */
+    .modal-content {
+      border: none;
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    }
+    
+    .modal-header {
+      border-bottom: 1px solid #e8e8e8;
+      padding: 20px 24px;
+    }
+    
+    .modal-title {
+      color: #2c3e50;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .modal-title i {
+      color: #28a745;
+    }
+    
+    .modal-body {
+      padding: 32px 24px;
+    }
+    
+    .modal-footer {
+      border-top: 1px solid #e8e8e8;
+      padding: 16px 24px;
+    }
+    
+    #sjPreviewImg {
+      max-width: 100%;
+      height: auto;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      background: #f8f9fa;
+      padding: 8px;
+    }
+    
+    /* No Delivery Note */
+    .no-delivery-note {
+      text-align: center;
+      padding: 32px;
+      background: #fafafa;
+      border-radius: 12px;
+      border: 1px dashed #d0d0d0;
+    }
+    
+    .no-delivery-icon {
+      font-size: 48px;
+      color: #d0d0d0;
+      margin-bottom: 12px;
+    }
+    
+    .no-delivery-text {
+      color: #6c757d;
+      font-size: 0.95rem;
+      margin: 0;
+    }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+      .confirmation-card {
+        padding: 24px;
+      }
+      
+      .delivery-note-section {
+        margin-top: 20px;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .delivery-header {
+        padding: 30px 0;
+      }
+      
+      .page-title {
+        font-size: 1.6rem;
+      }
+      
+      .header-icon-box {
+        width: 56px;
+        height: 56px;
+        font-size: 24px;
+      }
+      
+      .confirmation-card {
+        padding: 20px;
+      }
+      
+      .order-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .order-total {
+        margin-left: 0;
+      }
+      
+      .order-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+      
+      .meta-divider {
+        display: none;
+      }
+      
+      .action-buttons {
+        width: 100%;
+      }
+      
+      .btn-custom {
+        flex: 1;
+        justify-content: center;
+      }
+    }
+
+  .container
+    //- Header Section
+    .delivery-header
+      .row.align-items-center.g-3
+        .col-lg-8
+          .d-flex.align-items-center.gap-3
+            .header-icon-box
+              i.bi.bi-truck
+            div
+              .page-title Konfirmasi Pengiriman
+              .page-subtitle
+                i.bi.bi-check-circle.me-2
+                | Daftar konfirmasi dari dapur
+        
+        .col-lg-4.text-lg-end
+          a.btn-custom.btn-outline-custom(href='/yayasan/dashboard' style='text-decoration: none;')
+            i.bi.bi-arrow-left
+            span Kembali
+
+    if confirmations && confirmations.length
+      .row.g-4
+        each c, index in confirmations
+          .col-12(style=`animation-delay: ${index * 0.1}s;`)
+            .confirmation-card
+              .row.g-4
+                .col-lg-7
+                  //- Order Header
+                  .order-header
+                    .order-icon
+                      i.bi.bi-receipt
+                    div
+                      .order-id Order ##{c.order_id}
+                      .order-meta
+                        .meta-item
+                          i.bi.bi-shop
+                          strong= c.dapur_name
+                        .meta-divider
+                        .meta-item
+                          i.bi.bi-calendar3
+                          span= c.created_at
+                    .order-total Rp #{(c.order_total ? Number(c.order_total).toLocaleString('id-ID') : '0')}
+                  
+                  //- Details List
+                  ul.details-list
+                    if c.receiver_name
+                      li.detail-item
+                        .detail-icon
+                          i.bi.bi-person-check
+                        .detail-label Penerima
+                        .detail-value= c.receiver_name
+                    
+                    if c.arrived_at
+                      li.detail-item
+                        .detail-icon
+                          i.bi.bi-clock-history
+                        .detail-label Waktu Tiba
+                        .detail-value= c.arrived_at
+                    
+                    if c.notes
+                      li.detail-item
+                        .detail-icon
+                          i.bi.bi-sticky
+                        .detail-label Catatan
+                        .detail-value= c.notes
+                  
+                  //- Action Button
+                  .action-buttons
+                    a.btn-custom.btn-info-custom(href=`/yayasan/orders/${c.order_id}`  style='text-decoration: none;')
+                      i.bi.bi-card-list
+                      span Lihat Detail Order
+                
+                .col-lg-5
+                  //- Delivery Note Section
+                  .delivery-note-section
+                    .section-header
+                      i.bi.bi-file-earmark-text
+                      span Surat Jalan
+                    
+                    if c.delivery_note_path
+                      - var dnPath = String(c.delivery_note_path || '');
+                      - var dnLower = dnPath.toLowerCase();
+                      
+                      if dnLower && dnLower.slice(-4) === '.pdf'
+                        //- PDF Version
+                        .text-center
+                          .mb-3
+                            i.bi.bi-file-earmark-pdf(style='font-size: 64px; color: #dc3545;')
+                          a.btn-custom.btn-primary-custom.w-100(href=c.delivery_note_path target='_blank' rel='noopener')
+                            i.bi.bi-file-earmark-pdf-fill
+                            span Buka PDF
+                      else
+                        //- Image Preview
+                        .delivery-note-preview
+                          img.sj-thumb-pic(
+                            src=c.delivery_note_path,
+                            alt='Surat Jalan'
+                            role='button'
+                            tabindex='0'
+                            data-src=c.delivery_note_path
+                          )
+                          .preview-hint
+                            i.bi.bi-zoom-in
+                            | Klik untuk memperbesar
+                        
+                        a.btn-custom.btn-primary-custom.w-100(href=c.delivery_note_path target='_blank' rel='noopener' download  style='text-decoration: none;')
+                          i.bi.bi-download
+                          span Download Surat Jalan
+                    else
+                      //- No Delivery Note
+                      .no-delivery-note
+                        .no-delivery-icon
+                          i.bi.bi-file-earmark-x
+                        .no-delivery-text Belum ada surat jalan dari vendor
+
+    else
+      //- Empty State
+      .empty-state-card
+        .empty-icon
+          i.bi.bi-inbox
+        .empty-title Tidak Ada Konfirmasi
+        .empty-text Semua konfirmasi pengiriman akan muncul di sini setelah dapur submit.
+
+    //- Modal Preview
+    .modal.fade#sjPreviewModal(tabindex='-1' aria-hidden='true')
+      .modal-dialog.modal-dialog-centered.modal-lg
+        .modal-content
+          .modal-header
+            h5.modal-title#sjPreviewTitle
+              i.bi.bi-file-earmark-text
+              | Surat Jalan
+            button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+          .modal-body.text-center
+            img#sjPreviewImg(src='' alt='Preview surat jalan')
+          .modal-footer
+            a#sjDownload.btn-custom.btn-primary-custom(href='#' target='_blank' rel='noopener'  style='text-decoration: none;')
+              i.bi.bi-download
+              span Download
+            button.btn-custom.btn-outline-custom(type='button' data-bs-dismiss='modal') Tutup
+
+  //- JavaScript
+  script.
+    (function(){
+      document.addEventListener('DOMContentLoaded', function(){
+        var modalEl = document.getElementById('sjPreviewModal');
+        if (!modalEl) return;
+        var bsModal = new bootstrap.Modal(modalEl, {});
+        var imgEl = document.getElementById('sjPreviewImg');
+        var dlBtn = document.getElementById('sjDownload');
+        var titleEl = document.getElementById('sjPreviewTitle');
+
+        function openPreview(src){
+          if(!src) return;
+          imgEl.src = src;
+          dlBtn.href = src;
+          bsModal.show();
+        }
+
+        document.querySelectorAll('.sj-thumb-pic').forEach(function(img){
+          img.addEventListener('click', function(){
+            var src = img.getAttribute('data-src') || img.src || '';
+            openPreview(src);
+          });
+          img.addEventListener('keydown', function(e){
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              img.click();
+            }
+          });
+        });
+      });
+    })();

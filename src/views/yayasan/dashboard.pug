@@ -1,0 +1,803 @@
+extends ../layout
+
+block content
+  style.
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    /* Global */
+    body {
+      background: #fafafa;
+    }
+
+    /* Header Section - Clean & Minimal */
+    .dashboard-header {
+      background: #ffffff;
+      padding: 40px 0;
+      margin-bottom: 40px;
+      border-bottom: 1px solid #e8e8e8;
+    }
+    
+    .header-icon-box {
+      width: 70px;
+      height: 70px;
+      background: #f8f9fa;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      color: #28a745;
+      border: 1px solid #e8e8e8;
+      transition: all 0.4s ease;
+    }
+    
+    .header-icon-box:hover {
+      background: #28a745;
+      color: white;
+      transform: rotate(10deg) scale(1.1);
+      border-color: #28a745;
+    }
+    
+    .dashboard-title {
+      font-size: 2.2rem;
+      color: #2c3e50;
+      font-weight: 700;
+      margin-bottom: 6px;
+      letter-spacing: -0.5px;
+    }
+    
+    .dashboard-subtitle {
+      color: #6c757d;
+      font-size: 1rem;
+      margin: 0;
+    }
+
+    /* Action Buttons */
+    .action-buttons-wrapper {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 32px;
+    }
+    
+    .btn-action-main {
+      padding: 16px 32px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 1rem;
+      border: none;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn-action-main:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    .btn-action-primary {
+      background: #28a745;
+      color: white;
+    }
+    
+    .btn-action-primary:hover {
+      background: #218838;
+    }
+    
+    .btn-action-warning {
+      background: #ffc107;
+      color: #212529;
+    }
+    
+    .btn-action-warning:hover {
+      background: #e0a800;
+    }
+    
+    .badge-notification {
+      background: #dc3545;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      animation: pulse 2s infinite;
+    }
+
+    /* Info Box */
+    .info-guide {
+      background: #ffffff;
+      border: 1px solid #e8e8e8;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 32px;
+    }
+    
+    .guide-title {
+      color: #2c3e50;
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .guide-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    
+    .color-box {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+
+    /* Section Card */
+    .section-card {
+      background: #ffffff;
+      border: 1px solid #e8e8e8;
+      border-radius: 16px;
+      padding: 32px;
+      margin-bottom: 32px;
+      transition: all 0.3s ease;
+      animation: fadeInUp 0.6s ease-out;
+    }
+    
+    .section-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+      border-color: #d0d0d0;
+    }
+    
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #e8e8e8;
+      position: relative;
+    }
+    
+    .section-header::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 80px;
+      height: 2px;
+      background: #28a745;
+    }
+    
+    .section-icon {
+      width: 56px;
+      height: 56px;
+      background: #f0f9f3;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      color: #28a745;
+      flex-shrink: 0;
+      border: 1px solid #e8e8e8;
+      transition: all 0.3s ease;
+    }
+    
+    .section-card:hover .section-icon {
+      background: #28a745;
+      color: white;
+      transform: rotate(5deg) scale(1.05);
+    }
+    
+    .section-title {
+      color: #2c3e50;
+      font-weight: 700;
+      font-size: 1.4rem;
+      margin: 0;
+      letter-spacing: -0.3px;
+    }
+    
+    .section-description {
+      color: #6c757d;
+      font-size: 0.95rem;
+      margin: 4px 0 0 0;
+    }
+
+    /* Info Box Variants */
+    .info-box {
+      background: #f8f9fa;
+      border-left: 4px solid #6c757d;
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      transition: all 0.3s ease;
+    }
+    
+    .info-box:hover {
+      background: #f0f0f0;
+      padding-left: 20px;
+    }
+    
+    .info-box-success {
+      background: #f0f9f3;
+      border-left-color: #28a745;
+    }
+    
+    .info-box-warning {
+      background: #fff9f0;
+      border-left-color: #ffc107;
+    }
+    
+    .info-box-info {
+      background: #f0f4ff;
+      border-left-color: #4361ee;
+    }
+
+    /* Form Elements */
+    .form-group-custom {
+      margin-bottom: 24px;
+    }
+    
+    .label-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    
+    .form-label-custom {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0;
+    }
+    
+    .form-label-custom i {
+      color: #28a745;
+      font-size: 18px;
+    }
+    
+    .required-badge {
+      background: #e8f5eb;
+      color: #28a745;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border: 1px solid #d4edda;
+    }
+    
+    .form-control-custom {
+      border: 2px solid #e8e8e8;
+      border-radius: 10px;
+      padding: 14px 16px;
+      width: 100%;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background: #ffffff;
+    }
+    
+    .form-control-custom:focus {
+      border-color: #28a745;
+      box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.1);
+      outline: none;
+      background: #fafafa;
+    }
+    
+    .form-control-custom:hover {
+      border-color: #c0c0c0;
+    }
+    
+    .input-hint {
+      font-size: 0.85rem;
+      color: #6c757d;
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Buttons */
+    .btn-custom {
+      padding: 14px 28px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 1rem;
+      border: none;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+    }
+    
+    .btn-custom:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    }
+    
+    .btn-primary-custom {
+      background: #28a745;
+      color: white;
+    }
+    
+    .btn-primary-custom:hover {
+      background: #218838;
+    }
+    
+    .btn-info-custom {
+      background: #4361ee;
+      color: white;
+    }
+    
+    .btn-info-custom:hover {
+      background: #3f37c9;
+    }
+
+    /* Table Styles */
+    .table-custom {
+      width: 100%;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    
+    .table-custom thead {
+      background: #f8f9fa;
+      border-bottom: 2px solid #28a745;
+    }
+    
+    .table-custom thead th {
+      padding: 18px 16px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #495057;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border: none;
+    }
+    
+    .table-custom tbody td {
+      padding: 20px 16px;
+      border: none;
+      border-bottom: 1px solid #f0f0f0;
+      vertical-align: middle;
+    }
+    
+    .table-custom tbody tr {
+      transition: all 0.3s ease;
+    }
+    
+    .table-custom tbody tr:hover {
+      background: #f8fdf9;
+      transform: scale(1.002);
+    }
+    
+    .user-avatar {
+      width: 44px;
+      height: 44px;
+      background: #f0f9f3;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #28a745;
+      font-size: 18px;
+      border: 2px solid #e8e8e8;
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+    }
+    
+    .table-custom tbody tr:hover .user-avatar {
+      background: #28a745;
+      color: white;
+      transform: rotate(5deg);
+      border-color: #28a745;
+    }
+    
+    .count-badge {
+      background: #e8f5eb;
+      color: #28a745;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      border: 1px solid #d4edda;
+      display: inline-block;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+    }
+    
+    .empty-icon {
+      font-size: 80px;
+      color: #e8e8e8;
+      margin-bottom: 16px;
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    .empty-text {
+      color: #6c757d;
+      font-size: 1rem;
+    }
+
+    /* Tooltip */
+    .info-tooltip {
+      position: relative;
+      display: inline-flex;
+      cursor: help;
+      margin-left: 8px;
+    }
+    
+    .info-tooltip i {
+      color: #6c757d;
+      font-size: 18px;
+      transition: all 0.3s ease;
+    }
+    
+    .info-tooltip:hover i {
+      color: #28a745;
+      transform: scale(1.2);
+    }
+    
+    .tooltip-text {
+      visibility: hidden;
+      width: 280px;
+      background-color: #2c3e50;
+      color: #fff;
+      text-align: center;
+      border-radius: 10px;
+      padding: 12px 16px;
+      position: absolute;
+      z-index: 1000;
+      bottom: 125%;
+      left: 50%;
+      margin-left: -140px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      font-size: 0.85rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+    
+    .tooltip-text::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -6px;
+      border-width: 6px;
+      border-style: solid;
+      border-color: #2c3e50 transparent transparent transparent;
+    }
+    
+    .info-tooltip:hover .tooltip-text {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    /* Animations */
+    .animate-fade-up {
+      animation: fadeInUp 0.6s ease-out;
+    }
+    
+    .animate-slide-right {
+      animation: slideInRight 0.6s ease-out;
+    }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+      .action-buttons-wrapper {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      .btn-action-main {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .dashboard-title {
+        font-size: 1.8rem;
+      }
+      
+      .header-icon-box {
+        width: 60px;
+        height: 60px;
+        font-size: 28px;
+      }
+      
+      .section-card {
+        padding: 24px;
+      }
+      
+      .section-title {
+        font-size: 1.2rem;
+      }
+      
+      .table-custom {
+        font-size: 0.9rem;
+      }
+      
+      .table-custom thead th,
+      .table-custom tbody td {
+        padding: 14px 12px;
+      }
+    }
+
+  //- Header Section
+  .dashboard-header.animate-fade-up
+    .container-fluid
+      .text-center
+        .d-inline-flex.align-items-center.justify-content-center.mb-4
+          .header-icon-box.me-3
+            i.bi.bi-building
+          div.text-start
+            .dashboard-title Dashboard Yayasan
+            .dashboard-subtitle Kelola vendor dan dapur dengan mudah
+        
+        .action-buttons-wrapper
+          a.btn-action-main.btn-action-warning(href='/yayasan/pending' style='text-decoration: none;')
+            i.bi.bi-hourglass-split
+            span Lihat Order Menunggu
+            if typeof pendingCount !== 'undefined' && pendingCount > 0
+              span.badge-notification= pendingCount
+
+          a.btn-action-main.btn-action-primary(href='/yayasan/delivery-confirmations' style='text-decoration: none;')
+            i.bi.bi-truck
+            span Konfirmasi Pengiriman
+
+  .container-fluid
+    //- Info Guide
+    .info-guide.animate-fade-up(style='animation-delay: 0.1s;')
+      .guide-title
+        i.bi.bi-info-circle
+        | Panduan Dashboard
+      .row
+        .col-md-4
+          .guide-item
+            .color-box(style='background: #28a745;')
+            small
+              strong Hijau: 
+              | Aksi utama & aktif
+        .col-md-4
+          .guide-item
+            .color-box(style='background: #ffc107;')
+            small
+              strong Kuning: 
+              | Perlu perhatian
+        .col-md-4
+          .guide-item
+            .color-box(style='background: #4361ee;')
+            small
+              strong Biru: 
+              | Informasi detail
+
+    .row
+      //- Section: Create Account
+      .col-lg-6.mb-4
+        .section-card.animate-fade-up(style='animation-delay: 0.2s;')
+          .section-header
+            .section-icon
+              i.bi.bi-person-plus-fill
+            div.flex-grow-1
+              .section-title Buat Akun Baru
+              .section-description Daftarkan vendor atau dapur baru
+            .info-tooltip
+              i.bi.bi-question-circle-fill
+              span.tooltip-text Form ini untuk mendaftarkan user baru (vendor atau dapur) yang akan menggunakan sistem
+
+          .info-box.info-box-success
+            i.bi.bi-lightbulb-fill.me-2
+            strong Tips: 
+            | Vendor = yang menjual bahan, Dapur = yang memasak makanan
+
+          form(action="/yayasan/create-user" method="post")
+            .form-group-custom
+              .label-wrapper
+                label.form-label-custom
+                  i.bi.bi-person
+                  | Nama Lengkap
+                span.required-badge Wajib
+              input.form-control-custom(type="text" name="name" placeholder="Contoh: Budi Santoso" required)
+              .input-hint
+                i.bi.bi-info-circle
+                | Masukkan nama lengkap vendor atau dapur
+
+            .form-group-custom
+              .label-wrapper
+                label.form-label-custom
+                  i.bi.bi-envelope
+                  | Email
+                span.required-badge Wajib
+              input.form-control-custom(type="email" name="email" placeholder="Contoh: budi@email.com" required)
+              .input-hint
+                i.bi.bi-info-circle
+                | Email ini digunakan untuk login
+
+            .form-group-custom
+              .label-wrapper
+                label.form-label-custom
+                  i.bi.bi-shield-check
+                  | Pilih Tipe
+                span.required-badge Pilih satu
+              select.form-control-custom(name="role")
+                option(value="vendor") 🏪 Vendor (Penjual Bahan)
+                option(value="dapur") 👨‍🍳 Dapur (Pembuat Makanan)
+              .input-hint
+                i.bi.bi-info-circle
+                | Pilih sesuai kebutuhan
+
+            .form-group-custom
+              .label-wrapper
+                label.form-label-custom
+                  i.bi.bi-key
+                  | Password
+                span.required-badge(style='background: #fff9f0; color: #856404; border-color: #ffeaa7;') Opsional
+              input.form-control-custom(type="text" name="password" placeholder="Kosongkan untuk password default")
+              .info-box.info-box-warning.mt-2
+                i.bi.bi-info-circle.me-2
+                small Jika dikosongkan, password otomatis: 
+                  strong password123
+
+            button.btn-custom.btn-primary-custom.w-100(type="submit")
+              i.bi.bi-plus-circle
+              span Buat Akun User Baru
+
+      //- Section: Statistics
+      .col-lg-6.mb-4
+        .section-card.animate-slide-right(style='animation-delay: 0.2s;')
+          .section-header
+            .section-icon(style='background: #f0f4ff; color: #4361ee;')
+              i.bi.bi-graph-up
+            div.flex-grow-1
+              .section-title Statistik Dapur
+              .section-description Ringkasan aktivitas semua dapur
+            .info-tooltip
+              i.bi.bi-question-circle-fill
+              span.tooltip-text Menampilkan jumlah order yang sudah dibuat oleh setiap dapur
+
+          .info-box.info-box-info
+            i.bi.bi-graph-up.me-2
+            strong Info: 
+            | Angka menunjukkan berapa kali dapur membuat pesanan
+
+          if dapurRows && dapurRows.length
+            .table-responsive
+              table.table-custom
+                thead
+                  tr
+                    th
+                      i.bi.bi-person.me-2
+                      | Nama Dapur
+                    th
+                      i.bi.bi-envelope.me-2
+                      | Email
+                    th.text-center
+                      i.bi.bi-cart.me-2
+                      | Order
+                tbody
+                  each d in dapurRows
+                    tr
+                      td
+                        strong= d.name
+                      td.text-muted.small= d.email
+                      td.text-center
+                        span.count-badge= d.orders_count || 0
+            
+            .info-box.info-box-success.mt-3
+              i.bi.bi-calculator.me-2
+              strong Total Order Semua Dapur: 
+              - var total = dapurRows.reduce((sum, d) => sum + (d.orders_count || 0), 0)
+              = total
+              |  pesanan
+          else
+            .empty-state
+              .empty-icon
+                i.bi.bi-inbox
+              .empty-text Belum ada data dapur
+
+    //- Section: All Dapur List
+    .section-card.animate-fade-up(style='animation-delay: 0.3s;')
+      .section-header
+        .section-icon
+          i.bi.bi-list-check
+        div.flex-grow-1
+          .section-title Daftar Semua Dapur Terdaftar
+          .section-description Kelola dan lihat detail setiap dapur
+        .info-tooltip
+          i.bi.bi-question-circle-fill
+          span.tooltip-text Klik tombol "Pesanan Dapur" untuk melihat semua order dari dapur tersebut
+
+      .info-box.info-box-info
+        i.bi.bi-eye.me-2
+        strong Cara Pakai: 
+        | Klik tombol "Pesanan Dapur" untuk melihat riwayat order lengkap
+
+      if dapurRows && dapurRows.length
+        .table-responsive
+          table.table-custom
+            thead
+              tr
+                th
+                  i.bi.bi-person.me-2
+                  | Nama Dapur
+                th
+                  i.bi.bi-envelope.me-2
+                  | Email
+                th.text-center
+                  i.bi.bi-cart.me-2
+                  | Total Order
+                th.text-center
+                  i.bi.bi-gear.me-2
+                  | Aksi
+            tbody
+              each d in dapurRows
+                tr
+                  td
+                    .d-flex.align-items-center.gap-3
+                      .user-avatar
+                        i.bi.bi-person-fill
+                      strong= d.name
+                  td.text-muted.small= d.email
+                  td.text-center
+                    span.count-badge= d.orders_count || 0
+                  td.text-center
+                    a.btn-custom.btn-info-custom.btn-sm(
+                      href=`/yayasan/dapur/${d.id}/orders`
+                      style='padding: 10px 20px; font-size: 0.9rem; text-decoration: none;'
+                    )
+                      i.bi.bi-list-ul
+                      | Pesanan Dapur
+      else
+        .empty-state
+          .empty-icon
+            i.bi.bi-inbox
+          .empty-text Belum ada dapur yang terdaftar

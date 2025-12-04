@@ -1,0 +1,313 @@
+-- Buat database dari awal
+DROP DATABASE IF EXISTS `marketplace`;
+CREATE DATABASE `marketplace`
+  DEFAULT CHARACTER SET utf8mb4
+  COLLATE utf8mb4_general_ci;
+
+USE `marketplace`;
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
+
+-- =========================================
+-- TABLE: users
+-- =========================================
+CREATE TABLE `users` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `yayasan_id` int UNSIGNED DEFAULT NULL,
+  `name` varchar(191) COLLATE utf8mb4_general_ci NOT NULL,
+  `email` varchar(191) COLLATE utf8mb4_general_ci NOT NULL,
+  `password` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `role` enum('dapur','vendor','yayasan','admin') COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'dapur',
+  `phone` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `address` text COLLATE utf8mb4_general_ci,
+  `avatar` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_users_email` (`email`),
+  KEY `idx_users_yayasan` (`yayasan_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- =========================================
+-- TABLE: carts
+-- =========================================
+CREATE TABLE `carts` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `user_id` int UNSIGNED NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_carts_user` (`user_id`),
+  KEY `idx_carts_user` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- =========================================
+-- TABLE: products
+-- =========================================
+CREATE TABLE `products` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `vendor_id` int UNSIGNED DEFAULT NULL,
+  `yayasan_id` int UNSIGNED DEFAULT NULL,
+  `name` varchar(191) COLLATE utf8mb4_general_ci NOT NULL,
+  `slug` varchar(191) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `category` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `price` decimal(12,2) NOT NULL DEFAULT '0.00',
+  `unit` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `stock` decimal(12,3) NOT NULL DEFAULT '0.000',
+  `description` text COLLATE utf8mb4_general_ci,
+  `image` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_products_vendor` (`vendor_id`),
+  KEY `idx_products_yayasan` (`yayasan_id`),
+  KEY `idx_products_category` (`category`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- =========================================
+-- TABLE: carts_items
+-- =========================================
+CREATE TABLE `cart_items` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `cart_id` int UNSIGNED NOT NULL,
+  `product_id` int UNSIGNED NOT NULL,
+  `qty` decimal(12,3) NOT NULL DEFAULT '1.000',
+  `price_at` decimal(12,2) NOT NULL DEFAULT '0.00',
+  `name` varchar(191) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_ci_cart` (`cart_id`),
+  KEY `idx_ci_product` (`product_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- =========================================
+-- TABLE: orders
+-- =========================================
+CREATE TABLE `orders` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `user_id` int UNSIGNED NOT NULL,
+  `yayasan_id` int UNSIGNED DEFAULT NULL,
+  `total` decimal(14,2) NOT NULL DEFAULT '0.00',
+  `status` varchar(50) COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'awaiting_yayasan',
+  `notes` text COLLATE utf8mb4_general_ci,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_orders_user` (`user_id`),
+  KEY `idx_orders_yayasan` (`yayasan_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- =========================================
+-- TABLE: order_items
+-- =========================================
+CREATE TABLE `order_items` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `order_id` int UNSIGNED NOT NULL,
+  `product_id` int UNSIGNED DEFAULT NULL,
+  `vendor_id` int UNSIGNED DEFAULT NULL,
+  `name` varchar(191) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `qty` decimal(12,3) NOT NULL DEFAULT '1.000',
+  `price` decimal(12,2) NOT NULL DEFAULT '0.00',
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_oi_order` (`order_id`),
+  KEY `idx_oi_product` (`product_id`),
+  KEY `idx_oi_vendor` (`vendor_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- =========================================
+-- TABLE: delivery_confirmations
+-- =========================================
+CREATE TABLE `delivery_confirmations` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `order_id` int UNSIGNED NOT NULL,
+  `user_id` int UNSIGNED DEFAULT NULL,
+  `yayasan_id` int UNSIGNED DEFAULT NULL,
+  `arrived_at` datetime DEFAULT NULL,
+  `notes` text COLLATE utf8mb4_general_ci,
+  `receiver_name` varchar(191) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `signature_path` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_dc_order` (`order_id`),
+  KEY `idx_dc_user` (`user_id`),
+  KEY `idx_dc_yayasan` (`yayasan_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- =========================================
+-- TABLE: notifications
+-- =========================================
+CREATE TABLE `notifications` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `user_id` int UNSIGNED NOT NULL,
+  `order_id` int UNSIGNED DEFAULT NULL,
+  `type` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `payload` text COLLATE utf8mb4_general_ci,
+  `is_read` tinyint(1) NOT NULL DEFAULT '0',
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_notifications_user` (`user_id`),
+  KEY `idx_notifications_order` (`order_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- =========================================
+-- TABLE: vendor_order_status
+-- =========================================
+CREATE TABLE `vendor_order_status` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `order_id` int UNSIGNED NOT NULL,
+  `vendor_id` int UNSIGNED NOT NULL,
+  `order_item_id` int UNSIGNED DEFAULT NULL,
+  `product_id` int UNSIGNED DEFAULT NULL,
+  `status` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `notes` text COLLATE utf8mb4_general_ci,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_vos_order_vendor` (`order_id`,`vendor_id`),
+  KEY `idx_vos_order` (`order_id`),
+  KEY `idx_vos_vendor` (`vendor_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- =========================================
+-- TABLE: vendor_shipments
+-- =========================================
+CREATE TABLE `vendor_shipments` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `order_id` int UNSIGNED NOT NULL,
+  `vendor_id` int UNSIGNED NOT NULL,
+  `shipped_at` datetime DEFAULT NULL,
+  `plate_number` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `sender_name` varchar(191) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `sender_contact` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `note` text COLLATE utf8mb4_general_ci,
+  `attachment_path` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `sender_signature_path` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `delivery_note_path` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `tracking_number` varchar(191) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_vs_order_vendor` (`order_id`,`vendor_id`),
+  KEY `idx_vs_order` (`order_id`),
+  KEY `idx_vs_vendor` (`vendor_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- =========================================
+-- FOREIGN KEYS
+-- =========================================
+
+-- users
+ALTER TABLE `users`
+  ADD CONSTRAINT `fk_users_yayasan`
+    FOREIGN KEY (`yayasan_id`)
+    REFERENCES `users` (`id`)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE;
+
+-- carts
+ALTER TABLE `carts`
+  ADD CONSTRAINT `fk_carts_user`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `users` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE;
+
+-- cart_items
+ALTER TABLE `cart_items`
+  ADD CONSTRAINT `fk_cartitems_cart`
+    FOREIGN KEY (`cart_id`)
+    REFERENCES `carts` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_cartitems_product`
+    FOREIGN KEY (`product_id`)
+    REFERENCES `products` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE;
+
+-- products
+ALTER TABLE `products`
+  ADD CONSTRAINT `fk_products_vendor`
+    FOREIGN KEY (`vendor_id`)
+    REFERENCES `users` (`id`)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_products_yayasan`
+    FOREIGN KEY (`yayasan_id`)
+    REFERENCES `users` (`id`)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE;
+
+-- orders
+ALTER TABLE `orders`
+  ADD CONSTRAINT `fk_orders_user`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `users` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_orders_yayasan`
+    FOREIGN KEY (`yayasan_id`)
+    REFERENCES `users` (`id`)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE;
+
+-- delivery_confirmations
+ALTER TABLE `delivery_confirmations`
+  ADD CONSTRAINT `fk_dc_order`
+    FOREIGN KEY (`order_id`)
+    REFERENCES `orders` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_dc_user`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `users` (`id`)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_dc_yayasan`
+    FOREIGN KEY (`yayasan_id`)
+    REFERENCES `users` (`id`)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE;
+
+-- notifications
+ALTER TABLE `notifications`
+  ADD CONSTRAINT `fk_notifications_order`
+    FOREIGN KEY (`order_id`)
+    REFERENCES `orders` (`id`)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_notifications_user`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `users` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE;
+
+-- vendor_order_status
+ALTER TABLE `vendor_order_status`
+  ADD CONSTRAINT `fk_vos_order`
+    FOREIGN KEY (`order_id`)
+    REFERENCES `orders` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_vos_vendor`
+    FOREIGN KEY (`vendor_id`)
+    REFERENCES `users` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE;
+
+-- vendor_shipments
+ALTER TABLE `vendor_shipments`
+  ADD CONSTRAINT `fk_vs_order`
+    FOREIGN KEY (`order_id`)
+    REFERENCES `orders` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_vs_vendor`
+    FOREIGN KEY (`vendor_id`)
+    REFERENCES `users` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE;
+
+INSERT INTO `users` (`name`,`email`,`password`,`role`,`created_at`)
+VALUES ('Yayasan','admin@yayasan.test','$2a$12$X3NDEXmQomXYsgqLd7R/QeWeYwDigaS4KjB./lU88g7NCcSuoct6C', 'yayasan', NOW());

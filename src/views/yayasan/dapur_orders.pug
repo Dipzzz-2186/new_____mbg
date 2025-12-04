@@ -1,0 +1,155 @@
+//- src/views/yayasan/dapur_orders.pug
+extends ../layout
+
+block content
+  style.
+    .hover-shadow:hover {
+      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+      transform: translateY(-2px);
+    }
+    
+    .table > :not(caption) > * > * {
+      padding: 0.75rem;
+    }
+    
+    .card {
+      border-radius: 0.5rem;
+    }
+    
+    .badge {
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+
+  .container-fluid.py-4
+    //- Header Section
+    .row.mb-4
+      .col-12
+        .d-flex.align-items-center.mb-2
+          a.btn.btn-sm.btn-outline-secondary.me-3(href="/yayasan/dashboard")
+            i.bi.bi-arrow-left.me-1
+            | Kembali
+          div
+            h2.mb-1.fw-bold= dapur.name
+            p.text-muted.mb-0
+              i.bi.bi-envelope.me-2
+              = dapur.email
+
+    //- Stats Summary
+    if orders && orders.length
+      .row.g-3.mb-4
+        .col-md-4
+          .card.border-0.shadow-sm.bg-primary.bg-opacity-10
+            .card-body
+              .d-flex.align-items-center
+                .rounded-circle.bg-primary.bg-opacity-25.p-3.me-3
+                  i.bi.bi-receipt.fs-4.text-primary
+                div
+                  h6.text-muted.mb-1.small Total Pesanan
+                  h3.mb-0.fw-bold= orders.length
+        .col-md-4
+          .card.border-0.shadow-sm.bg-success.bg-opacity-10
+            .card-body
+              .d-flex.align-items-center
+                .rounded-circle.bg-success.bg-opacity-25.p-3.me-3
+                  i.bi.bi-cash-stack.fs-4.text-success
+                div
+                  h6.text-muted.mb-1.small Total Nilai
+                  h3.mb-0.fw-bold Rp #{orders.reduce((sum, o) => sum + Number(o.total || 0), 0).toLocaleString('id-ID')}
+        .col-md-4
+          .card.border-0.shadow-sm.bg-info.bg-opacity-10
+            .card-body
+              .d-flex.align-items-center
+                .rounded-circle.bg-info.bg-opacity-25.p-3.me-3
+                  i.bi.bi-box-seam.fs-4.text-info
+                div
+                  h6.text-muted.mb-1.small Total Item
+                  h3.mb-0.fw-bold= orders.reduce((sum, o) => sum + (o.items ? o.items.length : 0), 0)
+
+    //- Orders List
+    .row
+      .col-12
+        if orders && orders.length
+          each o in orders
+            .card.border-0.shadow-sm.mb-3.hover-shadow(style="transition: all 0.2s ease;")
+              .card-body
+                //- Order Header
+                .row.align-items-center.mb-3
+                  .col-md-8
+                    .d-flex.align-items-center
+                      .badge.bg-secondary.me-3.px-3.py-2
+                        i.bi.bi-hash
+                        = o.id
+                      div
+                        h5.mb-1.fw-bold Rp #{Number(o.total || 0).toLocaleString('id-ID')}
+                        small.text-muted
+                          i.bi.bi-calendar3.me-1
+                          = new Date(o.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+                  .col-md-4.text-md-end.mt-3.mt-md-0
+                    - 
+                      let statusClass = 'secondary';
+                      let statusIcon = 'circle';
+                      if (o.status === 'pending') {
+                        statusClass = 'warning';
+                        statusIcon = 'clock-history';
+                      } else if (o.status === 'confirmed') {
+                        statusClass = 'info';
+                        statusIcon = 'check-circle';
+                      } else if (o.status === 'completed') {
+                        statusClass = 'success';
+                        statusIcon = 'check-circle-fill';
+                      } else if (o.status === 'cancelled') {
+                        statusClass = 'danger';
+                        statusIcon = 'x-circle';
+                      }
+                    if o.vendor_status
+                      span.badge.bg-info.ms-1
+                        i.bi.bi-truck.me-1
+                        = o.vendor_status.toUpperCase()
+                    a.btn.btn-primary.btn-sm(href=`/yayasan/orders/${o.id}`)
+                      i.bi.bi-eye.me-1
+                      | Detail
+
+                //- Order Items
+                if o.items && o.items.length
+                  .table-responsive
+                    table.table.table-hover.align-middle.mb-0
+                      thead.table-light
+                        tr
+                          th.border-0
+                            i.bi.bi-box.me-2
+                            | Produk
+                          th.border-0
+                            i.bi.bi-shop.me-2
+                            | Vendor
+                          th.border-0.text-center
+                            i.bi.bi-123.me-2
+                            | Qty
+                          th.border-0.text-end
+                            i.bi.bi-currency-dollar.me-2
+                            | Harga
+                      tbody
+                        each it in o.items
+                          tr
+                            td
+                              .fw-medium= it.product_name
+                            td
+                              if it.vendor_name
+                                span.text-muted= it.vendor_name
+                              else
+                                span.text-muted.fst-italic Vendor ##{it.vendor_id || 'N/A'}
+                            td.text-center
+                              span.badge.bg-light.text-dark= it.qty
+                            td.text-end
+                              span.fw-medium Rp #{Number(it.price).toLocaleString('id-ID')}
+                else
+                  .alert.alert-light.border.mb-0
+                    i.bi.bi-info-circle.me-2
+                    | Tidak ada item di order ini.
+        else
+          .card.border-0.shadow-sm.text-center.py-5
+            .card-body
+              .mb-3
+                i.bi.bi-inbox.display-1.text-muted(style="opacity: 0.3;")
+              h5.text-muted.mb-2 Belum Ada Pesanan
+              p.text-muted.mb-0 Dapur ini belum memiliki riwayat pesanan.
