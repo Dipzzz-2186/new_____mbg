@@ -182,21 +182,21 @@ block content
   script.
     function incrementQty() {
       const input = document.getElementById('qtyInput');
-      const step = parseFloat(input.step) || 0.1;
-      input.value = (parseFloat(input.value) + step).toFixed(1);
+      let current = parseInt(input.value.replace(',', '.')) || 0;
+      input.value = current + 1;
       updateSubtotal();
     }
     
     function decrementQty() {
       const input = document.getElementById('qtyInput');
-      const step = parseFloat(input.step) || 0.1;
-      const min = parseFloat(input.min) || 0.1;
-      const newVal = parseFloat(input.value) - step;
-      if (newVal >= min) {
-        input.value = newVal.toFixed(1);
+      const min = parseInt(input.min) || 1;
+      let current = parseInt(input.value.replace(',', '.')) || min;
+      if (current > min) {
+        input.value = current - 1;
         updateSubtotal();
       }
     }
+
 
     function updateSubtotal() {
       // This would calculate based on quantity
