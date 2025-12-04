@@ -2,235 +2,283 @@
 extends ../layout
 
 block content
-  .container-fluid.px-4.px-lg-5.py-4.py-lg-5
-    //- Modern Header
-    .dashboard-header.mb-5.pb-4.border-bottom
+  .container-fluid.px-3.px-lg-5.py-4.py-lg-5
+    //- Clean Header
+    .dashboard-header.mb-5
       .d-flex.justify-content-between.align-items-center.flex-wrap.gap-3
         div
           .d-flex.align-items-center.gap-3.mb-2
-            .icon-header.bg-gradient-primary
-              i.bi.bi-house-door
+            i.bi.bi-grid-1x2.header-icon
             div
-              h2.mb-1.fw-bold Dashboard Dapur
-              p.text-muted.mb-0 Kelola pesanan dan transaksi Anda
+              h1.mb-1.fw-bold.text-dark Dashboard Dapur
+              p.text-muted.mb-0.d-flex.align-items-center.gap-2
+                i.bi.bi-calendar-check(style="font-size: 0.9rem;")
+                span Kelola pesanan dan transaksi dengan mudah
         
-        a.btn.btn-success.btn-lg.px-4.py-3.shadow(href="/market")
-          i.bi.bi-shop.me-2
-          | Buka Marketplace
+        a.btn.btn-success.px-4.py-2.shadow-sm(href="/market")
+          i.bi.bi-bag-plus.me-2
+          span Mulai Belanja
 
-    //- Stats Overview
-    .row.g-4.mb-5
+    //- Stats Overview - Clean Design
+    .row.g-3.g-lg-4.mb-5
       .col-md-6.col-xl-3
-        .stat-card.card.border-0.shadow-sm.h-100
+        .stat-card.card.border-0.h-100
           .card-body.p-4
-            .d-flex.justify-content-between.align-items-start.mb-3
-              .stat-icon.bg-gradient-primary
-                i.bi.bi-receipt
-              .text-end
+            .d-flex.align-items-start.justify-content-between.mb-3
+              .stat-info
+                .stat-label.text-muted.mb-2.d-flex.align-items-center.gap-2
+                  i.bi.bi-receipt
+                  span Total Pesanan
                 - const totalOrders = recentOrders ? recentOrders.length : 0
-                h3.mb-0.fw-bold= totalOrders
-                small.text-muted Total Pesanan
-            .progress(style="height: 4px;")
+                h2.mb-0.fw-bold.text-dark= totalOrders
+              .stat-icon.stat-icon-primary
+                i.bi.bi-box-seam
+            .progress.mt-3(style="height: 5px; background: #f1f5f9;")
               .progress-bar.bg-primary(style="width: 100%;")
       
       .col-md-6.col-xl-3
-        .stat-card.card.border-0.shadow-sm.h-100
+        .stat-card.card.border-0.h-100
           .card-body.p-4
-            .d-flex.justify-content-between.align-items-start.mb-3
-              .stat-icon.bg-gradient-warning
-                i.bi.bi-clock-history
-              .text-end
+            .d-flex.align-items-start.justify-content-between.mb-3
+              .stat-info
+                .stat-label.text-muted.mb-2.d-flex.align-items-center.gap-2
+                  i.bi.bi-hourglass-split
+                  span Menunggu Approval
                 - const pendingCount = recentOrders ? recentOrders.filter(o => o.status === 'awaiting_yayasan').length : 0
-                h3.mb-0.fw-bold= pendingCount
-                small.text-muted Menunggu Approval
-            .progress(style="height: 4px;")
+                h2.mb-0.fw-bold.text-warning= pendingCount
+              .stat-icon.stat-icon-warning
+                i.bi.bi-clock-history
+            .progress.mt-3(style="height: 5px; background: #f1f5f9;")
               .progress-bar.bg-warning(style="width: 75%;")
       
       .col-md-6.col-xl-3
-        .stat-card.card.border-0.shadow-sm.h-100
+        .stat-card.card.border-0.h-100
           .card-body.p-4
-            .d-flex.justify-content-between.align-items-start.mb-3
-              .stat-icon.bg-gradient-success
-                i.bi.bi-check-circle
-              .text-end
+            .d-flex.align-items-start.justify-content-between.mb-3
+              .stat-info
+                .stat-label.text-muted.mb-2.d-flex.align-items-center.gap-2
+                  i.bi.bi-check-circle
+                  span Selesai
                 - const completedCount = recentOrders ? recentOrders.filter(o => o.status === 'completed').length : 0
-                h3.mb-0.fw-bold= completedCount
-                small.text-muted Selesai
-            .progress(style="height: 4px;")
+                h2.mb-0.fw-bold.text-success= completedCount
+              .stat-icon.stat-icon-success
+                i.bi.bi-check2-circle
+            .progress.mt-3(style="height: 5px; background: #f1f5f9;")
               .progress-bar.bg-success(style="width: 90%;")
-      
-      .col-md-6.col-xl-3
-        .stat-card.card.border-0.shadow-sm.h-100
-          .card-body.p-4
-            .d-flex.justify-content-between.align-items-start.mb-3
-              .stat-icon.bg-gradient-info
-                i.bi.bi-cash-stack
-              .text-end
-                - const totalAmount = recentOrders ? recentOrders.reduce((sum, o) => sum + Number(o.total || 0), 0) : 0
-                h3.mb-0.fw-bold= (totalAmount / 1000000).toFixed(1) + 'M'
-                small.text-muted Total Nilai
-            .progress(style="height: 4px;")
-              .progress-bar.bg-info(style="width: 65%;")
 
-    .row.g-4.g-lg-5
+      .col-md-6.col-xl-3
+        .stat-card.card.border-0.h-100
+          .card-body.p-4
+            .d-flex.align-items-start.justify-content-between.mb-3
+              .stat-info
+                .stat-label.text-muted.mb-2.d-flex.align-items-center.gap-2
+                  i.bi.bi-x-circle
+                  span Ditolak
+                - const rejectedCount = recentOrders ? recentOrders.filter(o => o.status === 'rejected_yayasan').length : 0
+                h2.mb-0.fw-bold.text-danger= rejectedCount
+              .stat-icon.stat-icon-danger
+                i.bi.bi-x-octagon
+            .progress.mt-3(style="height: 5px; background: #f1f5f9;")
+              .progress-bar.bg-danger(style="width: 100%;")
+
+    .row.g-4
       //- RECENT ORDERS
       .col-lg-8
         .card.border-0.shadow-sm.orders-card
-          .card-header.bg-gradient-header.text-white.border-0.p-4
-            .d-flex.justify-content-between.align-items-center
-              h4.mb-0.fw-semibold
-                i.bi.bi-clock-history.me-2
-                | Riwayat Pesanan
-              if recentOrders && recentOrders.length
-                span.badge.bg-white.text-primary.px-3.py-2= recentOrders.length + ' Pesanan'
+          .card-header.bg-white.border-0.p-4.d-flex.justify-content-between.align-items-center
+            h4.mb-0.fw-semibold.text-dark
+              i.bi.bi-clock-history.me-2.text-primary
+              | Riwayat Pesanan
+            if recentOrders && recentOrders.length
+              span.badge.bg-light.text-dark.px-3.py-2
+                i.bi.bi-list-ul.me-1
+                = recentOrders.length + ' pesanan'
           
           .card-body.p-4
             if recentOrders && recentOrders.length
               .orders-list
                 each o, idx in recentOrders
-                  .order-item.mb-3.p-3.border.rounded-3(data-index=idx)
-                    .d-flex.justify-content-between.align-items-start.mb-3
-                      div
-                        .d-flex.align-items-center.gap-2.mb-2
-                          .order-number.bg-gradient-primary
+                  .order-item.mb-3.p-4.border.rounded-3(data-index=idx)
+                    .row.align-items-center.g-3
+                      .col-md-7
+                        .d-flex.align-items-center.gap-3.mb-3.mb-md-0
+                          .order-number.text-white.fw-bold
                             | ##{o.id}
-                          .fw-bold.fs-5.text-primary
-                            | Rp #{Number(o.total || 0).toLocaleString('id-ID')}
-                        
-                        .d-flex.align-items-center.gap-2.text-muted
-                          i.bi.bi-calendar-event
-                          small= o.created_at
+                          div
+                            .fw-bold.fs-5.text-success.mb-1
+                              i.bi.bi-currency-dollar.me-1
+                              | Rp #{Number(o.total || 0).toLocaleString('id-ID')}
+                            .text-muted.small.d-flex.align-items-center.gap-2
+                              i.bi.bi-calendar3
+                              = o.created_at
                       
-                      div
+                      .col-md-5.text-md-end
                         - let statusLabel = '';
                         - let badgeClass = '';
                         - let iconClass = '';
 
                         if o.status === 'awaiting_yayasan'
                           - statusLabel = 'Menunggu Approval';
-                          - badgeClass = 'bg-warning bg-opacity-10 text-warning';
-                          - iconClass = 'bi-clock';
+                          - badgeClass = 'badge-warning';
+                          - iconClass = 'bi-hourglass-split';
                         else if o.status === 'approved_yayasan'
                           - statusLabel = 'Disetujui Yayasan';
-                          - badgeClass = 'bg-primary bg-opacity-10 text-primary';
+                          - badgeClass = 'badge-primary';
                           - iconClass = 'bi-check-circle';
                         else if o.status === 'completed'
                           - statusLabel = 'Selesai';
-                          - badgeClass = 'bg-success bg-opacity-10 text-success';
+                          - badgeClass = 'badge-success';
                           - iconClass = 'bi-check-circle-fill';
                         else if o.status === 'rejected_yayasan'
                           - statusLabel = 'Ditolak';
-                          - badgeClass = 'bg-danger bg-opacity-10 text-danger';
+                          - badgeClass = 'badge-danger';
                           - iconClass = 'bi-x-circle';
                         else
                           - statusLabel = 'Pending';
-                          - badgeClass = 'bg-secondary bg-opacity-10 text-secondary';
+                          - badgeClass = 'badge-secondary';
                           - iconClass = 'bi-hourglass';
 
-                        span.badge.px-3.py-2(class=badgeClass)
+                        span.badge.px-3.py-2.fw-semibold(class=badgeClass)
                           i(class=iconClass).me-1
                           = statusLabel
-                    
-                      if o.status === 'approved_yayasan'
-                        a.btn.btn-sm.btn-success.flex-fill(href='/dapur/orders/' + o.id + '/ship')
-                          i.bi.bi-truck.me-1
-                          | Kirim Pesanan
-
-              
+                                  
               //- Load More
               if recentOrders.length >= 5
-                .text-center.mt-4.pt-3.border-top
-                  a.btn.btn-outline-primary(href="/dapur/orders")
-                    i.bi.bi-arrow-right-circle.me-2
-                    | Lihat Semua Pesanan
+                .text-center.mt-4.pt-4.border-top
+                  a.btn.btn-outline-primary.px-4.py-2(href="/dapur/orders")
+                    span Lihat Semua Pesanan
+                    i.bi.bi-arrow-right.ms-2
             else
               .empty-state.text-center.py-5
                 .empty-icon.mb-4
                   i.bi.bi-inbox
-                h5.mb-3.fw-normal Belum Ada Pesanan
+                h5.mb-3.text-dark Belum Ada Pesanan
                 p.text-muted.mb-4 Mulai belanja di marketplace untuk membuat pesanan pertama Anda
-                a.btn.btn-primary.px-4.py-2(href="/market")
-                  i.bi.bi-shop.me-2
+                a.btn.btn-success.px-4.py-2(href="/market")
+                  i.bi.bi-bag-plus.me-2
                   | Buka Marketplace
 
       //- ACCOUNT INFO & QUICK ACTIONS
       .col-lg-4
         //- Account Card
         .card.border-0.shadow-sm.mb-4.account-card
-          .card-body.p-4.bg-gradient-account.text-white.rounded-top
-            .text-center.mb-4
+          .card-body.p-4
+            .text-center.mb-4.pb-4.border-bottom
               .avatar-wrapper.mx-auto.mb-3
-                .avatar-circle.bg-white.text-primary
-                  i.bi.bi-person-fill
-              h5.mb-1.fw-bold= currentUser.name
-              .badge.bg-white.text-primary.px-3.py-2
+                .avatar-circle.bg-light.text-success
+                  i.bi.bi-person-circle
+              h5.mb-2.fw-bold.text-dark= currentUser.name
+              .badge.bg-success.bg-opacity-10.text-success.px-3.py-2.fw-semibold
                 i.bi.bi-shield-check.me-1
                 = currentUser.role
             
             .info-grid
-              .info-item.mb-3.p-3.bg-white.bg-opacity-10.rounded-3
-                .d-flex.align-items-center.gap-2
-                  i.bi.bi-envelope.fs-5
+              .info-item.mb-3.p-3.bg-light.rounded-3
+                .d-flex.align-items-start.gap-3
+                  i.bi.bi-envelope.fs-5.text-primary
                   div
-                    small.opacity-75.d-block Email
-                    .fw-medium= currentUser.email || 'Belum diatur'
+                    small.text-muted.d-block.mb-1 Email
+                    .fw-medium.text-dark= currentUser.email || 'Belum diatur'
               
-              .info-item.p-3.bg-white.bg-opacity-10.rounded-3
-                .d-flex.align-items-center.gap-2
-                  i.bi.bi-telephone.fs-5
+              .info-item.mb-4.p-3.bg-light.rounded-3
+                .d-flex.align-items-start.gap-3
+                  i.bi.bi-telephone.fs-5.text-success
                   div
-                    small.opacity-75.d-block Telepon
-                    .fw-medium= currentUser.phone || 'Belum diatur'
-          
-          .card-footer.bg-white.border-0.p-4
+                    small.text-muted.d-block.mb-1 Telepon
+                    .fw-medium.text-dark= currentUser.phone || 'Belum diatur'
+            
             .d-grid
-              a.btn.btn-primary.py-2(href="/dapur/profile")
+              a.btn.btn-outline-primary.py-2(href="/dapur/profile")
                 i.bi.bi-gear.me-2
                 | Pengaturan Akun
 
         //- Quick Actions Card
         .card.border-0.shadow-sm.quick-actions-card
           .card-body.p-4
-            h5.card-title.mb-4.fw-semibold
-              i.bi.bi-lightning-charge.me-2
+            h5.card-title.mb-4.fw-semibold.text-dark
+              i.bi.bi-lightning-charge-fill.me-2.text-warning
               | Aksi Cepat
             
             .d-grid.gap-3
-              a.action-btn.btn.btn-outline-success.text-start.p-3(href="/market")
+              a.action-btn.p-3.rounded-3(href="/market")
                 .d-flex.align-items-center.gap-3
                   .action-icon.bg-success.bg-opacity-10
-                    i.bi.bi-shop.text-success
+                    i.bi.bi-bag-check.text-success
                   div
-                    .fw-semibold Marketplace
-                    small.text-muted.d-block Belanja produk baru  
+                    .fw-semibold.text-dark Marketplace
+                    small.text-muted.d-block Belanja produk segar
+              
+              a.action-btn.p-3.rounded-3(href="/dapur/orders")
+                .d-flex.align-items-center.gap-3
+                  .action-icon.bg-primary.bg-opacity-10
+                    i.bi.bi-list-check.text-primary
+                  div
+                    .fw-semibold.text-dark Semua Pesanan
+                    small.text-muted.d-block Lihat riwayat lengkap
+              
+              a.action-btn.p-3.rounded-3(href="/dapur/cart")
+                .d-flex.align-items-center.gap-3
+                  .action-icon.bg-warning.bg-opacity-10
+                    i.bi.bi-cart3.text-warning
+                  div
+                    .fw-semibold.text-dark Keranjang
+                    small.text-muted.d-block Cek keranjang belanja
 
   //- Custom Styles
   style.
-    /* Color Gradients */
-    .bg-gradient-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-    .bg-gradient-success { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
-    .bg-gradient-warning { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
-    .bg-gradient-info { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
-    .bg-gradient-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-    .bg-gradient-account { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+    :root {
+      --primary-green: #10b981;
+      --dark-green: #059669;
+      --light-green: #d1fae5;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --info: #3b82f6;
+      --danger: #ef4444;
+    }
     
-    /* Header Icon */
-    .icon-header {
-      width: 56px;
-      height: 56px;
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 1.5rem;
+    /* Header */
+    .header-icon {
+      font-size: 2rem;
+      color: var(--primary-green);
+      animation: fadeInScale 0.6s ease-out;
+    }
+    
+    @keyframes fadeInScale {
+      from {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+    
+    .dashboard-header h1 {
+      font-size: 2rem;
+      animation: fadeInUp 0.6s ease-out;
+    }
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
     
     /* Stat Cards */
     .stat-card {
-      transition: all 0.3s ease;
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       opacity: 0;
-      transform: translateY(20px);
+      transform: translateY(30px);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     }
     
     .stat-card.visible {
@@ -240,27 +288,63 @@ block content
     
     .stat-card:hover {
       transform: translateY(-8px);
-      box-shadow: 0 12px 28px rgba(0,0,0,0.12) !important;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+      border-color: var(--primary-green);
+    }
+    
+    .stat-label {
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+    
+    .stat-label i {
+      font-size: 0.9rem;
     }
     
     .stat-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: 12px;
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: white;
-      font-size: 1.3rem;
+      font-size: 1.4rem;
+      transition: all 0.3s ease;
     }
     
-    /* Order Items */
+    .stat-card:hover .stat-icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+    
+    .stat-icon-primary {
+      background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+      color: #3b82f6;
+    }
+    
+    .stat-icon-warning {
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      color: #f59e0b;
+    }
+    
+    .stat-icon-success {
+      background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+      color: var(--success);
+    }
+    
+    .stat-icon-info {
+      background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+      color: #6366f1;
+    }
+    
+    /* Order Cards */
     .orders-card,
     .account-card,
     .quick-actions-card {
-      transition: all 0.3s ease;
+      border-radius: 16px;
+      transition: all 0.4s ease;
       opacity: 0;
-      transform: translateY(20px);
+      transform: translateY(30px);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     }
     
     .orders-card.visible,
@@ -270,11 +354,26 @@ block content
       transform: translateY(0);
     }
     
+    .card-header h4 i {
+      animation: pulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.6;
+      }
+    }
+    
+    /* Order Items */
     .order-item {
-      transition: all 0.3s ease;
-      background: white;
+      background: #fafafa;
+      border: 2px solid #e5e7eb !important;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       opacity: 0;
-      transform: translateX(-20px);
+      transform: translateX(-30px);
     }
     
     .order-item.visible {
@@ -283,73 +382,189 @@ block content
     }
     
     .order-item:hover {
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-      transform: translateX(4px);
+      background: white;
+      border-color: var(--primary-green) !important;
+      box-shadow: 0 8px 16px rgba(16, 185, 129, 0.15);
+      transform: translateX(8px);
     }
     
     .order-number {
-      width: 48px;
-      height: 48px;
-      border-radius: 10px;
+      width: 52px;
+      height: 52px;
+      background: linear-gradient(135deg, var(--primary-green) 0%, var(--dark-green) 100%);
+      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: white;
-      font-weight: 700;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
+      box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+      transition: transform 0.3s ease;
+    }
+    
+    .order-item:hover .order-number {
+      transform: scale(1.1) rotate(-5deg);
+    }
+    
+    /* Badges */
+    .badge-warning {
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fde68a;
+    }
+    
+    .badge-primary {
+      background: #dbeafe;
+      color: #1e40af;
+      border: 1px solid #bfdbfe;
+    }
+    
+    .badge-success {
+      background: var(--light-green);
+      color: var(--dark-green);
+      border: 1px solid #a7f3d0;
+    }
+    
+    .badge-danger {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+    
+    .badge-secondary {
+      background: #f1f5f9;
+      color: #475569;
+      border: 1px solid #e2e8f0;
     }
     
     /* Account Card */
-    .avatar-wrapper {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-    }
-    
     .avatar-circle {
-      width: 80px;
-      height: 80px;
+      width: 90px;
+      height: 90px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2.5rem;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      font-size: 3rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+      border: 3px solid white;
+    }
+    
+    .account-card:hover .avatar-circle {
+      transform: scale(1.05);
+      box-shadow: 0 8px 16px rgba(16, 185, 129, 0.2);
+    }
+    
+    .info-item {
+      transition: all 0.3s ease;
+      border: 1px solid transparent;
+    }
+    
+    .info-item:hover {
+      background: white !important;
+      border-color: #e5e7eb;
+      transform: translateX(4px);
     }
     
     /* Quick Actions */
     .action-btn {
-      transition: all 0.2s ease;
-      border-width: 2px;
+      background: #fafafa;
+      border: 2px solid #e5e7eb;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      text-decoration: none;
+      display: block;
     }
     
     .action-btn:hover {
-      transform: translateX(4px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      background: white;
+      border-color: var(--primary-green);
+      transform: translateX(8px);
+      box-shadow: 0 8px 16px rgba(16, 185, 129, 0.15);
     }
     
     .action-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 10px;
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.2rem;
+      font-size: 1.3rem;
+      transition: all 0.3s ease;
+    }
+    
+    .action-btn:hover .action-icon {
+      transform: scale(1.15) rotate(-5deg);
     }
     
     /* Empty State */
     .empty-icon i {
       font-size: 5rem;
-      color: #dee2e6;
+      color: #d1d5db;
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-15px);
+      }
+    }
+    
+    /* Buttons */
+    .btn {
+      border-radius: 10px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-success {
+      background: var(--primary-green);
+      border: none;
+    }
+    
+    .btn-success:hover {
+      background: var(--dark-green);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(16, 185, 129, 0.3);
+    }
+    
+    .btn-outline-primary {
+      border: 2px solid #3b82f6;
+      color: #3b82f6;
+    }
+    
+    .btn-outline-primary:hover {
+      background: #3b82f6;
+      transform: translateY(-2px);
+    }
+    
+    /* Progress Bars */
+    .progress {
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    
+    .progress-bar {
+      border-radius: 10px;
+      transition: width 1s ease-in-out;
     }
     
     /* Responsive */
     @media (max-width: 768px) {
-      .icon-header { width: 48px; height: 48px; font-size: 1.3rem; }
-      .stat-icon { width: 42px; height: 42px; font-size: 1.1rem; }
-      .avatar-circle { width: 70px; height: 70px; font-size: 2rem; }
-      .order-number { width: 40px; height: 40px; font-size: 0.85rem; }
+      .header-icon { font-size: 1.6rem; }
+      .dashboard-header h1 { font-size: 1.6rem; }
+      .stat-icon { width: 44px; height: 44px; font-size: 1.2rem; }
+      .avatar-circle { width: 75px; height: 75px; font-size: 2.5rem; }
+      .order-number { width: 44px; height: 44px; font-size: 0.85rem; }
+      .action-icon { width: 42px; height: 42px; font-size: 1.2rem; }
+    }
+    
+    /* Card Shadows on Hover */
+    .card:hover {
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
     }
 
   //- JavaScript
@@ -361,7 +576,7 @@ block content
         statCards.forEach(function(card, index){
           setTimeout(function(){
             card.classList.add('visible');
-          }, index * 100);
+          }, index * 120);
         });
 
         // Fade-in animations for main cards
@@ -374,7 +589,7 @@ block content
         mainCards.forEach(function(card, index){
           setTimeout(function(){
             card.classList.add('visible');
-          }, 400 + (index * 100));
+          }, 500 + (index * 120));
         });
 
         // Fade-in animations for order items
@@ -382,8 +597,20 @@ block content
         orderItems.forEach(function(item, index){
           setTimeout(function(){
             item.classList.add('visible');
-          }, 700 + (index * 100));
+          }, 800 + (index * 100));
         });
+
+        // Animate progress bars
+        setTimeout(function(){
+          var progressBars = document.querySelectorAll('.progress-bar');
+          progressBars.forEach(function(bar){
+            var width = bar.style.width;
+            bar.style.width = '0';
+            setTimeout(function(){
+              bar.style.width = width;
+            }, 100);
+          });
+        }, 600);
 
         // Intersection Observer for scroll animations
         if ('IntersectionObserver' in window) {
@@ -395,7 +622,6 @@ block content
             });
           }, { threshold: 0.1 });
 
-          // Observe all animated elements
           statCards.forEach(function(card) { observer.observe(card); });
           mainCards.forEach(function(card) { observer.observe(card); });
           orderItems.forEach(function(item) { observer.observe(item); });
@@ -404,14 +630,18 @@ block content
         // Smooth scroll to top button
         var scrollBtn = document.createElement('button');
         scrollBtn.innerHTML = '<i class="bi bi-arrow-up"></i>';
-        scrollBtn.className = 'btn btn-primary btn-sm position-fixed bottom-0 end-0 m-4 rounded-circle shadow-lg';
-        scrollBtn.style.cssText = 'width: 48px; height: 48px; opacity: 0; transition: opacity 0.3s; z-index: 1000; display: none;';
+        scrollBtn.className = 'btn btn-success position-fixed bottom-0 end-0 m-4 rounded-circle shadow-lg';
+        scrollBtn.style.cssText = 'width: 50px; height: 50px; opacity: 0; transition: all 0.3s; z-index: 1000; display: none; border: none;';
         scrollBtn.onclick = function(){ window.scrollTo({ top: 0, behavior: 'smooth' }); };
+        scrollBtn.onmouseover = function(){ this.style.transform = 'scale(1.1) translateY(-3px)'; };
+        scrollBtn.onmouseout = function(){ this.style.transform = 'scale(1)'; };
         document.body.appendChild(scrollBtn);
 
         window.addEventListener('scroll', function(){
           if(window.scrollY > 400){
-            scrollBtn.style.display = 'block';
+            scrollBtn.style.display = 'flex';
+            scrollBtn.style.alignItems = 'center';
+            scrollBtn.style.justifyContent = 'center';
             setTimeout(function(){ scrollBtn.style.opacity = '1'; }, 10);
           } else {
             scrollBtn.style.opacity = '0';

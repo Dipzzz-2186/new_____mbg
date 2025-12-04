@@ -1,146 +1,215 @@
-nav.navbar.navbar-expand-lg.navbar-light.sticky-top.shadow-sm(style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);")
+nav.navbar.navbar-expand-lg.navbar-light.sticky-top(style="background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(12px); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);")
 
-  .container-fluid.px-3.px-lg-4
+  .container-fluid.px-3.px-lg-5.py-2
 
-    // BRAND
-    a.navbar-brand.d-flex.align-items-center.fw-bold(href="/market" style="color: #2d6a4f;")
-      .brand-icon-wrapper.me-2(style="background: linear-gradient(135deg, #52b788 0%, #40916c 100%); padding: 8px 12px; border-radius: 12px; box-shadow: 0 2px 8px rgba(82, 183, 136, 0.3);")
-        i.bi.bi-cart-check-fill(style="font-size: 1.3rem; color: white;")
-      span.d-none.d-sm-inline(style="font-size: 1.25rem; letter-spacing: -0.5px;") FreshMart
+    // BRAND - Minimal & Elegant
+    a.navbar-brand.d-flex.align-items-center.fw-bold(href="/market" style="color: #1f2937; transition: all 0.3s ease;")
+      i.bi.bi-bag-check(style="font-size: 1.8rem; color: #10b981; margin-right: 0.6rem; transition: transform 0.3s ease;")
+      span(style="font-size: 1.4rem; letter-spacing: -0.5px;") FreshMart
 
     // TOGGLER (mobile)
-    button.navbar-toggler.border-0.shadow-none(type="button", data-bs-toggle="collapse", data-bs-target="#mainNav")
-      span.navbar-toggler-icon
+    button.navbar-toggler.border-0.shadow-none(type="button", data-bs-toggle="collapse", data-bs-target="#mainNav" style="color: #6b7280;")
+      i.bi.bi-list(style="font-size: 1.8rem;")
 
     // NAV MENU WRAPPER
     #mainNav.collapse.navbar-collapse.mt-3.mt-lg-0
 
-      // CENTER — SEARCH BAR
-      form.d-flex.mx-auto.my-2.my-lg-0(
+      // CENTER — SEARCH BAR - Clean Design
+      form.d-flex.mx-auto.my-3.my-lg-0(
         method="GET"
         action="/market"
         role="search"
-        style="width:100%; max-width:600px;"
+        style="width:100%; max-width:550px;"
       )
-        .input-group.shadow-sm(style="border-radius: 50px;")
-          span.input-group-text.bg-white.border-0(style="border-radius: 50px 0 0 50px; padding-left: 20px;")
-            i.bi.bi-search(style="color: #52b788;")
-          input#navSearch.form-control.border-0.shadow-none(
+        .search-container.position-relative.w-100
+          i.bi.bi-search.search-icon(style="position: absolute; left: 1.2rem; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 1.1rem; transition: color 0.3s ease; z-index: 2;")
+          input#navSearch.form-control.border-0(
             type="search"
             name="q"
-            placeholder="Cari produk, kategori atau brand..."
+            placeholder="Cari produk fresh pilihan Anda..."
             value=(typeof searchQuery !== 'undefined' ? searchQuery : '')
-            style="border-radius: 0 50px 50px 0; padding: 12px 20px 12px 8px; font-size: 0.95rem;"
+            style="border: 2px solid #e5e7eb; border-radius: 50px; padding: 0.85rem 1.5rem 0.85rem 3.2rem; font-size: 0.95rem; background: #ffffff; transition: all 0.3s ease; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);"
           )
 
-      // RIGHT — ICONS
-      .d-flex.align-items-center.gap-2.gap-lg-3.ms-lg-3.mt-2.mt-lg-0
+      // RIGHT — ICONS - Minimal Design
+      .d-flex.align-items-center.gap-3.ms-lg-4.mt-3.mt-lg-0
 
-        // CART ICON
-        a.nav-icon-wrapper.position-relative.d-flex.align-items-center.justify-content-center(
+        // CART ICON with Badge
+        a.nav-icon-link.position-relative(
           href="/dapur/cart"
-          style="width: 44px; height: 44px; border-radius: 12px; transition: all 0.3s ease; color: #2d6a4f;"
-          onmouseover="this.style.background='#f1faee'; this.style.transform='translateY(-2px)'"
-          onmouseout="this.style.background='transparent'; this.style.transform='translateY(0)'"
+          title="Keranjang Belanja"
         )
-          i.bi.bi-cart3(style="font-size: 1.4rem;")
+          i.bi.bi-cart3(style="font-size: 1.5rem;")
           if typeof cartCount !== 'undefined' && cartCount > 0
-            span.position-absolute.badge.rounded-pill.bg-danger(
-              style="font-size: 0.65rem; top: 4px; right: 4px; padding: 3px 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"
-            )= cartCount
+            span.cart-badge= cartCount
 
         // USER ICON DROPDOWN
         .dropdown
-          a#userDropdown.nav-icon-wrapper.d-flex.align-items-center.justify-content-center(
+          a#userDropdown.nav-icon-link(
             href="#"
             role="button"
             data-bs-toggle="dropdown"
             aria-expanded="false"
-            style="width: 44px; height: 44px; border-radius: 12px; transition: all 0.3s ease; color: #2d6a4f;"
-            onmouseover="this.style.background='#f1faee'; this.style.transform='translateY(-2px)'"
-            onmouseout="this.style.background='transparent'; this.style.transform='translateY(0)'"
+            title="Menu Pengguna"
           )
-            i.bi.bi-person-circle(style="font-size: 1.4rem;")
+            i.bi.bi-person-circle(style="font-size: 1.5rem;")
 
-          ul.dropdown-menu.dropdown-menu-end.shadow-lg.border-0.mt-2(
+          ul.dropdown-menu.dropdown-menu-end.shadow-lg.border-0.mt-3(
             aria-labelledby="userDropdown"
-            style="border-radius: 12px; min-width: 200px;"
+            style="border-radius: 16px; min-width: 240px; padding: 0.5rem;"
           )
             if currentUser
               li
-                .dropdown-header.d-flex.align-items-center.px-3.py-2(style="background: #f8f9fa; border-radius: 12px 12px 0 0;")
-                  i.bi.bi-person-circle.me-2(style="font-size: 1.5rem; color: #52b788;")
-                  .flex-grow-1
-                    .small.text-muted Logged in as
-                    .fw-semibold.text-dark= currentUser.username || 'User'
+                .dropdown-header.px-3.py-3(style="background: #f9fafb; border-radius: 12px; margin: 0.25rem;")
+                  .d-flex.align-items-center.mb-1
+                    .user-avatar.me-2
+                      i.bi.bi-person-circle(style="font-size: 2rem; color: #10b981;")
+                    .flex-grow-1
+                      .fw-semibold.text-dark.mb-0(style="font-size: 0.95rem;")= currentUser.username || 'User'
+                      .small.text-muted(style="font-size: 0.8rem;")
+                        i.bi.bi-shield-check.me-1(style="font-size: 0.75rem;")
+                        = currentUser.role || 'Member'
 
               li
-                hr.dropdown-divider.my-2
+                hr.dropdown-divider.my-2(style="margin: 0.5rem 0.25rem;")
 
               li
-                a.dropdown-item.d-flex.align-items-center.px-3.py-2(
+                a.dropdown-item.menu-item(
                   href=(currentUser.role === 'dapur' ? "/dapur/dashboard" :
                         currentUser.role === 'vendor' ? "/vendor/dashboard" :
                         "/yayasan/dashboard")
-                  style="transition: all 0.2s ease; border-radius: 8px; margin: 0 8px;"
-                  onmouseover="this.style.background='#f1faee'"
-                  onmouseout="this.style.background='transparent'"
                 )
-                  i.bi.bi-speedometer2.me-2(style="color: #52b788;")
-                  | Dashboard
+                  i.bi.bi-speedometer2.me-3
+                  span Dashboard
 
               li
-                hr.dropdown-divider.my-2
+                a.dropdown-item.menu-item(href="/profile")
+                  i.bi.bi-gear.me-3
+                  span Pengaturan
 
               li
-                form(action="/logout" method="POST" style="margin: 0 8px;")
-                  button.dropdown-item.d-flex.align-items-center.px-3.py-2.w-100.text-start(
-                    type="submit"
-                    style="transition: all 0.2s ease; border-radius: 8px; background: transparent; border: none;"
-                    onmouseover="this.style.background='#fee'; this.style.color='#dc3545'"
-                    onmouseout="this.style.background='transparent'; this.style.color='inherit'"
-                  )
-                    i.bi.bi-box-arrow-right.me-2
-                    | Logout
+                hr.dropdown-divider.my-2(style="margin: 0.5rem 0.25rem;")
+
+              li
+                form(action="/logout" method="POST" style="margin: 0.25rem;")
+                  button.dropdown-item.menu-item.logout-btn(type="submit")
+                    i.bi.bi-box-arrow-right.me-3
+                    span Keluar
             else
               li
-                a.dropdown-item.d-flex.align-items-center.px-3.py-2(
-                  href="/login"
-                  style="transition: all 0.2s ease; border-radius: 8px; margin: 8px;"
-                  onmouseover="this.style.background='#f1faee'"
-                  onmouseout="this.style.background='transparent'"
-                )
-                  i.bi.bi-box-arrow-in-right.me-2(style="color: #52b788;")
-                  | Login
+                a.dropdown-item.menu-item(href="/login")
+                  i.bi.bi-box-arrow-in-right.me-3
+                  span Masuk
+              li
+                a.dropdown-item.menu-item(href="/register")
+                  i.bi.bi-person-plus.me-3
+                  span Daftar
 
-// Optional: Add this CSS for smooth animations
+// Enhanced CSS Styling
 style.
+  /* ===== NAVBAR STYLING ===== */
   .navbar {
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    border-bottom: 1px solid rgba(229, 231, 235, 0.8);
   }
   
-  #navSearch::placeholder {
-    color: #95a5a6;
-    font-size: 0.9rem;
+  .navbar.scrolled {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    padding: 0.5rem 0 !important;
+  }
+  
+  /* ===== BRAND HOVER ===== */
+  .navbar-brand:hover {
+    transform: translateX(3px);
+  }
+  
+  .navbar-brand:hover i {
+    transform: rotate(12deg) scale(1.1);
+    color: #059669;
+  }
+  
+  /* ===== SEARCH BAR ===== */
+  .search-container {
+    position: relative;
   }
   
   #navSearch:focus {
-    box-shadow: 0 0 0 3px rgba(82, 183, 136, 0.1) !important;
+    border-color: #10b981;
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+    outline: none;
   }
   
-  .nav-icon-wrapper {
-    cursor: pointer;
+  #navSearch:focus + .search-icon {
+    color: #10b981;
   }
   
+  #navSearch::placeholder {
+    color: #9ca3af;
+  }
+  
+  /* ===== NAV ICONS ===== */
+  .nav-icon-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    color: #4b5563;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    text-decoration: none;
+  }
+  
+  .nav-icon-link:hover {
+    background: #f3f4f6;
+    color: #10b981;
+    transform: translateY(-2px);
+  }
+  
+  .nav-icon-link:active {
+    transform: translateY(0);
+  }
+  
+  /* ===== CART BADGE ===== */
+  .cart-badge {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 10px;
+    min-width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.4);
+    animation: cartBadgePulse 2s ease-in-out infinite;
+  }
+  
+  @keyframes cartBadgePulse {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.1);
+    }
+  }
+  
+  /* ===== DROPDOWN MENU ===== */
   .dropdown-menu {
-    animation: slideDown 0.3s ease;
+    animation: dropdownSlide 0.3s ease-out;
+    border: 1px solid #e5e7eb;
   }
   
-  @keyframes slideDown {
+  @keyframes dropdownSlide {
     from {
       opacity: 0;
-      transform: translateY(-10px);
+      transform: translateY(-12px);
     }
     to {
       opacity: 1;
@@ -148,21 +217,172 @@ style.
     }
   }
   
-  .brand-icon-wrapper {
-    transition: all 0.3s ease;
+  .dropdown-header {
+    border: none;
+    padding: 0;
   }
   
-  .navbar-brand:hover .brand-icon-wrapper {
-    transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(82, 183, 136, 0.4);
+  .user-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
+  /* ===== DROPDOWN ITEMS ===== */
+  .menu-item {
+    display: flex;
+    align-items: center;
+    padding: 0.7rem 1rem;
+    margin: 0.2rem 0.25rem;
+    border-radius: 10px;
+    color: #4b5563;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border: none;
+    background: transparent;
+    text-decoration: none;
+    width: calc(100% - 0.5rem);
+    cursor: pointer;
+  }
+  
+  .menu-item i {
+    font-size: 1.1rem;
+    width: 20px;
+    transition: transform 0.2s ease;
+  }
+  
+  .menu-item:hover {
+    background: #f0fdf4;
+    color: #10b981;
+    transform: translateX(4px);
+  }
+  
+  .menu-item:hover i {
+    transform: scale(1.15);
+  }
+  
+  .logout-btn:hover {
+    background: #fef2f2;
+    color: #ef4444;
+  }
+  
+  .logout-btn:hover i {
+    transform: translateX(3px);
+  }
+  
+  /* ===== MOBILE RESPONSIVE ===== */
   @media (max-width: 991px) {
     .navbar-collapse {
       background: white;
-      padding: 15px;
-      border-radius: 12px;
-      margin-top: 10px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      padding: 1.5rem;
+      border-radius: 16px;
+      margin-top: 1rem;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      animation: mobileMenuSlide 0.3s ease-out;
+    }
+    
+    @keyframes mobileMenuSlide {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    #navSearch {
+      width: 100%;
+    }
+    
+    .nav-icon-link {
+      width: 48px;
+      height: 48px;
+    }
+    
+    .dropdown-menu {
+      width: 100%;
+      max-width: 100%;
     }
   }
+  
+  /* ===== TOGGLER ANIMATION ===== */
+  .navbar-toggler:focus {
+    box-shadow: none;
+  }
+  
+  .navbar-toggler i {
+    transition: transform 0.3s ease;
+  }
+  
+  .navbar-toggler:hover i {
+    transform: scale(1.1);
+    color: #10b981;
+  }
+  
+  /* ===== SCROLL BEHAVIOR ===== */
+  @media (min-width: 992px) {
+    .navbar-brand {
+      font-size: 1.3rem;
+    }
+  }
+  
+  /* ===== DIVIDER STYLING ===== */
+  .dropdown-divider {
+    border-top: 1px solid #e5e7eb;
+    opacity: 0.6;
+  }
+  
+  /* ===== FOCUS STATES ===== */
+  .dropdown-item:focus,
+  .menu-item:focus {
+    background: #f0fdf4;
+    color: #10b981;
+    outline: none;
+  }
+  
+  /* ===== SMOOTH TRANSITIONS ===== */
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+script.
+  // Navbar scroll effect
+  let lastScroll = 0;
+  window.addEventListener('scroll', function() {
+    const navbar = document.querySelector('.navbar');
+    const currentScroll = window.pageYOffset;
+    
+    if (currentScroll > 50) {
+      navbar.classList.add('scrolled');
+    } else {
+      navbar.classList.remove('scrolled');
+    }
+    
+    lastScroll = currentScroll;
+  });
+  
+  // Search input animation
+  const searchInput = document.getElementById('navSearch');
+  if (searchInput) {
+    searchInput.addEventListener('focus', function() {
+      this.parentElement.style.transform = 'scale(1.02)';
+    });
+    
+    searchInput.addEventListener('blur', function() {
+      this.parentElement.style.transform = 'scale(1)';
+    });
+  }
+  
+  // Close dropdown on click outside
+  document.addEventListener('click', function(e) {
+    const dropdowns = document.querySelectorAll('.dropdown-menu.show');
+    dropdowns.forEach(dropdown => {
+      if (!dropdown.parentElement.contains(e.target)) {
+        const bsDropdown = bootstrap.Dropdown.getInstance(dropdown.previousElementSibling);
+        if (bsDropdown) bsDropdown.hide();
+      }
+    });
+  });
