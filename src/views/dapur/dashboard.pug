@@ -30,13 +30,12 @@ block content
                 .stat-label.text-muted.mb-2.d-flex.align-items-center.gap-2
                   i.bi.bi-hourglass-split
                   span Menunggu Approval
-                - const pendingCount = recentOrders ? recentOrders.filter(o => o.status === 'awaiting_yayasan').length : 0
                 h2.mb-0.fw-bold.text-warning= pendingCount
               .stat-icon.stat-icon-warning
                 i.bi.bi-clock-history
             .progress.mt-3(style="height: 5px; background: #f1f5f9;")
               .progress-bar.bg-warning(style="width: 75%;")
-      
+
       // DISETUJUI
       .col-md-6.col-xl-3
         .stat-card.card.border-0.h-100
@@ -46,7 +45,6 @@ block content
                 .stat-label.text-muted.mb-2.d-flex.align-items-center.gap-2
                   i.bi.bi-patch-check-fill
                   span Disetujui
-                - const approveCount = recentOrders ? recentOrders.filter(o => o.status === 'approved_yayasan').length : 0
                 h2.mb-0.fw-bold.text-dark= approveCount
               .stat-icon.stat-icon-primary
                 i.bi.bi-shield-check
@@ -62,7 +60,6 @@ block content
                 .stat-label.text-muted.mb-2.d-flex.align-items-center.gap-2
                   i.bi.bi-x-octagon
                   span Ditolak
-                - const rejectedCount = recentOrders ? recentOrders.filter(o => o.status === 'rejected_yayasan').length : 0
                 h2.mb-0.fw-bold.text-danger= rejectedCount
               .stat-icon.stat-icon-danger
                 i.bi.bi-slash-circle
@@ -78,12 +75,12 @@ block content
                 .stat-label.text-muted.mb-2.d-flex.align-items-center.gap-2
                   i.bi.bi-clipboard-check
                   span Selesai
-                - const completedCount = recentOrders ? recentOrders.filter(o => o.status === 'completed').length : 0
                 h2.mb-0.fw-bold.text-success= completedCount
               .stat-icon.stat-icon-success
                 i.bi.bi-check2-all
             .progress.mt-3(style="height: 5px; background: #f1f5f9;")
               .progress-bar.bg-success(style="width: 90%;")
+
 
     .row.g-4
       //- RECENT ORDERS

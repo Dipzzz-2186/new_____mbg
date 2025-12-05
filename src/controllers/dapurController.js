@@ -6,7 +6,36 @@ exports.dashboard = async (req, res) => {
   try {
     const userId = req.session.user.id;
 
-    // 5 order terbaru saja
+    // ========== STAT DARI SEMUA ORDER USER ==========
+    const [statRows] = await pool.query(
+      'SELECT status, COUNT(*) AS cnt FROM orders WHERE user_id = ? GROUP BY status',
+      [userId]
+    );
+
+    // default 0 semua
+    let pendingCount = 0; // awaiting_yayasan
+    let approveCount = 0; // approved_yayasan
+    let rejectedCount = 0; // rejected_yayasan
+    let completedCount = 0; // completed
+
+    statRows.forEach(r => {
+      switch (r.status) {
+        case 'awaiting_yayasan':
+          pendingCount = r.cnt;
+          break;
+        case 'approved_yayasan':
+          approveCount = r.cnt;
+          break;
+        case 'rejected_yayasan':
+          rejectedCount = r.cnt;
+          break;
+        case 'completed':
+          completedCount = r.cnt;
+          break;
+      }
+    });
+
+    // ========== 5 ORDER TERBARU UNTUK RIWAYAT ==========
     const [orders] = await pool.query(
       'SELECT id, total, status, created_at FROM orders WHERE user_id=? ORDER BY created_at DESC LIMIT 5',
       [userId]
@@ -49,7 +78,11 @@ exports.dashboard = async (req, res) => {
 
     res.render('dapur/dashboard', {
       title: 'Dashboard Dapur',
-      recentOrders
+      recentOrders,
+      pendingCount,
+      approveCount,
+      rejectedCount,
+      completedCount
     });
   } catch (err) {
     console.error(err);
@@ -57,7 +90,6 @@ exports.dashboard = async (req, res) => {
     res.redirect('/');
   }
 };
-
 
 // =================== CART ===================
 exports.viewCart = async (req, res) => {
