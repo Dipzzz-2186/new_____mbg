@@ -503,3 +503,31 @@ exports.listOrdersForDapur = async (req, res) => {
     return res.redirect('/dapur/dashboard');
   }
 };
+
+// =================== VIEW PROFILE (DAPUR) ===================
+exports.viewProfile = async (req, res) => {
+  try {
+    const sessionUser = req.session.user;
+    if (!sessionUser || sessionUser.role !== 'dapur') {
+      req.flash('error', 'Silakan login sebagai dapur.');
+      return res.redirect('/login');
+    }
+
+    // ambil data terbaru dari DB
+    const [rows] = await pool.query(
+      'SELECT id, name, email, phone, address, role, created_at FROM users WHERE id = ? LIMIT 1',
+      [sessionUser.id]
+    );
+
+    const user = rows[0] || sessionUser;
+
+    return res.render('dapur/profile', {
+      title: 'Profil Dapur',
+      user
+    });
+  } catch (err) {
+    console.error('viewProfile error:', err);
+    req.flash('error', 'Gagal membuka profil.');
+    return res.redirect('/dapur/dashboard');
+  }
+};

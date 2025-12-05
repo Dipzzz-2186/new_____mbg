@@ -8,6 +8,7 @@ router.use(ensureAuthenticated, ensureRole('dapur'));
 
 router.get('/dashboard', dapurCtrl.dashboard);
 router.get('/orders', dapurCtrl.listOrdersForDapur);
+router.get('/profile', dapurCtrl.viewProfile);
 
 router.get('/cart', dapurCtrl.viewCart);
 router.post('/cart/add', dapurCtrl.addToCart);
