@@ -1,3 +1,4 @@
+//- src/views/vendor/create.pug
 extends ../layout
 
 block content
@@ -415,6 +416,7 @@ block content
             .dashboard-subtitle
               i.bi.bi-box-seam.me-2
               | Lengkapi informasi produk yang akan dijual
+
   .container-fluid
     .form-container
       .form-card
@@ -432,15 +434,26 @@ block content
                 required
               )
             
-            //- Kategori
+            //- Kategori (DROPDOWN + LAINNYA)
             .form-section
               label.form-label
                 i.bi.bi-grid
                 | Kategori
-              input.form-control(
-                name="category" 
-                placeholder="Contoh: Sembako, Sayur, Buah"
+              select.form-control#categorySelect(name="category" required)
+                option(value="") Pilih kategori
+                option(value="Sayur") Sayur
+                option(value="Daging") Daging
+                option(value="Sembako") Sembako
+                option(value="__other") Lain-lainnya
+              input.form-control.mt-2#categoryOtherInput(
+                type="text"
+                name=""
+                placeholder="Tulis kategori lainnya..."
+                style="display:none;"
               )
+              small.form-text
+                i.bi.bi-info-circle
+                |  Pilih kategori yang tersedia, atau gunakan "Lain-lainnya" untuk isi sendiri.
             
             //- Harga, Satuan, Stok
             .form-row
@@ -523,51 +536,77 @@ block content
 
   script.
     (function() {
+      // ========= FILE UPLOAD =========
       const fileInput = document.getElementById('fileInput');
       const fileLabel = document.getElementById('fileLabel');
       const fileInfo = document.getElementById('fileInfo');
       const fileName = document.getElementById('fileName');
       
-      if (!fileInput || !fileLabel || !fileInfo || !fileName) return;
-      
-      // File change handler
-      fileInput.addEventListener('change', function() {
-        if (this.files && this.files[0]) {
-          fileLabel.classList.add('has-file');
-          fileName.textContent = this.files[0].name;
-          fileInfo.classList.add('show');
-        }
-      });
-      
-      // Drag and drop handlers
-      ['dragover', 'dragenter'].forEach(event => {
-        fileLabel.addEventListener(event, function(e) {
-          e.preventDefault();
-          e.stopPropagation();
-          this.style.borderColor = '#28a745';
-          this.style.background = '#f0f9f3';
-        });
-      });
-      
-      ['dragleave', 'dragend'].forEach(event => {
-        fileLabel.addEventListener(event, function(e) {
-          e.preventDefault();
-          e.stopPropagation();
-          if (!fileInput.files.length) {
-            this.style.borderColor = '#e8e8e8';
-            this.style.background = '#fafafa';
+      if (fileInput && fileLabel && fileInfo && fileName) {
+        // File change handler
+        fileInput.addEventListener('change', function() {
+          if (this.files && this.files[0]) {
+            fileLabel.classList.add('has-file');
+            fileName.textContent = this.files[0].name;
+            fileInfo.classList.add('show');
           }
         });
-      });
-      
-      fileLabel.addEventListener('drop', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
         
-        const files = e.dataTransfer.files;
-        if (files.length > 0) {
-          fileInput.files = files;
-          fileInput.dispatchEvent(new Event('change', { bubbles: true }));
-        }
-      });
+        // Drag and drop handlers
+        ['dragover', 'dragenter'].forEach(event => {
+          fileLabel.addEventListener(event, function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            this.style.borderColor = '#28a745';
+            this.style.background = '#f0f9f3';
+          });
+        });
+        
+        ['dragleave', 'dragend'].forEach(event => {
+          fileLabel.addEventListener(event, function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (!fileInput.files.length) {
+              this.style.borderColor = '#e8e8e8';
+              this.style.background = '#fafafa';
+            }
+          });
+        });
+        
+        fileLabel.addEventListener('drop', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          
+          const files = e.dataTransfer.files;
+          if (files.length > 0) {
+            fileInput.files = files;
+            fileInput.dispatchEvent(new Event('change', { bubbles: true }));
+          }
+        });
+      }
+
+      // ========= KATEGORI DROPDOWN + LAINNYA =========
+      const categorySelect = document.getElementById('categorySelect');
+      const categoryOtherInput = document.getElementById('categoryOtherInput');
+
+      if (categorySelect && categoryOtherInput) {
+        categorySelect.addEventListener('change', function () {
+          if (this.value === '__other') {
+            // pakai input custom
+            categoryOtherInput.style.display = 'block';
+            categoryOtherInput.name = 'category';
+            categoryOtherInput.required = true;
+
+            // select tidak kirim name
+            categorySelect.name = '';
+          } else {
+            // pakai value dari select
+            categoryOtherInput.style.display = 'none';
+            categoryOtherInput.name = '';
+            categoryOtherInput.required = false;
+
+            categorySelect.name = 'category';
+          }
+        });
+      }
     })();
