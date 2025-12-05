@@ -1,60 +1,54 @@
-//- src/views/marketplace/_product_card.pug
 - var product = (typeof product !== 'undefined') ? product : ((typeof p !== 'undefined') ? p : {});
 - var productDetailUrl = `/market/product/${(product && product.id) || ''}`;
+- var isVendorDashboard = (typeof fromVendorDashboard !== 'undefined') ? !!fromVendorDashboard : false;
 
 style.
   .product-card-wrapper {
     text-decoration: none;
     color: inherit;
     display: block;
-    height: 100%;
     transition: transform 0.3s ease;
   }
-  
   .product-card-wrapper:hover {
     transform: translateY(-4px);
   }
-  
+
   .product-card {
     border: 1px solid #e8e8e8 !important;
     border-radius: 16px !important;
     overflow: hidden;
-    transition: all 0.3s ease;
     background: white;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
+    transition: all 0.3s ease;
   }
-  
+
   .product-card-wrapper:hover .product-card {
     border-color: #28a745 !important;
     box-shadow: 0 8px 24px rgba(40, 167, 69, 0.15);
   }
-  
+
   .card-image-wrap {
     position: relative;
     overflow: hidden;
     background: #fafafa;
     height: 220px;
   }
-  
+
   .card-image-wrap img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     transition: transform 0.4s ease;
   }
-  
+
   .product-card-wrapper:hover .card-image-wrap img {
     transform: scale(1.05);
   }
-  
+
   .stock-badge {
     position: absolute;
     bottom: 12px;
     left: 12px;
     background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(8px);
     padding: 6px 12px;
     border-radius: 8px;
     font-size: 0.75rem;
@@ -62,388 +56,103 @@ style.
     display: flex;
     align-items: center;
     gap: 4px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
-  
-  .stock-badge.available {
-    color: #28a745;
-  }
-  
-  .stock-badge.unavailable {
-    color: #dc3545;
-  }
-  
+
   .category-badge {
     position: absolute;
     top: 12px;
     right: 12px;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(8px);
+    background: rgba(255,255,255,0.95);
     padding: 4px 10px;
-    border-radius: 6px;
     font-size: 0.7rem;
-    font-weight: 600;
-    color: #6c757d;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
   }
-  
-  .discount-badge {
-    position: absolute;
-    top: 12px;
-    left: 12px;
-    background: #dc3545;
-    color: white;
-    padding: 6px 10px;
-    border-radius: 8px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
-  }
-  
-  .card-body {
-    padding: 16px;
-    background: white;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .product-name {
-    min-height: 44px;
-    margin-bottom: 12px;
-    flex: 0 0 auto;
-  }
-  
+
   .product-name-text {
-    font-size: 0.95rem;
-    line-height: 1.5;
+    font-size: .95rem;
+    font-weight: 500;
     color: #2c3e50;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    font-weight: 500;
   }
-  
-  .price-section {
-    margin-bottom: 12px;
-    flex: 0 0 auto;
-  }
-  
-  .current-price {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #28a745;
-    margin-bottom: 2px;
-  }
-  
-  .price-unit {
-    font-size: 0.75rem;
-    color: #6c757d;
-  }
-  
-  .product-meta {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 12px;
-    font-size: 0.75rem;
-    color: #6c757d;
-    flex: 0 0 auto;
-  }
-  
-  .rating-item {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-  
-  .rating-star {
-    color: #ffc107;
-    font-size: 0.75rem;
-  }
-  
-  .meta-separator {
-    color: #d1d5db;
-  }
-  
-  .card-footer {
-    padding: 12px 16px;
-    background: #fafafa;
-    border-top: 1px solid #e8e8e8;
-  }
-  
-  .add-to-cart-form {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-  }
-  
-  .qty-control {
-    display: flex;
-    align-items: center;
-    border: 2px solid #e8e8e8;
+
+  .btn-edit-vendor,
+  .btn-delete-vendor {
+    width: 100%;
+    padding: 8px 14px;
     border-radius: 8px;
-    overflow: hidden;
-    background: white;
-  }
-  
-  .qty-btn {
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: white;
-    border: none;
-    color: #28a745;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-  
-  .qty-btn:hover {
-    background: #f0f9f3;
-  }
-  
-  .qty-btn:active {
-    transform: scale(0.95);
-  }
-  
-  .qty-input {
-    width: 45px;
-    height: 32px;
-    border: none;
-    border-left: 1px solid #e8e8e8;
-    border-right: 1px solid #e8e8e8;
-    text-align: center;
+    font-size: .875rem;
     font-weight: 600;
-    font-size: 0.875rem;
-    color: #2c3e50;
-    background: white;
+    margin-top: 6px;
   }
-  
-  .qty-input:focus {
-    outline: none;
-  }
-  
-  .btn-add-cart {
-    flex: 1;
-    padding: 8px 16px;
-    background: #28a745;
+  .btn-edit-vendor {
+    background: #0d6efd;
     color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 0.875rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
   }
-  
-  .btn-add-cart:hover:not(:disabled) {
-    background: #218838;
-    transform: translateY(-1px);
-  }
-  
-  .btn-add-cart:disabled {
-    background: #9e9e9e;
-    cursor: not-allowed;
-  }
-  
-  .btn-complete-profile {
-    width: 100%;
-    padding: 8px 16px;
-    background: #ffc107;
-    color: #2c3e50;
-    border: none;
-    border-radius: 8px;
-    font-size: 0.875rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    text-decoration: none;
-  }
-  
-  .btn-complete-profile:hover {
-    background: #ffb300;
-    transform: translateY(-1px);
-    color: #2c3e50;
-  }
-  
-  .btn-view-detail {
-    width: 100%;
-    padding: 8px 16px;
-    background: white;
-    color: #28a745;
-    border: 2px solid #28a745;
-    border-radius: 8px;
-    font-size: 0.875rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    text-decoration: none;
-  }
-  
-  .btn-view-detail:hover {
-    background: #f0f9f3;
-    color: #218838;
-    border-color: #218838;
-    transform: translateY(-1px);
-  }
-  
-  .image-placeholder {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #f8f9fa;
-  }
-  
-  .placeholder-icon {
-    font-size: 3.5rem;
-    color: #d1d5db;
-  }
-  
-  @media (max-width: 576px) {
-    .product-card {
-      border-radius: 12px !important;
-    }
-    
-    .card-image-wrap {
-      height: 180px;
-    }
-    
-    .product-name {
-      min-height: 40px;
-    }
-    
-    .product-name-text {
-      font-size: 0.875rem;
-    }
-    
-    .current-price {
-      font-size: 1.125rem;
-    }
-    
-    .qty-control {
-      flex: 0 0 100px;
-    }
+  .btn-delete-vendor {
+    background: #dc3545;
+    color: white;
   }
 
 a.product-card-wrapper(href=productDetailUrl)
-  .product-card.h-100
-    //- Image Area
+  .product-card
+
     .card-image-wrap
       if product && product.image
-        img(src=product.image alt=(product.name||'Produk') loading='lazy')
+        img(src=product.image alt=product.name loading="lazy")
       else
         .image-placeholder
           i.bi.bi-image.placeholder-icon
 
-      //- Discount Badge (optional - uncomment if needed)
-      //- .discount-badge 53% OFF
-
-      //- Stock Badge
-      if product && product.stock && Number(product.stock) > 0
+      if product && product.stock > 0
         .stock-badge.available
           i.bi.bi-check-circle-fill
-          span Tersedia
+          | Tersedia
       else
         .stock-badge.unavailable
           i.bi.bi-x-circle-fill
-          span Habis
+          | Habis
 
-      //- Category Badge
       if product && product.category
         .category-badge= product.category
 
-    //- Card Body
     .card-body
-      //- Product Name
       .product-name
-        .product-name-text= (product && product.name) || 'Produk'
+        .product-name-text= product.name || 'Produk'
 
-      //- Price Section
       .price-section
-        .current-price
-          | Rp#{Number((product && product.price) || 0).toLocaleString('id-ID')}
-        if product && product.unit
-          .price-unit per #{product.unit}
+        .current-price Rp #{Number(product.price || 0).toLocaleString('id-ID')}
 
-      //- Rating & Stock
       .product-meta
-        .rating-item
-          i.bi.bi-star-fill.rating-star
-          span 4.9
-        span.meta-separator |
-        span #{Number((product && product.stock) || 0)} stok
+        i.bi.bi-star-fill.rating-star
+        span 4.9 |
+        span #{Number(product.stock || 0)} stok
 
-    //- Card Footer - Action Area
     .card-footer
-      if currentUser && currentUser.role === 'dapur'
-        //- Check if profile is complete
-        if !(currentUser.phone && currentUser.address)
-          a.btn-complete-profile(
-            href="/dapur/profile/complete"
-            onclick="event.stopPropagation()"
-            title="Lengkapi data dapur"
-          )
-            i.bi.bi-pencil-square
-            span Lengkapi Profile
-        else
-          //- Add to Cart Form
-          form.add-to-cart-form(action="/dapur/cart/add" method="post" onclick="event.stopPropagation()")
-            input(type="hidden" name="product_id" value=(product && product.id))
-            if typeof csrfToken !== 'undefined'
-              input(type="hidden" name="_csrf" value=csrfToken)
-            
-            //- Quantity Control
-            .qty-control
-              button.qty-btn(
-                type="button"
-                onclick="event.stopPropagation(); let inp=this.parentElement.querySelector('input[name=qty]'); let v=parseInt(inp.value,10); if(isNaN(v)||v<=1)v=1; else v--; inp.value=v;"
-              )
-                i.bi.bi-dash
-              
-              input.qty-input(
-                type="number"
-                name="qty"
-                value="1"
-                min="1"
-                step="1"
-                onclick="event.stopPropagation()"
-                readonly
-              )
-              
-              button.qty-btn(
-                type="button"
-                onclick="event.stopPropagation(); let inp=this.parentElement.querySelector('input[name=qty]'); let v=parseInt(inp.value,10); if(isNaN(v)||v<1)v=1; else v++; inp.value=v;"
-              )
-                i.bi.bi-plus
-            
-            //- Add to Cart Button
-            button.btn-add-cart(
-              type="submit"
-              disabled=!((product && product.stock) && Number(product.stock) > 0)
-              onclick="event.stopPropagation()"
-            )
-              i.bi.bi-cart-plus
-              span Keranjang
-      else
-        //- View Detail Button for non-dapur users
-        a.btn-view-detail(href=productDetailUrl)
+      // HANYA MUNCUL DI DASHBOARD VENDOR
+      if currentUser && currentUser.role === 'vendor' && isVendorDashboard
+        a.btn-edit-vendor(
+          href=`/vendor/products/${product.id}/edit`
+          onclick="event.stopPropagation()"
+        )
+          i.bi.bi-pencil-square
+          |  Edit
+        form(
+          method='POST',
+          action=`/vendor/products/${product.id}/delete`,
+          onsubmit="event.stopPropagation()"
+        )
+          button.btn-delete-vendor(type='submit')
+            i.bi.bi-trash
+            |  Hapus
+
+      else if currentUser && currentUser.role === 'dapur'
+        a.btn-view-detail(href=productDetailUrl onclick="event.stopPropagation()")
           i.bi.bi-eye
-          span Lihat Detail
+          |  Detail
+
+      else
+        a.btn-view-detail(href=productDetailUrl onclick="event.stopPropagation()")
+          | Lihat Detail

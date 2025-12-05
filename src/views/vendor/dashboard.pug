@@ -3,47 +3,25 @@ extends ../layout
 block content
   style.
     @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-    
-    @keyframes slideInLeft {
-      from {
-        opacity: 0;
-        transform: translateX(-30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
     
     @keyframes float {
       0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-8px); }
+      50%      { transform: translateY(-8px); }
     }
     
     @keyframes pulse {
       0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-    }
-    
-    @keyframes shimmer {
-      0% { transform: translateX(-100%); }
-      100% { transform: translateX(100%); }
+      50%      { transform: scale(1.05); }
     }
 
-    /* Dashboard Header - Clean & Minimal */
+    /* Dashboard Header */
     .vendor-dashboard-header {
       background: #ffffff;
-      padding: 40px 0;
-      margin-bottom: 40px;
+      padding: 40px 0 32px;
+      margin-bottom: 24px;
       border-bottom: 1px solid #e8e8e8;
       animation: fadeInUp 0.6s ease-out;
     }
@@ -89,6 +67,7 @@ block content
       display: flex;
       gap: 12px;
       flex-wrap: wrap;
+      justify-content: flex-end;
     }
     
     .btn-action {
@@ -102,6 +81,7 @@ block content
       align-items: center;
       gap: 10px;
       position: relative;
+      text-decoration: none;
     }
     
     .btn-action:hover {
@@ -140,16 +120,16 @@ block content
       animation: pulse 2s infinite;
     }
 
-    /* Stats Cards - Elegant & Subtle */
+    /* Stats Cards */
     .stats-row {
-      margin-bottom: 40px;
+      margin-bottom: 24px;
     }
     
     .stat-card {
       background: #ffffff;
       border: 1px solid #e8e8e8;
       border-radius: 16px;
-      padding: 28px;
+      padding: 24px;
       transition: all 0.4s ease;
       position: relative;
       overflow: hidden;
@@ -179,16 +159,16 @@ block content
     }
     
     .stat-icon-wrapper {
-      width: 64px;
-      height: 64px;
+      width: 56px;
+      height: 56px;
       background: #f0f9f3;
       border-radius: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 28px;
+      font-size: 26px;
       color: #28a745;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
       border: 1px solid #e8e8e8;
       transition: all 0.3s ease;
     }
@@ -206,11 +186,11 @@ block content
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
     
     .stat-value {
-      font-size: 2.2rem;
+      font-size: 2rem;
       font-weight: 700;
       color: #2c3e50;
       line-height: 1;
@@ -220,29 +200,6 @@ block content
       color: #6c757d;
       font-size: 0.85rem;
       margin-top: 8px;
-    }
-
-    /* Product Grid */
-    .products-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 24px;
-      margin-bottom: 40px;
-    }
-    
-    .product-card {
-      background: #ffffff;
-      border: 1px solid #e8e8e8;
-      border-radius: 16px;
-      overflow: hidden;
-      transition: all 0.3s ease;
-      animation: fadeInUp 0.6s ease-out;
-    }
-    
-    .product-card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
-      border-color: #28a745;
     }
 
     /* Empty State */
@@ -271,11 +228,10 @@ block content
     
     .empty-text {
       color: #6c757d;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       margin-bottom: 32px;
     }
 
-    /* Responsive */
     @media (max-width: 992px) {
       .action-buttons {
         width: 100%;
@@ -285,16 +241,11 @@ block content
         flex: 1;
         justify-content: center;
       }
-      
-      .products-grid {
-        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-        gap: 20px;
-      }
     }
     
     @media (max-width: 768px) {
       .vendor-dashboard-header {
-        padding: 30px 0;
+        padding: 30px 0 24px;
       }
       
       .dashboard-title {
@@ -308,20 +259,16 @@ block content
       }
       
       .stat-card {
-        padding: 24px;
+        padding: 20px;
       }
       
       .stat-value {
         font-size: 1.8rem;
       }
-      
-      .products-grid {
-        grid-template-columns: 1fr;
-      }
     }
 
   .container-fluid
-    //- Header Section
+    // ===== HEADER =====
     .vendor-dashboard-header
       .row.align-items-center.g-3
         .col-lg-7
@@ -336,21 +283,21 @@ block content
         
         .col-lg-5.text-lg-end
           .action-buttons
-            a.btn-action.btn-primary-action(href="/vendor/products/new" style='text-decoration: none;')
+            a.btn-action.btn-primary-action(href="/vendor/products/new")
               i.bi.bi-plus-circle
               span Tambah Produk
             
-            a.btn-action.btn-outline-action(href="/vendor/orders" style='text-decoration: none;')
+            a.btn-action.btn-outline-action(href="/vendor/orders")
               i.bi.bi-bell
               span Pesanan Saya
               if typeof pendingCount !== 'undefined' && pendingCount > 0
                 span.notification-badge= pendingCount
 
     if products && products.length
-      //- Stats Section
+      // ===== STATS =====
       .stats-row
         .row.g-4
-          .col-lg-4.col-md-6(style='animation-delay: 0.1s;')
+          .col-lg-4.col-md-6
             .stat-card
               .stat-icon-wrapper
                 i.bi.bi-box-seam
@@ -358,36 +305,41 @@ block content
               .stat-value= products.length
               .stat-description= products.length === 1 ? 'produk terdaftar' : 'produk terdaftar'
           
-          .col-lg-4.col-md-6(style='animation-delay: 0.2s;')
+          .col-lg-4.col-md-6
             .stat-card
               .stat-icon-wrapper
                 i.bi.bi-check-circle
               .stat-label Stok Tersedia
-              .stat-value= products.reduce((sum, p) => sum + (parseFloat(p.stock) || 0), 0).toFixed(1)
+              - const totalStock = products.reduce((sum, p) => sum + (parseFloat(p.stock) || 0), 0)
+              .stat-value= totalStock.toFixed(1)
               .stat-description unit total stok
           
-          .col-lg-4.col-md-12(style='animation-delay: 0.3s;')
+          .col-lg-4.col-md-12
             .stat-card
               .stat-icon-wrapper
                 i.bi.bi-currency-dollar
               .stat-label Nilai Total
-              .stat-value= 'Rp ' + products.reduce((sum, p) => sum + (parseFloat(p.price) * parseFloat(p.stock || 0)), 0).toLocaleString('id-ID')
+              - const totalValue = products.reduce((sum, p) => sum + ((parseFloat(p.price) || 0) * (parseFloat(p.stock) || 0)), 0)
+              .stat-value= 'Rp ' + totalValue.toLocaleString('id-ID')
               .stat-description nilai inventori saat ini
 
-      //- Products Grid
-      .products-grid
-        each p, index in products
-          .product-card(style=`animation-delay: ${0.05 * index}s;`)
-            - var product = p
-            include ../marketplace/_product_card.pug
+      // ===== PRODUCT GRID (NO CSS GRID, PAKAI BOOTSTRAP ROW) =====
+      .mt-3
+        .row.g-4
+          each p, index in products
+            .col-xl-3.col-lg-4.col-md-6
+              - var product = p
+              - var fromVendorDashboard = true
+              include ../marketplace/_product_card.pug
     
     else
-      //- Empty State
-      .empty-state-card
-        .empty-icon
-          i.bi.bi-inbox
-        .empty-title Belum Ada Produk
-        .empty-text Mulai tambahkan produk untuk ditampilkan di marketplace
-        a.btn-action.btn-primary-action(href="/vendor/products/new" style='padding: 16px 32px; font-size: 1.1rem; text-decoration: none;')
-          i.bi.bi-plus-circle
-          span Tambah Produk Pertama
+      // ===== EMPTY STATE =====
+      .mt-4
+        .empty-state-card
+          .empty-icon
+            i.bi.bi-inbox
+          .empty-title Belum Ada Produk
+          .empty-text Mulai tambahkan produk untuk ditampilkan di marketplace
+          a.btn-action.btn-primary-action(href="/vendor/products/new" style='padding: 16px 32px; font-size: 1.1rem;')
+            i.bi.bi-plus-circle
+            span Tambah Produk Pertama
