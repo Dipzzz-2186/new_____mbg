@@ -199,6 +199,62 @@ style.
     background: white;
   }
 
+    /* ============================
+     RAPIHIN TOMBOL DI CARD FOOTER
+     ============================ */
+  .card-footer {
+    padding: 14px;
+    display: flex;
+    flex-direction: column;   /* tombol disusun vertikal */
+    gap: 10px;                /* jarak antar tombol */
+  }
+
+  /* Samakan ukuran semua tombol */
+  .btn-edit-vendor,
+  .btn-delete-vendor,
+  .btn-view-detail,
+  .btn-complete-profile,
+  .btn-add-cart {
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: .9rem;
+    font-weight: 600;
+    gap: 8px;
+    transition: all .25s ease;
+  }
+
+  /* Hover efek smooth */
+  .btn-edit-vendor:hover,
+  .btn-delete-vendor:hover,
+  .btn-view-detail:hover,
+  .btn-complete-profile:hover,
+  .btn-add-cart:hover:not(:disabled) {
+    transform: translateY(-2px);
+  }
+
+  /* Form add cart biar tidak melebar dan rapi */
+  .add-to-cart-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
+
+  /* Qty biar sedikit lebih besar & rapi */
+  .qty-control {
+    height: 36px;
+  }
+  .qty-btn {
+    width: 36px;
+    height: 36px;
+  }
+  .qty-input {
+    height: 36px;
+    width: 50px;
+    font-size: .9rem;
+  }
+
+
 
 //- ============== WRAPPER BERBEDA ==============
 if isVendorDashboard
