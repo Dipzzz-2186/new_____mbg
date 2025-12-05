@@ -80,7 +80,9 @@ block content
                           strong Rp #{Number(item.price_at).toLocaleString('id-ID')}
                         td.text-center
                           .d-inline-flex.align-items-center.bg-light.rounded.px-2.py-1
-                            span.badge.bg-primary.rounded-pill= item.qty
+                            span.badge.bg-primary.rounded-pill
+                            = Number(item.qty || 0).toLocaleString('id-ID', { maximumFractionDigits: 0 })
+
                         td.text-center
                           strong.text-success Rp #{Number(subtotal).toLocaleString('id-ID')}
                         td.text-center

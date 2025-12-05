@@ -60,7 +60,6 @@ exports.dashboard = async (req, res) => {
 
 
 // =================== CART ===================
-// =================== CART ===================
 exports.viewCart = async (req, res) => {
   try {
     const userId = req.session.user.id;
@@ -94,7 +93,7 @@ exports.viewCart = async (req, res) => {
     // mapping boleh simpel gini, biar jelas
     const items = rows.map(r => ({
       id: r.id,
-      qty: r.qty,
+      qty: Number(r.qty || 0),
       price_at: r.price_at,
       product_name: r.product_name,
       product_image: r.product_image
@@ -128,8 +127,13 @@ exports.addToCart = async (req, res) => {
       return res.redirect('/login');
     }
 
-    const productId = req.body.product_id;
-    const qty = parseFloat(req.body.qty) || 1;
+ const productId = req.body.product_id;
+
+// qty Wajib integer minimal 1
+let qty = parseInt(req.body.qty, 10);
+if (isNaN(qty) || qty < 1) {
+  qty = 1;
+}
 
     const [prodRows] = await pool.query(
       'SELECT id, price FROM products WHERE id = ?',

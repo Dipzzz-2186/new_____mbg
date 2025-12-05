@@ -127,12 +127,28 @@ block content
                 
                 .d-flex.align-items-center.justify-content-between.mb-3
                   .d-flex.align-items-center.gap-3
-                    .input-group(style="width: 110px;")
-                      button.btn.btn-outline-secondary.btn-sm(type="button" onclick="decrementQty()" style="border-radius: 8px 0 0 8px;")
-                        i.bi.bi-dash
-                      input#qtyInput.form-control.form-control-sm.text-center.fw-bold(type="number" name="qty" value="1" min="0.1" step="0.1" style="border-left: none; border-right: none;")
-                      button.btn.btn-outline-secondary.btn-sm(type="button" onclick="incrementQty()" style="border-radius: 0 8px 8px 0;")
-                        i.bi.bi-plus
+                  .input-group(style="width: 110px;")
+                    button.btn.btn-outline-secondary.btn-sm(
+                      type="button"
+                      onclick="decrementQty()"
+                      style="border-radius: 8px 0 0 8px;"
+                    )
+                      i.bi.bi-dash
+                    input#qtyInput.form-control.form-control-sm.text-center.fw-bold(
+                      type="number"
+                      name="qty"
+                      value="1"
+                      min="1"
+                      step="1"
+                      style="border-left: none; border-right: none;"
+                    )
+                    button.btn.btn-outline-secondary.btn-sm(
+                      type="button"
+                      onclick="incrementQty()"
+                      style="border-radius: 0 8px 8px 0;"
+                    )
+                      i.bi.bi-plus
+
                   div(style="text-align: right;")
                     .text-muted(style="font-size: 0.75rem;") Stok Total: 
                       strong.text-dark= Number((product && product.stock) || 0).toLocaleString('id-ID')
@@ -182,26 +198,27 @@ block content
   script.
     function incrementQty() {
       const input = document.getElementById('qtyInput');
-      let current = parseInt(input.value.replace(',', '.')) || 0;
+      let current = parseInt(input.value, 10);
+      if (isNaN(current) || current < 1) current = 1;
       input.value = current + 1;
       updateSubtotal();
     }
     
     function decrementQty() {
       const input = document.getElementById('qtyInput');
-      const min = parseInt(input.min) || 1;
-      let current = parseInt(input.value.replace(',', '.')) || min;
+      const min = parseInt(input.min, 10) || 1;
+      let current = parseInt(input.value, 10);
+      if (isNaN(current) || current < min) current = min;
       if (current > min) {
         input.value = current - 1;
         updateSubtotal();
       }
     }
 
-
     function updateSubtotal() {
-      // This would calculate based on quantity
-      // For now it just shows the base price
+      // TODO: kalau mau, hitung ulang subtotal di detail page
     }
+
 
   style
     | .nav-tabs .nav-link { border: none; padding: 0.75rem 1rem; }

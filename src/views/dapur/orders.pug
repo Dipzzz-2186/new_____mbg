@@ -3,41 +3,94 @@ extends ../layout
 
 block content
   .container-fluid.px-3.px-lg-5.py-4.py-lg-5
-    .d-flex.justify-content-between.align-items-center.mb-4
-      h3.mb-0 Riwayat Pesanan Dapur
-      a.btn.btn-outline-secondary(href="/dapur/dashboard")
-        i.bi.bi-arrow-left.me-1
-        | Kembali ke Dashboard
+    //- Clean Header with Breadcrumb
+    .page-header.mb-5
+      .d-flex.justify-content-between.align-items-start.flex-wrap.gap-3
+        div
+          nav.mb-3(aria-label="breadcrumb")
+            ol.breadcrumb.mb-0
+              li.breadcrumb-item
+                a.text-decoration-none(href="/dapur/dashboard")
+                  i.bi.bi-house-door.me-1
+                  span Dashboard
+              li.breadcrumb-item.active(aria-current="page")
+                i.bi.bi-receipt-cutoff.me-1
+                span Riwayat Pesanan
+          
+          .d-flex.align-items-center.gap-3
+            i.bi.bi-clock-history.header-icon
+            div
+              h1.mb-1.fw-bold.text-dark Riwayat Pesanan
+              p.text-muted.mb-0.d-flex.align-items-center.gap-2
+                i.bi.bi-info-circle(style="font-size: 0.9rem;")
+                span Lihat dan kelola semua pesanan Anda
+        
+        .d-flex.gap-2
+          a.btn.btn-outline-secondary.px-4.py-2(href="/dapur/dashboard")
+            i.bi.bi-arrow-left.me-2
+            | Kembali
+          a.btn.btn-success.px-4.py-2(href="/market")
+            i.bi.bi-bag-plus.me-2
+            | Belanja Lagi
 
+    //- Filter & Stats Bar
+    if orders && orders.length
+      .filter-bar.card.border-0.shadow-sm.mb-4
+        .card-body.p-4
+          .row.g-3.align-items-center
+            .col-md-8
+              .d-flex.gap-2.flex-wrap
+                button.filter-btn.active(data-filter="all")
+                  i.bi.bi-grid.me-2
+                  span Semua
+                  .badge.bg-dark.bg-opacity-10.ms-2= orders.length
+                button.filter-btn(data-filter="awaiting_yayasan")
+                  i.bi.bi-hourglass-split.me-2
+                  span Menunggu
+                  - const pendingCount = orders.filter(o => o.status === 'awaiting_yayasan').length
+                  if pendingCount > 0
+                    .badge.bg-warning.bg-opacity-20.text-warning.ms-2= pendingCount
+                button.filter-btn(data-filter="completed")
+                  i.bi.bi-check-circle-fill.me-2
+                  span Selesai
+                  - const completedCount = orders.filter(o => o.status === 'completed').length
+                  if completedCount > 0
+                    .badge.bg-success.bg-opacity-20.text-success.ms-2= completedCount
+            
+            .col-md-4
+              .search-box.position-relative
+                i.bi.bi-search.search-icon
+                input#orderSearch.form-control(type="search" placeholder="Cari pesanan...")
+
+    //- Orders List
     .card.border-0.shadow-sm.orders-card
-      .card-header.bg-white.border-0.p-4.d-flex.justify-content-between.align-items-center
-        h4.mb-0.fw-semibold.text-dark
-          i.bi.bi-clock-history.me-2.text-primary
-          | Semua Pesanan
-        if orders && orders.length
-          span.badge.bg-light.text-dark.px-3.py-2
-            i.bi.bi-list-ul.me-1
-            = orders.length + ' pesanan'
+      .card-header.bg-white.border-0.p-4
+        .d-flex.justify-content-between.align-items-center
+          h4.mb-0.fw-semibold.text-dark
+            i.bi.bi-receipt-cutoff.me-2.text-success
+            | Daftar Pesanan
+          if orders && orders.length
+            .d-flex.align-items-center.gap-2
+              span.text-muted.small Total:
+              span.badge.bg-light.text-dark.px-3.py-2.fw-semibold= orders.length + ' pesanan'
 
       .card-body.p-4
         if orders && orders.length
-          .orders-list
+          .orders-list#ordersList
             each o, idx in orders
-              .order-item.mb-3.p-4.border.rounded-3(data-index=idx)
-                .row.align-items-center.g-3
-                  .col-md-7
-                    .d-flex.align-items-center.gap-3.mb-3.mb-md-0
-                      .order-number.text-white.fw-bold
-                        | ##{o.id}
-                      div
-                        .fw-bold.fs-5.text-success.mb-1
-                          i.bi.bi-currency-dollar.me-1
-                          | Rp #{Number(o.total || 0).toLocaleString('id-ID')}
-                        .text-muted.small.d-flex.align-items-center.gap-2
-                          i.bi.bi-calendar3
-                          = o.created_at
+              .order-item.mb-4.border.rounded-3(data-index=idx data-status=o.status)
+                //- Order Header
+                .order-header.p-4.bg-light.rounded-top.d-flex.justify-content-between.align-items-center.flex-wrap.gap-3
+                  .d-flex.align-items-center.gap-3
+                    .order-id
+                      i.bi.bi-hash.text-muted
+                      span.fw-bold.text-dark= o.id
+                    .vr.d-none.d-md-block
+                    .order-date.text-muted.d-flex.align-items-center.gap-2
+                      i.bi.bi-calendar3
+                      span= o.created_at
                   
-                  .col-md-5.text-md-end
+                  .d-flex.align-items-center.gap-3
                     - let statusLabel = '';
                     - let badgeClass = '';
                     - let iconClass = '';
@@ -63,35 +116,541 @@ block content
                       - badgeClass = 'badge-secondary';
                       - iconClass = 'bi-hourglass';
 
-                    span.badge.px-3.py-2.fw-semibold(class=badgeClass)
-                      i(class=iconClass).me-1
+                    span.status-badge.px-3.py-2.fw-semibold(class=badgeClass)
+                      i(class=iconClass).me-2
                       = statusLabel
 
-                //- DETAIL ITEM ORDER (produk, qty, harga satuan, subtotal)
-                if o.items && o.items.length
-                  table.table.table-sm.align-middle.mt-3.mb-0
-                    thead
-                      tr
-                        th(style='width:40%') Produk
-                        th.text-center(style='width:15%') Jumlah
-                        th.text-end(style='width:20%') Harga Satuan
-                        th.text-end(style='width:25%') Subtotal
-                    tbody
-                      each it in o.items
-                        tr
-                          td= it.product_name
-                          td.text-center= it.qty
-                          td.text-end Rp #{Number(it.price || 0).toLocaleString('id-ID')}
-                          td.text-end Rp #{Number(it.subtotal || (Number(it.price || 0) * Number(it.qty || 0))).toLocaleString('id-ID')}
-                else
-                  .text-muted.small.mt-2 Tidak ada item untuk order ini.
+                //- Order Items Table
+                .order-body.p-4
+                  if o.items && o.items.length
+                    .table-responsive
+                      table.table.table-hover.align-middle.mb-0
+                        thead
+                          tr.border-bottom
+                            th.text-muted.fw-semibold.py-3
+                              i.bi.bi-box-seam.me-2
+                              | Produk
+                            th.text-center.text-muted.fw-semibold.py-3
+                              i.bi.bi-hash.me-2
+                              | Qty
+                            th.text-end.text-muted.fw-semibold.py-3
+                              i.bi.bi-tag.me-2
+                              | Harga
+                            th.text-end.text-muted.fw-semibold.py-3
+                              i.bi.bi-calculator.me-2
+                              | Subtotal
+                        tbody
+                          each it in o.items
+                            tr.product-row
+                              td.py-3
+                                .d-flex.align-items-center.gap-2
+                                  .product-icon
+                                    i.bi.bi-box
+                                  .fw-medium= it.product_name
+                              td.text-center.py-3
+                                .qty-badge= it.qty
+                              td.text-end.py-3.text-muted= 'Rp ' + Number(it.price || 0).toLocaleString('id-ID')
+                              td.text-end.py-3.fw-semibold= 'Rp ' + Number(it.subtotal || (Number(it.price || 0) * Number(it.qty || 0))).toLocaleString('id-ID')
+                  else
+                    .text-center.text-muted.py-3
+                      i.bi.bi-inbox.me-2
+                      span Tidak ada item
+
+                //- Order Footer - Total
+                .order-footer.p-4.bg-light.rounded-bottom.d-flex.justify-content-between.align-items-center.border-top
+                  .d-flex.align-items-center.gap-2.text-muted
+                    i.bi.bi-info-circle
+                    span Total Pesanan
+                  .total-amount.d-flex.align-items-center.gap-2
+                    i.bi.bi-currency-dollar.text-success
+                    span.fw-bold.fs-4.text-success= 'Rp ' + Number(o.total || 0).toLocaleString('id-ID')
         else
           .empty-state.text-center.py-5
             .empty-icon.mb-4
               i.bi.bi-inbox
             h5.mb-3.text-dark Belum Ada Pesanan
-            p.text-muted.mb-4 Pesanan yang kamu buat akan muncul di halaman ini.
-            a.btn.btn-success.px-4.py-2(href="/market")
-              i.bi.bi-bag-plus.me-1
-              | Mulai Belanja
+            p.text-muted.mb-4 Pesanan yang Anda buat akan muncul di halaman ini
+            a.btn.btn-success.px-4.py-3(href="/market")
+              i.bi.bi-bag-plus.me-2
+              | Mulai Belanja Sekarang
+
+  //- Custom Styles
+  style.
+    :root {
+      --primary-green: #10b981;
+      --dark-green: #059669;
+      --light-green: #d1fae5;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+    }
     
+    /* Header */
+    .header-icon {
+      font-size: 2rem;
+      color: var(--primary-green);
+      animation: fadeInRotate 0.6s ease-out;
+    }
+    
+    @keyframes fadeInRotate {
+      from {
+        opacity: 0;
+        transform: rotate(-20deg) scale(0.8);
+      }
+      to {
+        opacity: 1;
+        transform: rotate(0) scale(1);
+      }
+    }
+    
+    .page-header h1 {
+      font-size: 2rem;
+      animation: fadeInUp 0.6s ease-out;
+    }
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    /* Breadcrumb */
+    .breadcrumb {
+      background: transparent;
+      padding: 0;
+    }
+    
+    .breadcrumb-item a {
+      color: #6b7280;
+      transition: all 0.3s ease;
+    }
+    
+    .breadcrumb-item a:hover {
+      color: var(--primary-green);
+    }
+    
+    .breadcrumb-item.active {
+      color: var(--primary-green);
+      font-weight: 600;
+    }
+    
+    /* Filter Bar */
+    .filter-bar {
+      border-radius: 16px;
+      animation: slideInDown 0.5s ease-out;
+    }
+    
+    @keyframes slideInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .filter-btn {
+      background: white;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 0.6rem 1.2rem;
+      font-weight: 600;
+      color: #4b5563;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+    
+    .filter-btn:hover {
+      border-color: var(--primary-green);
+      background: #f0fdf4;
+      color: var(--primary-green);
+      transform: translateY(-2px);
+    }
+    
+    .filter-btn.active {
+      background: var(--primary-green);
+      border-color: var(--primary-green);
+      color: white;
+    }
+    
+    .filter-btn .badge {
+      font-size: 0.75rem;
+      padding: 0.2rem 0.5rem;
+    }
+    
+    /* Search Box */
+    .search-box {
+      position: relative;
+    }
+    
+    .search-icon {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #9ca3af;
+      font-size: 1.1rem;
+      transition: color 0.3s ease;
+    }
+    
+    .search-box input {
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 0.65rem 1rem 0.65rem 2.8rem;
+      transition: all 0.3s ease;
+    }
+    
+    .search-box input:focus {
+      border-color: var(--primary-green);
+      box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+      outline: none;
+    }
+    
+    .search-box input:focus ~ .search-icon {
+      color: var(--primary-green);
+    }
+    
+    /* Orders Card */
+    .orders-card {
+      border-radius: 16px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      animation: fadeIn 0.6s ease-out;
+    }
+    
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+    
+    /* Order Item */
+    .order-item {
+      background: white;
+      border: 2px solid #e5e7eb !important;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      opacity: 0;
+      animation: slideInLeft 0.5s ease-out forwards;
+    }
+    
+    .order-item:nth-child(1) { animation-delay: 0.1s; }
+    .order-item:nth-child(2) { animation-delay: 0.2s; }
+    .order-item:nth-child(3) { animation-delay: 0.3s; }
+    .order-item:nth-child(4) { animation-delay: 0.4s; }
+    .order-item:nth-child(5) { animation-delay: 0.5s; }
+    
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    
+    .order-item:hover {
+      border-color: var(--primary-green) !important;
+      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.15);
+      transform: translateY(-4px);
+    }
+    
+    /* Order Header */
+    .order-header {
+      transition: all 0.3s ease;
+    }
+    
+    .order-id {
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    
+    .order-date {
+      font-size: 0.9rem;
+    }
+    
+    /* Status Badges */
+    .status-badge {
+      border-radius: 10px;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      transition: all 0.3s ease;
+    }
+    
+    .badge-warning {
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fde68a;
+    }
+    
+    .badge-primary {
+      background: #dbeafe;
+      color: #1e40af;
+      border: 1px solid #bfdbfe;
+    }
+    
+    .badge-success {
+      background: var(--light-green);
+      color: var(--dark-green);
+      border: 1px solid #a7f3d0;
+    }
+    
+    .badge-danger {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+    
+    .badge-secondary {
+      background: #f1f5f9;
+      color: #475569;
+      border: 1px solid #e2e8f0;
+    }
+    
+    /* Table */
+    .table thead th {
+      border-bottom: 2px solid #e5e7eb;
+      font-size: 0.9rem;
+    }
+    
+    .product-row {
+      transition: all 0.3s ease;
+    }
+    
+    .product-row:hover {
+      background: #fafafa;
+    }
+    
+    .product-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--light-green) 0%, #a7f3d0 100%);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--dark-green);
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+    
+    .product-row:hover .product-icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+    
+    .qty-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      background: #f1f5f9;
+      border-radius: 8px;
+      font-weight: 600;
+      color: #475569;
+      transition: all 0.3s ease;
+    }
+    
+    .product-row:hover .qty-badge {
+      background: #e2e8f0;
+      transform: scale(1.05);
+    }
+    
+    /* Order Footer */
+    .order-footer {
+      border-top: 2px solid #e5e7eb !important;
+    }
+    
+    .total-amount {
+      animation: pulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.8;
+      }
+    }
+    
+    /* Empty State */
+    .empty-state {
+      animation: fadeInScale 0.6s ease-out;
+    }
+    
+    @keyframes fadeInScale {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+    
+    .empty-icon i {
+      font-size: 5rem;
+      color: #d1d5db;
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-15px);
+      }
+    }
+    
+    /* Buttons */
+    .btn {
+      border-radius: 10px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-success {
+      background: var(--primary-green);
+      border: none;
+    }
+    
+    .btn-success:hover {
+      background: var(--dark-green);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(16, 185, 129, 0.3);
+    }
+    
+    .btn-outline-secondary {
+      border: 2px solid #d1d5db;
+      color: #6b7280;
+    }
+    
+    .btn-outline-secondary:hover {
+      background: #f3f4f6;
+      border-color: #9ca3af;
+      color: #374151;
+      transform: translateY(-2px);
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header-icon { font-size: 1.6rem; }
+      .page-header h1 { font-size: 1.6rem; }
+      
+      .filter-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+      }
+      
+      .order-id { font-size: 1rem; }
+      .order-date { font-size: 0.85rem; }
+      
+      .table thead th { font-size: 0.85rem; }
+      .product-icon { width: 32px; height: 32px; }
+      .qty-badge { width: 32px; height: 32px; }
+      
+      .total-amount { font-size: 1.1rem !important; }
+    }
+    
+    /* Hidden class for filtering */
+    .order-item.hidden {
+      display: none;
+    }
+
+  //- JavaScript
+  script.
+    (function(){
+      document.addEventListener('DOMContentLoaded', function(){
+        // Filter functionality
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const orderItems = document.querySelectorAll('.order-item');
+        
+        filterBtns.forEach(function(btn) {
+          btn.addEventListener('click', function() {
+            // Remove active class from all buttons
+            filterBtns.forEach(function(b) { b.classList.remove('active'); });
+            // Add active class to clicked button
+            this.classList.add('active');
+            
+            const filter = this.getAttribute('data-filter');
+            
+            orderItems.forEach(function(item) {
+              if (filter === 'all') {
+                item.classList.remove('hidden');
+              } else {
+                const status = item.getAttribute('data-status');
+                if (status === filter) {
+                  item.classList.remove('hidden');
+                } else {
+                  item.classList.add('hidden');
+                }
+              }
+            });
+          });
+        });
+        
+        // Search functionality
+        const searchInput = document.getElementById('orderSearch');
+        if (searchInput) {
+          searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            
+            orderItems.forEach(function(item) {
+              const orderId = item.querySelector('.order-id span').textContent.toLowerCase();
+              const products = Array.from(item.querySelectorAll('.product-row td:first-child'));
+              const hasMatch = products.some(function(td) {
+                return td.textContent.toLowerCase().includes(searchTerm);
+              });
+              
+              if (orderId.includes(searchTerm) || hasMatch || searchTerm === '') {
+                item.classList.remove('hidden');
+              } else {
+                item.classList.add('hidden');
+              }
+            });
+          });
+        }
+        
+        // Smooth scroll to top button
+        const scrollBtn = document.createElement('button');
+        scrollBtn.innerHTML = '<i class="bi bi-arrow-up"></i>';
+        scrollBtn.className = 'btn btn-success position-fixed bottom-0 end-0 m-4 rounded-circle shadow-lg';
+        scrollBtn.style.cssText = 'width: 50px; height: 50px; opacity: 0; transition: all 0.3s; z-index: 1000; display: none; border: none;';
+        scrollBtn.onclick = function(){ window.scrollTo({ top: 0, behavior: 'smooth' }); };
+        scrollBtn.onmouseover = function(){ this.style.transform = 'scale(1.1) translateY(-3px)'; };
+        scrollBtn.onmouseout = function(){ this.style.transform = 'scale(1)'; };
+        document.body.appendChild(scrollBtn);
+
+        window.addEventListener('scroll', function(){
+          if(window.scrollY > 400){
+            scrollBtn.style.display = 'flex';
+            scrollBtn.style.alignItems = 'center';
+            scrollBtn.style.justifyContent = 'center';
+            setTimeout(function(){ scrollBtn.style.opacity = '1'; }, 10);
+          } else {
+            scrollBtn.style.opacity = '0';
+            setTimeout(function(){ scrollBtn.style.display = 'none'; }, 300);
+          }
+        });
+      });
+    })();

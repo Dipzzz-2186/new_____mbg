@@ -38,65 +38,59 @@ app.use((req, res, next) => {
 
 // ==== MINI CART MIDDLEWARE ====
 app.use(async (req, res, next) => {
-  res.locals.cartCount = 0;
-  res.locals.miniCartItems = [];
-  res.locals.miniCartTotal = 0;
-  res.locals.miniCartTotalFormatted = '0';
-
   try {
-    if (!req.session.user || req.session.user.role !== 'dapur') return next();
+    // kalau belum login atau bukan dapur → jangan paksa baca cart
+    if (!req.session.user || req.session.user.role !== 'dapur') {
+      res.locals.cartCount = 0;
+      res.locals.miniCartItems = [];
+      res.locals.miniCartTotal = 0;
+      return next();
+    }
 
     const userId = req.session.user.id;
 
-    const [cartRows] = await pool.query(
-      'SELECT id FROM carts WHERE user_id = ? LIMIT 1',
-      [userId]
-    );
-    if (!cartRows.length) return next();
-
-    const cartId = cartRows[0].id;
-
-    const [items] = await pool.query(`
-      SELECT 
+    const [rows] = await pool.query(`
+      SELECT
         ci.qty,
-        p.price AS product_price,
-        p.name AS product_name,
+        ci.price_at,
+        p.name  AS product_name,
         p.image AS product_image
       FROM cart_items ci
+      JOIN carts c   ON c.id = ci.cart_id
       JOIN products p ON p.id = ci.product_id
-      WHERE ci.cart_id = ?
+      WHERE c.user_id = ?
       ORDER BY ci.id DESC
-    `, [cartId]);
+      LIMIT 5
+    `, [userId]);
 
-    if (!items.length) return next();
+    const items = rows.map(r => {
+      const qtyInt   = Number(r.qty || 0);       // <== buang .000 di sini
+      const priceNum = Number(r.price_at || 0);
+      const subtotal = qtyInt * priceNum;
 
-    const miniItems = items.map(row => {
-    const price = row.product_price || 0;
-    const subtotal = row.qty * price;
-    return {
-        name: row.product_name,
-        qty: row.qty,
+      return {
+        name: r.product_name,
+        qty: qtyInt,
         subtotal,
         subtotalFormatted: subtotal.toLocaleString('id-ID'),
-        // pakai path persis seperti di card produk
-        image_url: row.product_image || null
-    };
+        image_url: r.product_image
+      };
     });
 
+    const cartCount = items.reduce((sum, it) => sum + it.qty, 0);
+    const miniCartTotal = items.reduce((sum, it) => sum + it.subtotal, 0);
 
-    const total = miniItems.reduce((s, x) => s + x.subtotal, 0);
-    const count = miniItems.reduce((s, x) => s + x.qty, 0);
-
-    res.locals.miniCartItems = miniItems;
-    res.locals.miniCartTotal = total;
-    res.locals.miniCartTotalFormatted = total.toLocaleString('id-ID');
-    res.locals.cartCount = count;
-
-    next();
-  } catch (e) {
-    console.log("miniCart middleware error:", e.message);
-    next();
+    res.locals.miniCartItems = items;
+    res.locals.miniCartTotal = miniCartTotal;
+    res.locals.miniCartTotalFormatted = miniCartTotal.toLocaleString('id-ID');
+    res.locals.cartCount = cartCount; // <== sekarang integer (misal 6)
+  } catch (err) {
+    console.error('miniCart middleware error:', err);
+    res.locals.cartCount = 0;
+    res.locals.miniCartItems = [];
+    res.locals.miniCartTotal = 0;
   }
+  next();
 });
 
 // routes
