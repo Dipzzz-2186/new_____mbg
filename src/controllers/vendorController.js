@@ -658,3 +658,111 @@ exports.submitDapurSignature = async (req, res) => {
     return res.redirect('/vendor/orders');
   }
 };
+
+exports.editProductForm = async (req, res) => {
+  const { id } = req.params;
+
+  const currentUser =
+    req.user ||
+    res.locals.currentUser ||
+    (req.session && (req.session.user || req.session.currentUser)) ||
+    null;
+
+  if (!currentUser) {
+    return res.redirect('/login');
+  }
+
+  const vendorId = currentUser.id;
+
+  try {
+    const [rows] = await pool.query(
+      'SELECT * FROM products WHERE id = ? AND vendor_id = ?',
+      [id, vendorId]
+    );
+
+    if (!rows.length) {
+      req.flash && req.flash('error', 'Produk tidak ditemukan');
+      return res.redirect('/vendor/dashboard');
+    }
+
+    const product = rows[0];
+
+    return res.render('vendor/edit_product', {
+      title: 'Edit Produk',
+      product,
+      messages: {
+        error: req.flash ? req.flash('error') : null,
+        success: req.flash ? req.flash('success') : null,
+      },
+      csrfToken: req.csrfToken ? req.csrfToken() : null,
+    });
+  } catch (err) {
+    console.error('Error editProductForm:', err);
+    req.flash && req.flash('error', 'Gagal memuat data produk');
+    return res.redirect('/vendor/dashboard');
+  }
+};
+
+// UPDATE PRODUK
+exports.updateProduct = async (req, res) => {
+  const { id } = req.params;
+
+  const currentUser =
+    req.user ||
+    res.locals.currentUser ||
+    (req.session && (req.session.user || req.session.currentUser)) ||
+    null;
+
+  if (!currentUser) {
+    return res.redirect('/login');
+  }
+
+  const vendorId = currentUser.id;
+  const { name, price, stock, unit, category } = req.body;
+
+  try {
+    await pool.query(
+      `
+      UPDATE products
+      SET name = ?, price = ?, stock = ?, unit = ?, category = ?
+      WHERE id = ? AND vendor_id = ?
+      `,
+      [
+        name,
+        Number(price) || 0,
+        Number(stock) || 0,
+        unit || null,
+        category || null,
+        id,
+        vendorId,
+      ]
+    );
+
+    req.flash && req.flash('success', 'Produk berhasil diperbarui');
+    return res.redirect('/vendor/dashboard');
+  } catch (err) {
+    console.error('Error updateProduct:', err);
+    req.flash && req.flash('error', 'Gagal memperbarui produk');
+    return res.redirect(`/vendor/products/${id}/edit`);
+  }
+};
+
+// HAPUS PRODUK
+exports.deleteProduct = async (req, res) => {
+  const { id } = req.params;
+  const vendorId = req.session.user.id;
+
+  try {
+    await pool.query(
+      'DELETE FROM products WHERE id = ? AND vendor_id = ?',
+      [id, vendorId]
+    );
+    req.flash('success', 'Produk berhasil dihapus');
+  } catch (err) {
+    console.error('deleteProduct error:', err);
+    req.flash('error', 'Gagal menghapus produk');
+  }
+
+  return res.redirect('/vendor/dashboard');
+};
+

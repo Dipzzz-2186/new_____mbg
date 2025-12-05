@@ -1,3 +1,5 @@
+//- src/views/marketplace/_product_card.pug
+
 - var product = (typeof product !== 'undefined') ? product : ((typeof p !== 'undefined') ? p : {});
 - var productDetailUrl = `/market/product/${(product && product.id) || ''}`;
 - var isVendorDashboard = (typeof fromVendorDashboard !== 'undefined') ? !!fromVendorDashboard : false;
@@ -58,6 +60,9 @@ style.
     gap: 4px;
   }
 
+  .stock-badge.available { color: #28a745; }
+  .stock-badge.unavailable { color: #dc3545; }
+
   .category-badge {
     position: absolute;
     top: 12px;
@@ -96,63 +101,128 @@ style.
     color: white;
   }
 
-a.product-card-wrapper(href=productDetailUrl)
-  .product-card
+  .btn-view-detail {
+    width: 100%;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: .875rem;
+    font-weight: 600;
+    border: 1px solid #28a745;
+    color: #28a745;
+    background: #ffffff;
+    text-align: center;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all .2s ease;
+  }
+  .btn-view-detail:hover {
+    background: #f0fdf4;
+    color: #218838;
+    border-color: #218838;
+  }
 
-    .card-image-wrap
-      if product && product.image
-        img(src=product.image alt=product.name loading="lazy")
-      else
-        .image-placeholder
-          i.bi.bi-image.placeholder-icon
 
-      if product && product.stock > 0
-        .stock-badge.available
-          i.bi.bi-check-circle-fill
-          | Tersedia
-      else
-        .stock-badge.unavailable
-          i.bi.bi-x-circle-fill
-          | Habis
+//- ============== WRAPPER BERBEDA ==============
+if isVendorDashboard
+  //- DI DASHBOARD VENDOR: BUKAN <a>, cukup div supaya tombol bisa diklik bebas
+  .product-card-wrapper
+    .product-card
+      //- IMAGE
+      .card-image-wrap
+        if product && product.image
+          img(src=product.image alt=(product.name || 'Produk') loading="lazy")
+        else
+          .image-placeholder
+            i.bi.bi-image.placeholder-icon
 
-      if product && product.category
-        .category-badge= product.category
+        if product && product.stock > 0
+          .stock-badge.available
+            i.bi.bi-check-circle-fill
+            |  Tersedia
+        else
+          .stock-badge.unavailable
+            i.bi.bi-x-circle-fill
+            |  Habis
 
-    .card-body
-      .product-name
-        .product-name-text= product.name || 'Produk'
+        if product && product.category
+          .category-badge= product.category
 
-      .price-section
-        .current-price Rp #{Number(product.price || 0).toLocaleString('id-ID')}
+      //- BODY
+      .card-body
+        .product-name
+          .product-name-text= product.name || 'Produk'
 
-      .product-meta
-        i.bi.bi-star-fill.rating-star
-        span 4.9 |
-        span #{Number(product.stock || 0)} stok
+        .price-section
+          .current-price Rp #{Number(product.price || 0).toLocaleString('id-ID')}
 
-    .card-footer
-      // HANYA MUNCUL DI DASHBOARD VENDOR
-      if currentUser && currentUser.role === 'vendor' && isVendorDashboard
-        a.btn-edit-vendor(
-          href=`/vendor/products/${product.id}/edit`
-          onclick="event.stopPropagation()"
-        )
-          i.bi.bi-pencil-square
-          |  Edit
-        form(
-          method='POST',
-          action=`/vendor/products/${product.id}/delete`,
-          onsubmit="event.stopPropagation()"
-        )
-          button.btn-delete-vendor(type='submit')
-            i.bi.bi-trash
-            |  Hapus
+        .product-meta
+          i.bi.bi-star-fill.rating-star
+          span 4.9 |
+          span #{Number(product.stock || 0)} stok
 
-      else if currentUser && currentUser.role === 'dapur'
+      //- FOOTER: tombol edit & hapus vendor
+      .card-footer
+        if currentUser && currentUser.role === 'vendor'
+          a.btn-edit-vendor(
+            href=`/vendor/products/${product.id}/edit`
+          )
+            i.bi.bi-pencil-square
+            |  Edit
+
+          form(
+            method='POST',
+            action=`/vendor/products/${product.id}/delete`,
+            onsubmit="return confirm('Yakin ingin menghapus produk ini?');"
+          )
+            if typeof csrfToken !== 'undefined'
+              input(type="hidden" name="_csrf" value=csrfToken)
+            button.btn-delete-vendor(type='submit')
+              i.bi.bi-trash
+              |  Hapus
+        else
+          a.btn-view-detail(href=productDetailUrl)
+            i.bi.bi-eye
+            |  Detail
+
+else
+  //- DI HALAMAN MARKETPLACE BIASA: kardi klik -> ke detail
+  a.product-card-wrapper(href=productDetailUrl)
+    .product-card
+      .card-image-wrap
+        if product && product.image
+          img(src=product.image alt=(product.name || 'Produk') loading="lazy")
+        else
+          .image-placeholder
+            i.bi.bi-image.placeholder-icon
+
+        if product && product.stock > 0
+          .stock-badge.available
+            i.bi.bi-check-circle-fill
+            |  Tersedia
+        else
+          .stock-badge.unavailable
+            i.bi.bi-x-circle-fill
+            |  Habis
+
+        if product && product.category
+          .category-badge= product.category
+
+      .card-body
+        .product-name
+          .product-name-text= product.name || 'Produk'
+
+        .price-section
+          .current-price Rp #{Number(product.price || 0).toLocaleString('id-ID')}
+
+        .product-meta
+          i.bi.bi-star-fill.rating-star
+          span 4.9 |
+          span #{Number(product.stock || 0)} stok
+
+      .card-footer
         a.btn-view-detail(href=productDetailUrl onclick="event.stopPropagation()")
           i.bi.bi-eye
-          |  Detail
-
-      else
-        a.btn-view-detail(href=productDetailUrl onclick="event.stopPropagation()")
-          | Lihat Detail
+          |  Lihat Detail

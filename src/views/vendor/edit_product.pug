@@ -1,0 +1,48 @@
+extends ../layout
+
+block content
+  .container.py-5
+    h2.mb-4.text-success Edit Produk
+
+    form(method="POST" action=`/vendor/products/${product.id}/edit` enctype="multipart/form-data")
+
+      .row
+        .col-md-6.mb-3
+          label.form-label Nama Produk
+          input.form-control(type="text" name="name" required value=product.name)
+
+        .col-md-3.mb-3
+          label.form-label Harga
+          input.form-control(type="number" name="price" min="0" value=product.price required)
+
+        .col-md-3.mb-3
+          label.form-label Stok
+          input.form-control(type="number" name="stock" min="0" value=product.stock required)
+
+      .row
+        .col-md-4.mb-3
+          label.form-label Satuan
+          input.form-control(type="text" name="unit" value=product.unit placeholder="kg, pcs, liter...")
+
+        .col-md-4.mb-3
+          label.form-label Kategori
+          select.form-select(name="category")
+            option(selected=product.category==="Sayuran") Sayuran
+            option(selected=product.category==="Daging") Daging
+            option(selected=product.category==="Sembako") Sembako
+            option(selected=product.category==="other") Lainnya
+
+      .mb-3
+        label.form-label Ganti Gambar (opsional)
+        input.form-control(type="file" name="image")
+        if product.image
+          img(src=product.image width="120" class="mt-2 rounded border")
+
+      .mt-4.d-flex.gap-3
+        button.btn.btn-success.btn-lg(type="submit")
+          i.bi.bi-save.me-2
+          | Simpan Perubahan
+
+        a.btn.btn-outline-secondary.btn-lg(href="/vendor/dashboard")
+          i.bi.bi-arrow-left.me-1
+          | Batal
