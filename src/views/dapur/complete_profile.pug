@@ -28,5 +28,5 @@ block content
                 textarea.form-control#address(name="address" rows="5" required)= (user && user.address) || ''
 
               .d-flex.justify-content-between.align-items-center
-                a.btn.btn-outline-secondary(href="/market") Batal
+                button.btn.btn-outline-secondary(type="button" onclick="history.back()") Batal
                 button.btn.btn-primary(type="submit") Simpan & Kembali ke Market

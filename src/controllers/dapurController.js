@@ -431,16 +431,23 @@ exports.showCompleteProfileForm = async (req, res) => {
       req.flash('error', 'Silakan login dulu.');
       return res.redirect('/login');
     }
-    // ambil user fresh dari DB (opsional)
-    const [rows] = await pool.query('SELECT id, name, email, phone, address FROM users WHERE id = ?', [user.id]);
-    const dbUser = rows[0] || user;
+
+    // simpan page asal hanya sekali
+    if (!req.session.returnTo) {
+      req.session.returnTo = req.headers.referer || '/market';
+    }
+
+    const [rows] = await pool.query(
+      'SELECT id, name, email, phone, address FROM users WHERE id = ?',
+      [user.id]
+    );
 
     res.render('dapur/complete_profile', {
       title: 'Lengkapi Data Dapur',
-      user: dbUser
+      user: rows[0] || user
     });
   } catch (err) {
-    console.error('showCompleteProfileForm error:', err);
+    console.error(err);
     req.flash('error', 'Gagal membuka form.');
     return res.redirect('/market');
   }
@@ -463,22 +470,22 @@ exports.completeProfilePost = async (req, res) => {
       return res.redirect('/dapur/profile/complete');
     }
 
-    // simple phone validation (boleh ganti)
-    if (phone.length < 6) {
-      req.flash('error', 'Nomor telepon tidak valid.');
-      return res.redirect('/dapur/profile/complete');
-    }
+    await pool.query(
+      'UPDATE users SET phone = ?, address = ?, updated_at = NOW() WHERE id = ?',
+      [phone, address, user.id]
+    );
 
-    await pool.query('UPDATE users SET phone = ?, address = ?, updated_at = NOW() WHERE id = ?', [phone, address, user.id]);
-
-    // update session user supaya view lain melihat data terbaru
     req.session.user.phone = phone;
     req.session.user.address = address;
 
+    const redirectTo = req.session.returnTo || '/market';
+    delete req.session.returnTo;
+
     req.flash('success', 'Data berhasil disimpan.');
-    return res.redirect('/market');
+    return res.redirect(redirectTo);
+
   } catch (err) {
-    console.error('completeProfilePost error:', err);
+    console.error(err);
     req.flash('error', 'Gagal menyimpan data.');
     return res.redirect('/dapur/profile/complete');
   }

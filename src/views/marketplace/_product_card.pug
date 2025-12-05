@@ -83,6 +83,7 @@ style.
     overflow: hidden;
   }
 
+  /* tombol vendor dashboard */
   .btn-edit-vendor,
   .btn-delete-vendor {
     width: 100%;
@@ -91,37 +92,111 @@ style.
     font-size: .875rem;
     font-weight: 600;
     margin-top: 6px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
   }
   .btn-edit-vendor {
     background: #0d6efd;
     color: white;
+    text-decoration: none;
   }
+  .btn-edit-vendor:hover { background: #0b5ed7; }
+
   .btn-delete-vendor {
     background: #dc3545;
     color: white;
   }
+  .btn-delete-vendor:hover { background: #bb2d3b; }
 
-  .btn-view-detail {
+  /* tombol untuk dapur & non-dapur */
+  .btn-view-detail,
+  .btn-complete-profile,
+  .btn-add-cart {
     width: 100%;
     padding: 8px 14px;
     border-radius: 8px;
     font-size: .875rem;
     font-weight: 600;
-    border: 1px solid #28a745;
-    color: #28a745;
-    background: #ffffff;
-    text-align: center;
-    text-decoration: none;
-    display: inline-flex;
+    border: none;
+    cursor: pointer;
+    display: flex;
     align-items: center;
     justify-content: center;
     gap: 6px;
-    transition: all .2s ease;
+    text-decoration: none;
+  }
+
+  .btn-view-detail {
+    background: #ffffff;
+    border: 2px solid #28a745;
+    color: #28a745;
   }
   .btn-view-detail:hover {
-    background: #f0fdf4;
+    background: #f0f9f3;
     color: #218838;
     border-color: #218838;
+  }
+
+  .btn-complete-profile {
+    background: #ffc107;
+    color: #2c3e50;
+  }
+  .btn-complete-profile:hover {
+    background: #ffb300;
+  }
+
+  .btn-add-cart {
+    background: #28a745;
+    color: #ffffff;
+  }
+  .btn-add-cart:hover:not(:disabled) {
+    background: #218838;
+  }
+  .btn-add-cart:disabled {
+    background: #9e9e9e;
+    cursor: not-allowed;
+  }
+
+  .add-to-cart-form {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .qty-control {
+    display: flex;
+    align-items: center;
+    border: 2px solid #e8e8e8;
+    border-radius: 8px;
+    overflow: hidden;
+    background: white;
+  }
+  .qty-btn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border: none;
+    color: #28a745;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+  .qty-input {
+    width: 45px;
+    height: 32px;
+    border: 0;
+    border-left: 1px solid #e8e8e8;
+    border-right: 1px solid #e8e8e8;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.875rem;
+    background: white;
   }
 
 
@@ -223,6 +298,53 @@ else
           span #{Number(product.stock || 0)} stok
 
       .card-footer
-        a.btn-view-detail(href=productDetailUrl onclick="event.stopPropagation()")
-          i.bi.bi-eye
-          |  Lihat Detail
+        if currentUser.role === 'dapur'
+          if !(currentUser.phone && currentUser.address)
+              a.btn-complete-profile(
+                href="/dapur/profile/complete"
+                onclick="event.stopPropagation()"
+                title="Lengkapi data dapur"
+              )
+                i.bi.bi-exclamation-circle
+                |  Lengkapi Data Dapur
+          else
+            form.add-to-cart-form(
+              action="/dapur/cart/add"
+              method="post"
+              onclick="event.stopPropagation()"
+            )
+              input(type="hidden" name="product_id" value=(product && product.id))
+              if typeof csrfToken !== 'undefined'
+                input(type="hidden" name="_csrf" value=csrfToken)
+
+              .qty-control
+                button.qty-btn(
+                  type="button"
+                  onclick="event.stopPropagation(); let inp=this.parentElement.querySelector('input[name=qty]'); let v=parseInt(inp.value||'1',10); if(isNaN(v)||v<=1)v=1; else v--; inp.value=v;"
+                )
+                  i.bi.bi-dash
+                input.qty-input(
+                  type="number"
+                  name="qty"
+                  value="1"
+                  min="1"
+                  step="1"
+                  readonly
+                  onclick="event.stopPropagation()"
+                )
+                button.qty-btn(
+                  type="button"
+                  onclick="event.stopPropagation(); let inp=this.parentElement.querySelector('input[name=qty]'); let v=parseInt(inp.value||'1',10); if(isNaN(v)||v<1)v=1; else v++; inp.value=v;"
+                )
+                  i.bi.bi-plus
+
+              button.btn-add-cart(
+                type="submit"
+                disabled=!((product && product.stock) && Number(product.stock) > 0)
+              )
+                i.bi.bi-cart-plus
+                |  Keranjang
+        else
+          a.btn-view-detail(href=productDetailUrl)
+            i.bi.bi-eye
+            |  Detail
