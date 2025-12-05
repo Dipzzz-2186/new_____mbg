@@ -20,22 +20,8 @@ block content
           span Mulai Belanja
 
     //- Stats Overview - Clean Design
-    .row.g-3.g-lg-4.mb-5
-      .col-md-6.col-xl-3
-        .stat-card.card.border-0.h-100
-          .card-body.p-4
-            .d-flex.align-items-start.justify-content-between.mb-3
-              .stat-info
-                .stat-label.text-muted.mb-2.d-flex.align-items-center.gap-2
-                  i.bi.bi-receipt
-                  span Total Pesanan
-                - const totalOrders = recentOrders ? recentOrders.length : 0
-                h2.mb-0.fw-bold.text-dark= totalOrders
-              .stat-icon.stat-icon-primary
-                i.bi.bi-box-seam
-            .progress.mt-3(style="height: 5px; background: #f1f5f9;")
-              .progress-bar.bg-primary(style="width: 100%;")
-      
+    .row.g-3.g-lg-4.mb-5      
+      // MENUNGGU APPROVAL
       .col-md-6.col-xl-3
         .stat-card.card.border-0.h-100
           .card-body.p-4
@@ -51,35 +37,53 @@ block content
             .progress.mt-3(style="height: 5px; background: #f1f5f9;")
               .progress-bar.bg-warning(style="width: 75%;")
       
+      // DISETUJUI
       .col-md-6.col-xl-3
         .stat-card.card.border-0.h-100
           .card-body.p-4
             .d-flex.align-items-start.justify-content-between.mb-3
               .stat-info
                 .stat-label.text-muted.mb-2.d-flex.align-items-center.gap-2
-                  i.bi.bi-check-circle
-                  span Selesai
-                - const completedCount = recentOrders ? recentOrders.filter(o => o.status === 'completed').length : 0
-                h2.mb-0.fw-bold.text-success= completedCount
-              .stat-icon.stat-icon-success
-                i.bi.bi-check2-circle
+                  i.bi.bi-patch-check-fill
+                  span Disetujui
+                - const approveCount = recentOrders ? recentOrders.filter(o => o.status === 'approved_yayasan').length : 0
+                h2.mb-0.fw-bold.text-dark= approveCount
+              .stat-icon.stat-icon-primary
+                i.bi.bi-shield-check
             .progress.mt-3(style="height: 5px; background: #f1f5f9;")
-              .progress-bar.bg-success(style="width: 90%;")
+              .progress-bar.bg-primary(style="width: 100%;")
 
+      // DITOLAK
       .col-md-6.col-xl-3
         .stat-card.card.border-0.h-100
           .card-body.p-4
             .d-flex.align-items-start.justify-content-between.mb-3
               .stat-info
                 .stat-label.text-muted.mb-2.d-flex.align-items-center.gap-2
-                  i.bi.bi-x-circle
+                  i.bi.bi-x-octagon
                   span Ditolak
                 - const rejectedCount = recentOrders ? recentOrders.filter(o => o.status === 'rejected_yayasan').length : 0
                 h2.mb-0.fw-bold.text-danger= rejectedCount
               .stat-icon.stat-icon-danger
-                i.bi.bi-x-octagon
+                i.bi.bi-slash-circle
             .progress.mt-3(style="height: 5px; background: #f1f5f9;")
               .progress-bar.bg-danger(style="width: 100%;")
+
+      // SELESAI
+      .col-md-6.col-xl-3
+        .stat-card.card.border-0.h-100
+          .card-body.p-4
+            .d-flex.align-items-start.justify-content-between.mb-3
+              .stat-info
+                .stat-label.text-muted.mb-2.d-flex.align-items-center.gap-2
+                  i.bi.bi-clipboard-check
+                  span Selesai
+                - const completedCount = recentOrders ? recentOrders.filter(o => o.status === 'completed').length : 0
+                h2.mb-0.fw-bold.text-success= completedCount
+              .stat-icon.stat-icon-success
+                i.bi.bi-check2-all
+            .progress.mt-3(style="height: 5px; background: #f1f5f9;")
+              .progress-bar.bg-success(style="width: 90%;")
 
     .row.g-4
       //- RECENT ORDERS
@@ -325,7 +329,10 @@ block content
       background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
       color: #f59e0b;
     }
-    
+    .stat-icon-danger {
+      background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+      color: var(--danger);
+    }
     .stat-icon-success {
       background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
       color: var(--success);
@@ -437,10 +444,16 @@ block content
     }
     
     /* Account Card */
+    .avatar-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
     .avatar-circle {
       width: 90px;
       height: 90px;
       border-radius: 50%;
+      overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -448,8 +461,14 @@ block content
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
       transition: all 0.3s ease;
       border: 3px solid white;
+      margin: 0 auto;
     }
-    
+    .avatar-circle .avatar-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;          /* biar nggak gepeng */
+      display: block;             /* hilangin jarak inline img */
+    }
     .account-card:hover .avatar-circle {
       transform: scale(1.05);
       box-shadow: 0 8px 16px rgba(16, 185, 129, 0.2);

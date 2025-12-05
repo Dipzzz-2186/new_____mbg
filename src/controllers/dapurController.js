@@ -23,10 +23,14 @@ exports.dashboard = async (req, res) => {
 };
 
 // =================== CART ===================
+// =================== CART ===================
 exports.viewCart = async (req, res) => {
   try {
     const userId = req.session.user.id;
-    const [carts] = await pool.query('SELECT * FROM carts WHERE user_id=?', [userId]);
+    const [carts] = await pool.query(
+      'SELECT * FROM carts WHERE user_id=?',
+      [userId]
+    );
 
     if (!carts.length) {
       return res.render('dapur/cart', {
@@ -36,15 +40,30 @@ exports.viewCart = async (req, res) => {
     }
 
     const cartId = carts[0].id;
-    const [items] = await pool.query(
-      `SELECT ci.id, ci.qty, ci.price_at, p.name as product_name
-       FROM cart_items ci
-       JOIN products p ON p.id = ci.product_id
-       WHERE ci.cart_id = ?`,
-      [cartId]
-    );
 
-    res.render('dapur/cart', {
+    const [rows] = await pool.query(`
+      SELECT
+        ci.id,
+        ci.qty,
+        ci.price_at,
+        p.name  AS product_name,
+        p.image AS product_image
+      FROM cart_items ci
+      JOIN products p ON p.id = ci.product_id
+      WHERE ci.cart_id = ?
+      ORDER BY ci.id DESC
+    `, [cartId]);
+
+    // mapping boleh simpel gini, biar jelas
+    const items = rows.map(r => ({
+      id: r.id,
+      qty: r.qty,
+      price_at: r.price_at,
+      product_name: r.product_name,
+      product_image: r.product_image
+    }));
+
+    return res.render('dapur/cart', {
       title: 'Keranjang',
       cart: { items }
     });
@@ -54,6 +73,7 @@ exports.viewCart = async (req, res) => {
     res.redirect('/market');
   }
 };
+
 
 exports.addToCart = async (req, res) => {
   try {

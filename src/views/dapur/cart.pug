@@ -64,8 +64,15 @@ block content
                         td.ps-4
                           .d-flex.align-items-center
                             .flex-shrink-0.me-3
-                              .bg-light.rounded.d-flex.align-items-center.justify-content-center.product-icon
-                                i.bi.bi-box-seam.text-muted.fs-4
+                              if item.product_image
+                                img.product-icon.rounded(
+                                  src=item.product_image
+                                  alt=item.product_name
+                                  style="object-fit: cover;"
+                                )
+                              else
+                                .bg-light.rounded.d-flex.align-items-center.justify-content-center.product-icon
+                                  i.bi.bi-box-seam.text-muted.fs-4
                             div
                               h6.mb-1= item.product_name
                               small.text-muted SKU: #{item.id}

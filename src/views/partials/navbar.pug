@@ -34,14 +34,18 @@ nav.navbar.navbar-expand-lg.navbar-light.sticky-top(style="background: rgba(255,
       // RIGHT — ICONS - Minimal Design
       .d-flex.align-items-center.gap-3.ms-lg-4.mt-3.mt-lg-0
 
-        // CART ICON with Badge
+        // CART ICON with Badge → buka mini cart
         a.nav-icon-link.position-relative(
-          href="/dapur/cart"
+          href="#"
           title="Keranjang Belanja"
+          data-bs-toggle="offcanvas"
+          data-bs-target="#miniCart"
+          aria-controls="miniCart"
         )
           i.bi.bi-cart3(style="font-size: 1.5rem;")
           if typeof cartCount !== 'undefined' && cartCount > 0
             span.cart-badge= cartCount
+
 
         // USER ICON DROPDOWN
         .dropdown
@@ -100,6 +104,49 @@ nav.navbar.navbar-expand-lg.navbar-light.sticky-top(style="background: rgba(255,
                 a.dropdown-item.menu-item(href="/login")
                   i.bi.bi-box-arrow-in-right.me-3
                   span Masuk
+
+
+                  // MINI CART OFFCANVAS (kayak panel Tokopedia)
+#miniCart.offcanvas.offcanvas-end(tabindex="-1" aria-labelledby="miniCartLabel")
+  .offcanvas-header
+    h5#miniCartLabel.offcanvas-title Keranjang
+    button.btn-close(type="button" data-bs-dismiss="offcanvas" aria-label="Close")
+
+  .offcanvas-body
+
+    //- Kalau nanti punya data keranjang, taruh di sini
+    if typeof miniCartItems !== 'undefined' && miniCartItems.length
+      each item in miniCartItems
+        .d-flex.align-items-center.mb-3
+          if item.image_url
+            img.me-3(
+              src=item.image_url
+              alt=item.name
+              style="width:48px;height:48px;object-fit:cover;border-radius:12px;"
+            )
+          .flex-grow-1
+            .fw-semibold(style="font-size:0.9rem;")= item.name
+            .text-muted.small Qty: #{item.qty}
+          .text-end.ms-2
+            .fw-semibold(style="font-size:0.9rem;") Rp #{item.subtotalFormatted || item.subtotal}
+
+      hr.mt-3.mb-2
+      .d-flex.justify-content-between.align-items-center.mb-3
+        span.text-muted Total
+        strong Rp #{miniCartTotalFormatted || miniCartTotal || 0}
+
+      a.btn.btn-success.w-100(href="/dapur/cart")
+        | Lihat Keranjang
+    else
+      //- STATE KOSONG
+      .text-center.mt-5
+        // bisa ganti ke gambar sendiri kalau mau
+        i.bi.bi-bag-x-fill(style="font-size:3rem;color:#10b981;")
+        h6.mt-3.mb-1 Wah, keranjang belanjamu kosong
+        p.text-muted.mb-3(style="font-size:0.9rem;")
+          | Yuk, isi dengan barang-barang impianmu!
+        a.btn.btn-success.btn-sm(href="/market") Mulai Belanja
+
 
 // Enhanced CSS Styling
 style.
