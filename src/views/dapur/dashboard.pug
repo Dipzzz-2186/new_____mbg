@@ -145,6 +145,25 @@ block content
                         span.badge.px-3.py-2.fw-semibold(class=badgeClass)
                           i(class=iconClass).me-1
                           = statusLabel
+                          
+                      //- DETAIL ITEM ORDER (produk, qty, harga satuan, subtotal)
+                      if o.items && o.items.length
+                        table.table.table-sm.align-middle.mt-3.mb-0
+                          thead
+                            tr
+                              th(style='width:40%') Produk
+                              th.text-center(style='width:15%') Jumlah
+                              th.text-end(style='width:20%') Harga Satuan
+                              th.text-end(style='width:25%') Subtotal
+                          tbody
+                            each it in o.items
+                              tr
+                                td= it.product_name
+                                td.text-center= it.qty
+                                td.text-end Rp #{Number(it.price || 0).toLocaleString('id-ID')}
+                                td.text-end Rp #{Number(it.subtotal || (Number(it.price || 0) * Number(it.qty || 0))).toLocaleString('id-ID')}
+                      else
+                        .text-muted.small.mt-2 Tidak ada item untuk order ini.
                                   
               //- Load More
               if recentOrders.length >= 5
@@ -183,6 +202,13 @@ block content
                   div
                     small.text-muted.d-block.mb-1 Email
                     .fw-medium.text-dark= currentUser.email || 'Belum diatur'
+
+              .info-item.mb-3.p-3.bg-light.rounded-3
+                .d-flex.align-items-start.gap-3
+                  i.bi.bi-geo-alt.fs-5.text-warning
+                  div
+                    small.text-muted.d-block.mb-1 Alamat
+                    .fw-medium.text-dark= currentUser.address || 'Belum diatur'
               
               .info-item.mb-4.p-3.bg-light.rounded-3
                 .d-flex.align-items-start.gap-3

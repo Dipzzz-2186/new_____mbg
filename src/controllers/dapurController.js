@@ -5,15 +5,51 @@ const pool = require('../models/db');
 exports.dashboard = async (req, res) => {
   try {
     const userId = req.session.user.id;
+
+    // 5 order terbaru saja
     const [orders] = await pool.query(
       'SELECT id, total, status, created_at FROM orders WHERE user_id=? ORDER BY created_at DESC LIMIT 5',
       [userId]
     );
 
-    // Dapur cuma lihat status high-level (awaiting_yayasan / approved / rejected / completed)
+    let recentOrders = orders;
+
+    if (recentOrders.length) {
+      const orderIds = recentOrders.map(o => o.id);
+
+      const [itemRows] = await pool.query(
+        `SELECT 
+           oi.order_id,
+           oi.qty,
+           oi.price,
+           p.name AS product_name
+         FROM order_items oi
+         JOIN products p ON p.id = oi.product_id
+         WHERE oi.order_id IN (?)
+         ORDER BY oi.order_id, oi.id`,
+        [orderIds]
+      );
+
+      const byOrder = {};
+      itemRows.forEach(r => {
+        if (!byOrder[r.order_id]) byOrder[r.order_id] = [];
+        byOrder[r.order_id].push({
+          product_name: r.product_name,
+          qty: r.qty,
+          price: r.price,
+          subtotal: Number(r.price) * Number(r.qty)
+        });
+      });
+
+      recentOrders = recentOrders.map(o => ({
+        ...o,
+        items: byOrder[o.id] || []
+      }));
+    }
+
     res.render('dapur/dashboard', {
       title: 'Dashboard Dapur',
-      recentOrders: orders
+      recentOrders
     });
   } catch (err) {
     console.error(err);
@@ -21,6 +57,7 @@ exports.dashboard = async (req, res) => {
     res.redirect('/');
   }
 };
+
 
 // =================== CART ===================
 // =================== CART ===================
@@ -408,5 +445,61 @@ exports.completeProfilePost = async (req, res) => {
     console.error('completeProfilePost error:', err);
     req.flash('error', 'Gagal menyimpan data.');
     return res.redirect('/dapur/profile/complete');
+  }
+};
+
+// =================== LIST SEMUA ORDER (DAPUR) ===================
+exports.listOrdersForDapur = async (req, res) => {
+  try {
+    const userId = req.session.user.id;
+
+    const [orders] = await pool.query(
+      'SELECT id, total, status, created_at FROM orders WHERE user_id=? ORDER BY created_at DESC',
+      [userId]
+    );
+
+    let fullOrders = [];
+
+    if (orders.length) {
+      const orderIds = orders.map(o => o.id);
+
+      const [itemRows] = await pool.query(
+        `SELECT 
+           oi.order_id,
+           oi.qty,
+           oi.price,
+           p.name AS product_name
+         FROM order_items oi
+         JOIN products p ON p.id = oi.product_id
+         WHERE oi.order_id IN (?)
+         ORDER BY oi.order_id, oi.id`,
+        [orderIds]
+      );
+
+      const byOrder = {};
+      itemRows.forEach(r => {
+        if (!byOrder[r.order_id]) byOrder[r.order_id] = [];
+        byOrder[r.order_id].push({
+          product_name: r.product_name,
+          qty: r.qty,
+          price: r.price,
+          subtotal: Number(r.price) * Number(r.qty)
+        });
+      });
+
+      fullOrders = orders.map(o => ({
+        ...o,
+        items: byOrder[o.id] || []
+      }));
+    }
+
+    return res.render('dapur/orders', {
+      title: 'Semua Pesanan',
+      orders: fullOrders
+    });
+  } catch (err) {
+    console.error('listOrdersForDapur error:', err);
+    req.flash('error', 'Gagal mengambil daftar pesanan');
+    return res.redirect('/dapur/dashboard');
   }
 };

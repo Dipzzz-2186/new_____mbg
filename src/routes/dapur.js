@@ -7,6 +7,8 @@ const dapurCtrl = require('../controllers/dapurController');
 router.use(ensureAuthenticated, ensureRole('dapur'));
 
 router.get('/dashboard', dapurCtrl.dashboard);
+router.get('/orders', dapurCtrl.listOrdersForDapur);
+
 router.get('/cart', dapurCtrl.viewCart);
 router.post('/cart/add', dapurCtrl.addToCart);
 router.post('/cart/remove', dapurCtrl.removeFromCart);

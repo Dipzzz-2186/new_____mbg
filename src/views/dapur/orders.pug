@@ -1,0 +1,97 @@
+//- src/views/dapur/orders.pug
+extends ../layout
+
+block content
+  .container-fluid.px-3.px-lg-5.py-4.py-lg-5
+    .d-flex.justify-content-between.align-items-center.mb-4
+      h3.mb-0 Riwayat Pesanan Dapur
+      a.btn.btn-outline-secondary(href="/dapur/dashboard")
+        i.bi.bi-arrow-left.me-1
+        | Kembali ke Dashboard
+
+    .card.border-0.shadow-sm.orders-card
+      .card-header.bg-white.border-0.p-4.d-flex.justify-content-between.align-items-center
+        h4.mb-0.fw-semibold.text-dark
+          i.bi.bi-clock-history.me-2.text-primary
+          | Semua Pesanan
+        if orders && orders.length
+          span.badge.bg-light.text-dark.px-3.py-2
+            i.bi.bi-list-ul.me-1
+            = orders.length + ' pesanan'
+
+      .card-body.p-4
+        if orders && orders.length
+          .orders-list
+            each o, idx in orders
+              .order-item.mb-3.p-4.border.rounded-3(data-index=idx)
+                .row.align-items-center.g-3
+                  .col-md-7
+                    .d-flex.align-items-center.gap-3.mb-3.mb-md-0
+                      .order-number.text-white.fw-bold
+                        | ##{o.id}
+                      div
+                        .fw-bold.fs-5.text-success.mb-1
+                          i.bi.bi-currency-dollar.me-1
+                          | Rp #{Number(o.total || 0).toLocaleString('id-ID')}
+                        .text-muted.small.d-flex.align-items-center.gap-2
+                          i.bi.bi-calendar3
+                          = o.created_at
+                  
+                  .col-md-5.text-md-end
+                    - let statusLabel = '';
+                    - let badgeClass = '';
+                    - let iconClass = '';
+
+                    if o.status === 'awaiting_yayasan'
+                      - statusLabel = 'Menunggu Approval';
+                      - badgeClass = 'badge-warning';
+                      - iconClass = 'bi-hourglass-split';
+                    else if o.status === 'approved_yayasan'
+                      - statusLabel = 'Disetujui Yayasan';
+                      - badgeClass = 'badge-primary';
+                      - iconClass = 'bi-check-circle';
+                    else if o.status === 'completed'
+                      - statusLabel = 'Selesai';
+                      - badgeClass = 'badge-success';
+                      - iconClass = 'bi-check-circle-fill';
+                    else if o.status === 'rejected_yayasan'
+                      - statusLabel = 'Ditolak';
+                      - badgeClass = 'badge-danger';
+                      - iconClass = 'bi-x-circle';
+                    else
+                      - statusLabel = 'Pending';
+                      - badgeClass = 'badge-secondary';
+                      - iconClass = 'bi-hourglass';
+
+                    span.badge.px-3.py-2.fw-semibold(class=badgeClass)
+                      i(class=iconClass).me-1
+                      = statusLabel
+
+                //- DETAIL ITEM ORDER (produk, qty, harga satuan, subtotal)
+                if o.items && o.items.length
+                  table.table.table-sm.align-middle.mt-3.mb-0
+                    thead
+                      tr
+                        th(style='width:40%') Produk
+                        th.text-center(style='width:15%') Jumlah
+                        th.text-end(style='width:20%') Harga Satuan
+                        th.text-end(style='width:25%') Subtotal
+                    tbody
+                      each it in o.items
+                        tr
+                          td= it.product_name
+                          td.text-center= it.qty
+                          td.text-end Rp #{Number(it.price || 0).toLocaleString('id-ID')}
+                          td.text-end Rp #{Number(it.subtotal || (Number(it.price || 0) * Number(it.qty || 0))).toLocaleString('id-ID')}
+                else
+                  .text-muted.small.mt-2 Tidak ada item untuk order ini.
+        else
+          .empty-state.text-center.py-5
+            .empty-icon.mb-4
+              i.bi.bi-inbox
+            h5.mb-3.text-dark Belum Ada Pesanan
+            p.text-muted.mb-4 Pesanan yang kamu buat akan muncul di halaman ini.
+            a.btn.btn-success.px-4.py-2(href="/market")
+              i.bi.bi-bag-plus.me-1
+              | Mulai Belanja
+    
