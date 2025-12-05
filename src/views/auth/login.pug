@@ -26,7 +26,7 @@ html(lang='id')
       
       @keyframes float {
         0%, 100% { transform: translateY(0) rotate(0deg); }
-        50% { transform: translateY(-20px) rotate(5deg); }
+        50% { transform: translateY(-15px) rotate(3deg); }
       }
       
       @keyframes shake {
@@ -35,109 +35,371 @@ html(lang='id')
         75% { transform: translateX(10px); }
       }
       
+      @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+      }
+      
       body {
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-        background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+        background: #f5f5f5;
         min-height: 100vh;
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 1rem;
+        padding: 2rem 1rem;
         position: relative;
         overflow: hidden;
       }
       
-      /* Background Decorations */
-      body::before {
-        content: '';
+      /* Background Decorations - Soft Shapes */
+      .bg-shape {
         position: absolute;
-        top: -50%;
-        right: -10%;
-        width: 500px;
-        height: 500px;
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 50%;
-        animation: float 8s ease-in-out infinite;
+        z-index: 0;
+        opacity: 0.6;
       }
       
-      body::after {
-        content: '';
-        position: absolute;
-        bottom: -30%;
-        left: -10%;
+      .bg-shape-1 {
+        top: -10%;
+        left: -5%;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, rgba(40, 167, 69, 0.15) 0%, transparent 70%);
+        border-radius: 50%;
+      }
+      
+      .bg-shape-2 {
+        bottom: -10%;
+        right: -5%;
         width: 400px;
         height: 400px;
-        background: rgba(255, 255, 255, 0.05);
+        background: radial-gradient(circle, rgba(33, 136, 56, 0.12) 0%, transparent 70%);
         border-radius: 50%;
-        animation: float 10s ease-in-out infinite reverse;
       }
       
-      .login-container {
-        width: 100%;
-        max-width: 460px;
-        animation: fadeInUp 0.6s ease-out;
+      .bg-shape-3 {
+        top: 30%;
+        right: 5%;
+        width: 200px;
+        height: 200px;
+        background: radial-gradient(circle, rgba(40, 167, 69, 0.08) 0%, transparent 70%);
+        border-radius: 50%;
+      }
+      
+      /* Logo */
+      .logo-container {
+        text-align: center;
+        margin-bottom: 3rem;
         position: relative;
         z-index: 1;
+        animation: fadeInUp 0.6s ease-out;
       }
       
+      .logo-text {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #28a745;
+        letter-spacing: -1px;
+      }
+      
+      .logo-text span {
+        color: #218838;
+      }
+      
+      .login-wrapper {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        max-width: 1100px;
+        width: 100%;
+        gap: 3rem;
+        align-items: center;
+        position: relative;
+        z-index: 1;
+        animation: fadeInUp 0.6s ease-out 0.2s both;
+      }
+      
+      /* Left Side - Illustration */
+      .illustration-side {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 500px;
+      }
+      
+      .illustration-wrapper {
+        position: relative;
+        width: 100%;
+        max-width: 450px;
+      }
+      
+      /* Main Illustration - Shopping Bag Character */
+      .main-character {
+        position: relative;
+        width: 280px;
+        height: 320px;
+        margin: 0 auto;
+        animation: float 4s ease-in-out infinite;
+      }
+      
+      .shopping-bag {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 200px;
+        height: 240px;
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        border-radius: 20px 20px 60px 60px;
+        box-shadow: 0 20px 40px rgba(40, 167, 69, 0.3);
+      }
+      
+      .bag-handle {
+        position: absolute;
+        top: -40px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 60px;
+        border: 12px solid #28a745;
+        border-bottom: none;
+        border-radius: 50px 50px 0 0;
+      }
+      
+      .bag-face {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 160px;
+        height: 160px;
+      }
+      
+      .eye {
+        position: absolute;
+        width: 50px;
+        height: 50px;
+        background: white;
+        border-radius: 50%;
+        top: 20%;
+      }
+      
+      .eye-left { left: 15%; }
+      .eye-right { right: 15%; }
+      
+      .eye::after {
+        content: '';
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        background: #2c3e50;
+        border-radius: 50%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+      
+      .mouth {
+        position: absolute;
+        bottom: 25%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 30px;
+        border: 6px solid white;
+        border-top: none;
+        border-radius: 0 0 40px 40px;
+      }
+      
+      .sparkle {
+        position: absolute;
+        color: #ffc107;
+        font-size: 1.5rem;
+        animation: bounce 2s ease-in-out infinite;
+      }
+      
+      .sparkle-1 {
+        top: 10%;
+        left: -10%;
+        animation-delay: 0s;
+      }
+      
+      .sparkle-2 {
+        top: 15%;
+        right: -5%;
+        animation-delay: 0.5s;
+        font-size: 2rem;
+      }
+      
+      .sparkle-3 {
+        bottom: 20%;
+        left: -5%;
+        animation-delay: 1s;
+        font-size: 1.2rem;
+      }
+      
+      /* Floating Items */
+      .floating-item {
+        position: absolute;
+        font-size: 3rem;
+        animation: float 5s ease-in-out infinite;
+      }
+      
+      .item-1 {
+        top: 5%;
+        left: 10%;
+        color: #dc3545;
+        animation-delay: 0s;
+      }
+      
+      .item-2 {
+        top: 15%;
+        right: 5%;
+        color: #28a745;
+        animation-delay: 1s;
+      }
+      
+      .item-3 {
+        bottom: 10%;
+        left: 5%;
+        color: #ffc107;
+        animation-delay: 2s;
+      }
+      
+      .item-4 {
+        bottom: 20%;
+        right: 10%;
+        color: #17a2b8;
+        animation-delay: 1.5s;
+      }
+      
+      /* Store Illustration */
+      .store-building {
+        position: absolute;
+        bottom: -50px;
+        right: -30px;
+        width: 180px;
+        height: 140px;
+        background: white;
+        border-radius: 12px 12px 0 0;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        animation: float 6s ease-in-out infinite;
+        animation-delay: 0.5s;
+      }
+      
+      .awning {
+        position: absolute;
+        top: -15px;
+        left: -10px;
+        right: -10px;
+        height: 25px;
+        background: repeating-linear-gradient(
+          90deg,
+          #28a745 0px,
+          #28a745 15px,
+          white 15px,
+          white 30px
+        );
+        border-radius: 8px 8px 0 0;
+      }
+      
+      .door {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 50px;
+        height: 70px;
+        background: #17a2b8;
+        border-radius: 8px 8px 0 0;
+      }
+      
+      .window {
+        position: absolute;
+        width: 35px;
+        height: 35px;
+        background: #b3e5fc;
+        border: 3px solid #0288d1;
+        border-radius: 4px;
+      }
+      
+      .window-left {
+        top: 35px;
+        left: 20px;
+      }
+      
+      .window-right {
+        top: 35px;
+        right: 20px;
+      }
+      
+      /* Parachute Delivery */
+      .delivery-box {
+        position: absolute;
+        top: 50px;
+        left: -50px;
+        width: 60px;
+        height: 60px;
+        background: #ffc107;
+        border: 3px solid #ff9800;
+        border-radius: 8px;
+        animation: float 4s ease-in-out infinite;
+        animation-delay: 1s;
+      }
+      
+      .parachute {
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 40px;
+        background: #28a745;
+        border-radius: 50% 50% 0 0;
+        margin-bottom: 20px;
+      }
+      
+      .parachute::before,
+      .parachute::after {
+        content: '';
+        position: absolute;
+        top: 100%;
+        width: 2px;
+        height: 25px;
+        background: #666;
+      }
+      
+      .parachute::before {
+        left: 20%;
+      }
+      
+      .parachute::after {
+        right: 20%;
+      }
+      
+      /* Right Side - Login Form */
       .login-card {
-        border-radius: 24px;
-        border: none;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-        background: #ffffff;
-        overflow: hidden;
+        background: white;
+        border-radius: 16px;
+        padding: 3rem 2.5rem;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+        max-width: 480px;
       }
       
       .login-header {
-        background: linear-gradient(135deg, #28a745 0%, #218838 100%);
-        padding: 3rem 2rem;
-        text-align: center;
-        position: relative;
-        overflow: hidden;
+        margin-bottom: 2rem;
       }
       
-      .login-header::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        right: -20%;
-        width: 300px;
-        height: 300px;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 50%;
-      }
-      
-      .login-icon {
-        width: 64px;
-        height: 64px;
-        background: rgba(255, 255, 255, 0.2);
-        border-radius: 16px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 2rem;
-        margin-bottom: 1rem;
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        position: relative;
-        z-index: 1;
-      }
-      
-      .login-icon i {
-        color: white;
-      }
-      
-      .login-header h3 {
-        color: white;
-        font-weight: 700;
+      .login-title {
         font-size: 1.75rem;
-        margin: 0;
-        position: relative;
-        z-index: 1;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
       }
       
-      .login-body {
-        padding: 2.5rem;
+      .login-subtitle {
+        color: #6c757d;
+        font-size: 1rem;
       }
       
       .form-label {
@@ -231,49 +493,135 @@ html(lang='id')
         margin-bottom: 32px;
       }
       
-      /* Additional Info */
-      .login-footer {
-        text-align: center;
-        padding: 1.5rem 2.5rem 2.5rem;
-        color: #6c757d;
-        font-size: 0.875rem;
+      /* Responsive */
+      @media (max-width: 992px) {
+        .login-wrapper {
+          grid-template-columns: 1fr;
+          gap: 2rem;
+        }
+        
+        .illustration-side {
+          min-height: 400px;
+          order: 2;
+        }
+        
+        .login-card {
+          order: 1;
+          max-width: 100%;
+        }
+        
+        .main-character {
+          width: 220px;
+          height: 260px;
+        }
+        
+        .shopping-bag {
+          width: 160px;
+          height: 200px;
+        }
+        
+        .store-building {
+          width: 140px;
+          height: 110px;
+        }
+        
+        .floating-item {
+          font-size: 2rem;
+        }
       }
       
       @media (max-width: 576px) {
-        .login-header {
-          padding: 2.5rem 1.5rem;
+        body {
+          padding: 1rem;
         }
         
-        .login-body {
+        .logo-text {
+          font-size: 2rem;
+        }
+        
+        .login-card {
           padding: 2rem 1.5rem;
         }
         
-        .login-header h3 {
+        .login-title {
           font-size: 1.5rem;
         }
         
-        .login-icon {
-          width: 56px;
-          height: 56px;
-          font-size: 1.75rem;
+        .illustration-side {
+          min-height: 300px;
         }
         
-        body::before,
-        body::after {
-          width: 300px;
-          height: 300px;
+        .main-character {
+          width: 180px;
+          height: 220px;
+        }
+        
+        .shopping-bag {
+          width: 140px;
+          height: 170px;
+        }
+        
+        .store-building {
+          display: none;
+        }
+        
+        .delivery-box {
+          display: none;
         }
       }
   
   body
-    .login-container
-      .login-card
-        .login-header
-          .login-icon
-            i.bi.bi-box-arrow-in-right
-          h3 Welcome Back
+    //- Background Shapes
+    .bg-shape.bg-shape-1
+    .bg-shape.bg-shape-2
+    .bg-shape.bg-shape-3
+    
+    //- Main Container
+    div(style='width: 100%; max-width: 1200px;')
+      //- Logo
+      .logo-container
+        .logo-text <span>FreshMart</span>
+      
+      //- Login Wrapper (Illustration + Form)
+      .login-wrapper
+        //- Left Side - Illustration
+        .illustration-side
+          .illustration-wrapper
+            //- Main Character - Shopping Bag
+            .main-character
+              .shopping-bag
+                .bag-handle
+                .bag-face
+                  .eye.eye-left
+                  .eye.eye-right
+                  .mouth
+              .sparkle.sparkle-1 ✨
+              .sparkle.sparkle-2 ✨
+              .sparkle.sparkle-3 ✨
+            
+            //- Floating Food Items
+            i.bi.bi-egg-fried.floating-item.item-1
+            i.bi.bi-cup-hot.floating-item.item-2
+            i.bi.bi-basket.floating-item.item-3
+            i.bi.bi-cart.floating-item.item-4
+            
+            //- Store Building
+            .store-building
+              .awning
+              .door
+              .window.window-left
+              .window.window-right
+            
+            //- Delivery Box with Parachute
+            .delivery-box
+              .parachute
+        
+        //- Right Side - Login Form
+        .login-card
+          .login-header
+            .login-title Masuk ke MBG Market
+            .login-subtitle Kelola toko dan belanja bahan makanan
           
-        .login-body
           if error && error.length
             each e in error
               .alert.alert-danger
