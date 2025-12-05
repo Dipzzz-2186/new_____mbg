@@ -2,22 +2,24 @@
 extends ../layout
 
 block content
-  //- Header Section dengan Gradient Modern
-  .position-relative.mb-4
-    .header-gradient.text-white.rounded-4.p-4.shadow-lg
-      .container-fluid
-        .row.align-items-center.g-3
-          .col-lg-8
-            .d-flex.align-items-center.mb-2
-              .header-icon.me-3
-                i.bi.bi-box-seam
-              div
-                h2.mb-1.fw-bold Pesanan Saya
-                p.mb-0.opacity-85.small Kelola dan lacak pesanan produk Anda dengan mudah
-          .col-lg-4.text-lg-end
-            a.btn.btn-light.btn-lg.shadow-sm(href='/vendor/dashboard')
-              i.bi.bi-arrow-left.me-2
-              | Kembali
+  //- Header Section - Clean & Minimal
+  .vendor-dashboard-header
+    .row.align-items-center.g-3
+      .col-lg-7
+        .d-flex.align-items-center.gap-3
+          .header-icon-box
+            i.bi.bi-box-seam
+          div
+            .dashboard-title Pesanan Saya
+            .dashboard-subtitle
+              i.bi.bi-truck.me-2
+              | Kelola dan lacak pesanan produk Anda
+      
+      .col-lg-5.text-lg-end
+        .action-buttons
+          a.btn-action.btn-outline-action(href='/vendor/dashboard' style='text-decoration: none;')
+            i.bi.bi-arrow-left
+            span Kembali ke Dashboard
 
   .container-fluid
     //- Flash Messages Modern
@@ -44,47 +46,36 @@ block content
     //- Orders List
     if orders && orders.length
       //- Summary Stats dengan Animasi
-      .row.g-4.mb-4
-        .col-md-4
-          .stat-card.h-100(data-aos='fade-up' data-aos-delay='0')
-            .stat-card-inner
-              .stat-content
-                .stat-icon
-                  i.bi.bi-cart-check
-                .stat-info
-                  .stat-label Total Pesanan
-                  .stat-value= orders.length
-              .stat-bg-icon
+      .stats-row
+        .row.g-4
+          .col-lg-4.col-md-6(style='animation-delay: 0.1s;')
+            .stat-card
+              .stat-icon-wrapper
                 i.bi.bi-cart-check
-        
-        .col-md-4
-          .stat-card.h-100(data-aos='fade-up' data-aos-delay='100')
-            .stat-card-inner
-              .stat-content
-                .stat-icon
-                  i.bi.bi-clock-history
-                .stat-info
-                  .stat-label Dalam Persiapan
-                  .stat-value= orders.filter(o => o.vendor_status === 'preparing').length
-              .stat-bg-icon
+              .stat-label Total Pesanan
+              .stat-value= orders.length
+              .stat-description= orders.length === 1 ? 'pesanan masuk' : 'pesanan masuk'
+          
+          .col-lg-4.col-md-6(style='animation-delay: 0.2s;')
+            .stat-card
+              .stat-icon-wrapper
                 i.bi.bi-clock-history
-        
-        .col-md-4
-          .stat-card.h-100(data-aos='fade-up' data-aos-delay='200')
-            .stat-card-inner
-              .stat-content
-                .stat-icon
-                  i.bi.bi-truck
-                .stat-info
-                  .stat-label Sudah Dikirim
-                  .stat-value= orders.filter(o => o.vendor_status === 'shipped').length
-              .stat-bg-icon
+              .stat-label Dalam Persiapan
+              .stat-value= orders.filter(o => o.vendor_status === 'preparing').length
+              .stat-description pesanan sedang disiapkan
+          
+          .col-lg-4.col-md-12(style='animation-delay: 0.3s;')
+            .stat-card
+              .stat-icon-wrapper
                 i.bi.bi-truck
+              .stat-label Sudah Dikirim
+              .stat-value= orders.filter(o => o.vendor_status === 'shipped').length
+              .stat-description pesanan dalam pengiriman
 
       //- Orders Grid dengan Card Compact
-      .row.g-4
+      .row.g-4.mt-2
         each o, index in orders
-          .col-lg-4.col-md-6(data-aos='fade-up' data-aos-delay=`${index * 50}`)
+          .col-lg-4.col-md-6(style=`animation-delay: ${0.05 * index}s;`)
             .order-card-compact.shadow-sm.h-100
               //- Card Header
               .card-compact-header
@@ -145,15 +136,15 @@ block content
                         | Edit Surat
     else
       //- Empty State Elegant
-      .empty-state(data-aos='fade-up')
+      .empty-state
         .empty-card
           .empty-icon
             i.bi.bi-inbox
-          h4.empty-title Belum Ada Pesanan
-          p.empty-text Saat ini belum ada pesanan yang masuk untuk produk Anda
-          a.btn.btn-primary.btn-lg.mt-3(href='/vendor/dashboard')
-            i.bi.bi-arrow-left.me-2
-            | Kembali ke Dashboard
+          .empty-title Belum Ada Pesanan
+          .empty-text Saat ini belum ada pesanan yang masuk untuk produk Anda
+          a.btn-action.btn-primary-action(href='/vendor/dashboard' style='text-decoration: none;')
+            i.bi.bi-arrow-left
+            span Kembali ke Dashboard
 
   //- Modal: Surat Jalan dengan Design Modern
   .modal.fade#deliveryNoteModal(tabindex='-1' aria-hidden='true')
@@ -161,7 +152,7 @@ block content
       .modal-content.border-0
         .modal-header.border-0.pb-2
           h5.modal-title.fw-bold#deliveryNoteTitle
-            i.bi.bi-file-earmark-text.me-2.text-primary
+            i.bi.bi-file-earmark-text.me-2(style='color: #28a745;')
             | Surat Jalan Pengiriman
           button.btn-close(type='button' data-bs-dismiss='modal')
         
@@ -172,7 +163,7 @@ block content
             //- Section dengan design card
             .form-section.mb-4
               .section-header.mb-3
-                i.bi.bi-truck.me-2.text-primary
+                i.bi.bi-truck.me-2(style='color: #28a745;')
                 h6.fw-bold.mb-0.d-inline Informasi Pengiriman
               .section-body
                 .row.g-3
@@ -190,7 +181,7 @@ block content
             //- Data Pengirim
             .form-section.mb-4
               .section-header.mb-3
-                i.bi.bi-person-badge.me-2.text-primary
+                i.bi.bi-person-badge.me-2(style='color: #28a745;')
                 h6.fw-bold.mb-0.d-inline Data Pengirim
               .section-body
                 .row.g-3
@@ -208,7 +199,7 @@ block content
             //- Catatan & Lampiran
             .form-section.mb-4
               .section-header.mb-3
-                i.bi.bi-paperclip.me-2.text-primary
+                i.bi.bi-paperclip.me-2(style='color: #28a745;')
                 h6.fw-bold.mb-0.d-inline Catatan & Lampiran
               .section-body
                 .mb-3
@@ -237,7 +228,7 @@ block content
             //- Tanda Tangan
             .form-section.mb-0
               .section-header.mb-3
-                i.bi.bi-pen.me-2.text-primary
+                i.bi.bi-pen.me-2(style='color: #28a745;')
                 h6.fw-bold.mb-0.d-inline Tanda Tangan Pengirim
               .section-body
                 .signature-area
@@ -255,128 +246,225 @@ block content
             button.btn.btn-lg.btn-outline-secondary(type='button' data-bs-dismiss='modal')
               i.bi.bi-x-circle.me-2
               | Batal
-            button.btn.btn-lg.btn-primary.px-5(type='submit')
+            button.btn.btn-lg.px-5(type='submit' style='background: #28a745; color: white; border: none;')
               i.bi.bi-send-check.me-2
               | Kirim Surat Jalan
 
   //- Enhanced Styles
   style.
-    /* Header Gradient */
-    .header-gradient {
-      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-      position: relative;
-      overflow: hidden;
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
-    .header-gradient::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      right: -20%;
-      width: 300px;
-      height: 300px;
-      background: rgba(255,255,255,0.1);
-      border-radius: 50%;
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
     }
-    .header-icon {
-      width: 60px;
-      height: 60px;
-      background: rgba(255,255,255,0.2);
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.8rem;
-      backdrop-filter: blur(10px);
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
     }
 
-    /* Stat Cards - Warna Biru */
-    .stat-card {
-      cursor: pointer;
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Dashboard Header - Clean & Minimal */
+    .vendor-dashboard-header {
+      background: #ffffff;
+      padding: 40px 0;
+      margin-bottom: 40px;
+      border-bottom: 1px solid #e8e8e8;
+      animation: fadeInUp 0.6s ease-out;
     }
-    .stat-card:hover {
-      transform: translateY(-8px);
-    }
-    .stat-card-inner {
-      border-radius: 20px;
-      padding: 30px;
-      position: relative;
-      overflow: hidden;
-      height: 100%;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-    }
-    .stat-content {
-      position: relative;
-      z-index: 2;
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
-    .stat-icon {
-      width: 70px;
-      height: 70px;
-      background: rgba(255,255,255,0.2);
+    
+    .header-icon-box {
+      width: 64px;
+      height: 64px;
+      background: #f8f9fa;
       border-radius: 16px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2rem;
+      font-size: 28px;
+      color: #28a745;
+      border: 1px solid #e8e8e8;
+      transition: all 0.4s ease;
+      flex-shrink: 0;
+    }
+    
+    .header-icon-box:hover {
+      background: #28a745;
       color: white;
-      backdrop-filter: blur(10px);
+      transform: rotate(10deg) scale(1.1);
+      border-color: #28a745;
     }
-    .stat-info {
-      flex: 1;
+    
+    .dashboard-title {
+      font-size: 2rem;
+      color: #2c3e50;
+      font-weight: 700;
+      margin-bottom: 6px;
+      letter-spacing: -0.5px;
     }
+    
+    .dashboard-subtitle {
+      color: #6c757d;
+      font-size: 1rem;
+      margin: 0;
+    }
+    
+    /* Action Buttons */
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    
+    .btn-action {
+      padding: 14px 24px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 1rem;
+      border: none;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+    }
+    
+    .btn-action:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    .btn-outline-action {
+      background: white;
+      color: #6c757d;
+      border: 2px solid #e8e8e8;
+    }
+    
+    .btn-outline-action:hover {
+      background: #fafafa;
+      border-color: #28a745;
+      color: #28a745;
+    }
+
+    /* Stat Cards - Elegant & Subtle */
+    .stats-row {
+      margin-bottom: 40px;
+    }
+    
+    .stat-card {
+      background: #ffffff;
+      border: 1px solid #e8e8e8;
+      border-radius: 16px;
+      padding: 28px;
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp 0.6s ease-out;
+      cursor: pointer;
+    }
+    
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: #28a745;
+      transform: scaleX(0);
+      transition: transform 0.4s ease;
+    }
+    
+    .stat-card:hover::before {
+      transform: scaleX(1);
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 28px rgba(40, 167, 69, 0.12);
+      border-color: #28a745;
+    }
+    
+    .stat-icon-wrapper {
+      width: 64px;
+      height: 64px;
+      background: #f0f9f3;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      color: #28a745;
+      margin-bottom: 20px;
+      border: 1px solid #e8e8e8;
+      transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover .stat-icon-wrapper {
+      background: #28a745;
+      color: white;
+      transform: rotate(5deg) scale(1.05);
+      border-color: #28a745;
+    }
+    
     .stat-label {
-      color: rgba(255,255,255,0.9);
+      color: #6c757d;
       font-size: 0.9rem;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
+    
     .stat-value {
-      color: white;
-      font-size: 2.5rem;
+      font-size: 2.2rem;
       font-weight: 700;
+      color: #2c3e50;
       line-height: 1;
     }
-    .stat-bg-icon {
-      position: absolute;
-      right: -30px;
-      bottom: -30px;
-      font-size: 180px;
-      color: rgba(255,255,255,0.1);
-      z-index: 1;
+    
+    .stat-description {
+      color: #6c757d;
+      font-size: 0.85rem;
+      margin-top: 8px;
     }
 
     /* Order Card Compact */
     .order-card-compact {
       background: white;
+      border: 1px solid #e8e8e8;
       border-radius: 16px;
       overflow: hidden;
-      border: 1px solid #f0f0f0;
       transition: all 0.3s ease;
       display: flex;
       flex-direction: column;
+      animation: fadeInUp 0.6s ease-out;
     }
     .order-card-compact:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 40px rgba(0,0,0,0.12) !important;
-      border-color: #3b82f6;
+      transform: translateY(-6px);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+      border-color: #28a745;
     }
     
     .card-compact-header {
-      background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+      background: #f8f9fa;
       padding: 16px;
-      border-bottom: 2px solid #f0f0f0;
+      border-bottom: 1px solid #e8e8e8;
     }
     .order-id-compact {
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      background: #28a745;
       color: white;
       padding: 6px 12px;
       border-radius: 8px;
@@ -393,12 +481,14 @@ block content
       font-size: 1.1rem;
     }
     .status-pill-compact.status-success {
-      background: rgba(59, 130, 246, 0.15);
-      color: #3b82f6;
+      background: #f0f9f3;
+      color: #28a745;
+      border: 1px solid #e8e8e8;
     }
     .status-pill-compact.status-warning {
-      background: rgba(59, 130, 246, 0.15);
-      color: #3b82f6;
+      background: #fff8f0;
+      color: #ffc107;
+      border: 1px solid #e8e8e8;
     }
     .order-date-compact {
       color: #6b7280;
@@ -411,13 +501,14 @@ block content
       flex: 1;
     }
     .total-compact {
-      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      background: #f0f9f3;
+      border: 1px solid #e8e8e8;
       border-radius: 12px;
       padding: 16px;
       text-align: center;
     }
     .total-label-compact {
-      color: rgba(255,255,255,0.9);
+      color: #6c757d;
       font-size: 0.75rem;
       font-weight: 600;
       text-transform: uppercase;
@@ -425,7 +516,7 @@ block content
       margin-bottom: 4px;
     }
     .total-value-compact {
-      color: white;
+      color: #28a745;
       font-size: 1.5rem;
       font-weight: 700;
       line-height: 1;
@@ -434,12 +525,12 @@ block content
       margin-top: 16px;
     }
     .items-title {
-      color: #6b7280;
+      color: #6c757d;
       font-size: 0.85rem;
       font-weight: 600;
       margin-bottom: 8px;
       padding-bottom: 8px;
-      border-bottom: 2px solid #f0f0f0;
+      border-bottom: 1px solid #e8e8e8;
     }
     .item-compact {
       display: flex;
@@ -460,7 +551,7 @@ block content
     }
     .item-name-compact i {
       font-size: 0.4rem;
-      color: #3b82f6;
+      color: #28a745;
     }
     .item-qty-compact {
       background: #f3f4f6;
@@ -473,26 +564,27 @@ block content
     
     .card-compact-footer {
       padding: 16px;
-      background: #f8f9fa;
-      border-top: 2px solid #f0f0f0;
+      background: #fafafa;
+      border-top: 1px solid #e8e8e8;
     }
     .completed-compact {
-      background: rgba(59, 130, 246, 0.15);
-      color: #3b82f6;
+      background: #f0f9f3;
+      color: #28a745;
       padding: 10px 16px;
       border-radius: 8px;
       font-weight: 600;
       font-size: 0.85rem;
       text-align: center;
+      border: 1px solid #e8e8e8;
     }
     .card-compact-footer .form-select {
-      border: 2px solid #e5e7eb;
+      border: 1px solid #e8e8e8;
       border-radius: 8px;
       font-size: 0.85rem;
     }
     .card-compact-footer .form-select:focus {
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      border-color: #28a745;
+      box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
     }
     .card-compact-footer .btn {
       font-size: 0.85rem;
@@ -504,8 +596,23 @@ block content
     .card-compact-footer .btn:hover {
       transform: translateY(-1px);
     }
+    .card-compact-footer .btn-primary {
+      background: #28a745;
+      border: none;
+    }
+    .card-compact-footer .btn-primary:hover {
+      background: #218838;
+    }
+    .card-compact-footer .btn-outline-success {
+      border: 2px solid #28a745;
+      color: #28a745;
+    }
+    .card-compact-footer .btn-outline-success:hover {
+      background: #28a745;
+      color: white;
+    }
 
-    /* Empty State */
+    /* Empty State - Elegant */
     .empty-state {
       padding: 80px 20px;
     }
@@ -514,29 +621,39 @@ block content
       margin: 0 auto;
       text-align: center;
       background: white;
-      border-radius: 24px;
+      border: 1px solid #e8e8e8;
+      border-radius: 20px;
       padding: 60px 40px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+      animation: fadeInUp 0.6s ease-out;
     }
     .empty-icon {
       font-size: 120px;
-      color: #e5e7eb;
+      color: #e8e8e8;
       margin-bottom: 24px;
       animation: float 3s ease-in-out infinite;
     }
     .empty-title {
-      color: #374151;
+      color: #2c3e50;
       font-weight: 700;
+      font-size: 1.8rem;
       margin-bottom: 12px;
     }
     .empty-text {
-      color: #6b7280;
+      color: #6c757d;
       font-size: 1.1rem;
       margin-bottom: 0;
     }
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-20px); }
+    .empty-card .btn-action {
+      padding: 16px 32px;
+      font-size: 1.1rem;
+      margin-top: 24px;
+    }
+    .btn-primary-action {
+      background: #28a745;
+      color: white;
+    }
+    .btn-primary-action:hover {
+      background: #218838;
     }
 
     /* Modal Sections - Fix Scroll */
@@ -558,17 +675,14 @@ block content
       color: #374151;
       margin-bottom: 16px;
     }
-    .section-body {
-      /* Removed padding since it's in form-section now */
-    }
     .form-control, .form-select {
       border: 2px solid #e5e7eb;
       border-radius: 10px;
       padding: 12px 16px;
     }
     .form-control:focus, .form-select:focus {
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      border-color: #28a745;
+      box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
     }
     .form-label {
       font-weight: 600;
@@ -609,29 +723,64 @@ block content
       font-size: 1.2rem;
       flex-shrink: 0;
     }
+    .alert-success {
+      background: #f0f9f3;
+      border: 1px solid #e8e8e8;
+      color: #2c3e50;
+    }
     .alert-success .alert-icon {
-      background: rgba(59, 130, 246, 0.1);
-      color: #3b82f6;
+      background: rgba(40, 167, 69, 0.15);
+      color: #28a745;
+    }
+    .alert-danger {
+      background: #fff5f5;
+      border: 1px solid #e8e8e8;
+      color: #2c3e50;
     }
     .alert-danger .alert-icon {
-      background: rgba(59, 130, 246, 0.1);
-      color: #3b82f6;
+      background: rgba(220, 53, 69, 0.15);
+      color: #dc3545;
     }
 
     /* Responsive */
+    @media (max-width: 992px) {
+      .action-buttons {
+        width: 100%;
+      }
+      
+      .btn-action {
+        flex: 1;
+        justify-content: center;
+      }
+    }
+    
     @media (max-width: 768px) {
-      .header-gradient {
-        padding: 24px 20px !important;
+      .vendor-dashboard-header {
+        padding: 30px 0;
       }
-      .stat-card-inner {
-        padding: 20px;
+      
+      .dashboard-title {
+        font-size: 1.6rem;
       }
+      
+      .header-icon-box {
+        width: 56px;
+        height: 56px;
+        font-size: 24px;
+      }
+      
+      .stat-card {
+        padding: 24px;
+      }
+      
       .stat-value {
-        font-size: 2rem;
+        font-size: 1.8rem;
       }
+      
       .order-card-compact {
         margin-bottom: 16px;
       }
+      
       .total-value-compact {
         font-size: 1.3rem;
       }
@@ -746,7 +895,7 @@ block content
             if (value === 'shipped') {
               dnOrderId.value = orderId;
               dnShippedAt.value = nowLocalInputValue();
-              dnTitle.innerHTML = '<i class="bi bi-file-earmark-text me-2 text-primary"></i>Surat Jalan — Order #' + orderId;
+              dnTitle.innerHTML = '<i class="bi bi-file-earmark-text me-2" style="color: #28a745;"></i>Surat Jalan — Order #' + orderId;
               if (sigCanvas && sigCtx) {
                 sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
                 hasDrawn = false;
@@ -818,4 +967,4 @@ block content
           });
         });
       });
-    })(); 
+    })();

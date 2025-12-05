@@ -2,89 +2,183 @@ extends ../layout
 
 block content
   style.
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
     
-    body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-      background: linear-gradient(135deg, #059669 0%, #047857 100%);
-      min-height: 100vh;
-      padding: 2rem 1rem;
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
     }
     
-    .form-container {
-      max-width: 720px;
-      margin: 0 auto;
-      animation: slideUp 0.6s ease-out;
+    /* Page Header - Clean & Minimal */
+    .vendor-dashboard-header {
+      background: #ffffff;
+      padding: 40px 0;
+      margin-bottom: 40px;
+      border-bottom: 1px solid #e8e8e8;
+      animation: fadeInUp 0.6s ease-out;
     }
     
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .card {
-      border-radius: 24px;
-      border: none;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-      backdrop-filter: blur(10px);
-      background: rgba(255, 255, 255, 0.95);
-    }
-    
-    .card-header {
-      background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
-      padding: 2rem;
-      border: none;
-      border-radius: 24px 24px 0 0;
-    }
-    
-    .card-header h4 {
-      font-weight: 700;
-      font-size: 1.75rem;
-      margin: 0;
+    .header-icon-box {
+      width: 64px;
+      height: 64px;
+      background: #f8f9fa;
+      border-radius: 16px;
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      justify-content: center;
+      font-size: 28px;
+      color: #28a745;
+      border: 1px solid #e8e8e8;
+      transition: all 0.4s ease;
+      flex-shrink: 0;
     }
     
-    .card-body { padding: 2.5rem; }
+    .header-icon-box:hover {
+      background: #28a745;
+      color: white;
+      transform: rotate(10deg) scale(1.1);
+      border-color: #28a745;
+    }
+    
+    .dashboard-title {
+      font-size: 2rem;
+      color: #2c3e50;
+      font-weight: 700;
+      margin-bottom: 6px;
+      letter-spacing: -0.5px;
+    }
+    
+    .dashboard-subtitle {
+      color: #6c757d;
+      font-size: 1rem;
+      margin: 0;
+    }
+    
+    /* Action Buttons */
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    
+    .btn-action {
+      padding: 14px 24px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 1rem;
+      border: none;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+    }
+    
+    .btn-action:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    .btn-outline-action {
+      background: white;
+      color: #6c757d;
+      border: 2px solid #e8e8e8;
+    }
+    
+    .btn-outline-action:hover {
+      background: #fafafa;
+      border-color: #28a745;
+      color: #28a745;
+    }
+
+    /* Form Container */
+    .form-container {
+      max-width: 900px;
+      margin: 0 auto;
+      animation: fadeInUp 0.6s ease-out 0.2s both;
+    }
+    
+    .form-card {
+      background: #ffffff;
+      border: 1px solid #e8e8e8;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    }
+    
+    .form-card-body {
+      padding: 40px;
+    }
+    
+    /* Form Elements */
+    .form-section {
+      margin-bottom: 32px;
+    }
+    
+    .form-section:last-child {
+      margin-bottom: 0;
+    }
     
     .form-label {
       font-weight: 600;
-      color: #374151;
-      margin-bottom: 0.5rem;
+      color: #2c3e50;
+      margin-bottom: 10px;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 8px;
       font-size: 0.95rem;
+    }
+    
+    .form-label i {
+      color: #28a745;
+      font-size: 1.1rem;
     }
     
     .form-control, .input-group {
       border-radius: 12px;
-      border: 2px solid #e5e7eb;
+      border: 2px solid #e8e8e8;
       font-size: 1rem;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      transition: all 0.2s ease;
+    }
+    
+    .form-control {
+      padding: 12px 16px;
     }
     
     .form-control:focus {
-      border-color: #10b981;
-      box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+      border-color: #28a745;
+      box-shadow: 0 0 0 4px rgba(40, 167, 69, 0.1);
       outline: none;
     }
     
-    .form-control:hover { border-color: #d1d5db; }
+    .form-control:hover {
+      border-color: #d1d5db;
+    }
     
     .input-group-text {
-      background: #f9fafb;
-      border: 2px solid #e5e7eb;
+      background: #f8f9fa;
+      border: 2px solid #e8e8e8;
       border-right: none;
       font-weight: 600;
-      color: #6b7280;
+      color: #6c757d;
       border-radius: 12px 0 0 12px;
       transition: all 0.2s ease;
+      padding: 0 16px;
     }
     
     .input-group .form-control {
@@ -93,42 +187,74 @@ block content
     }
     
     .input-group:focus-within .input-group-text {
-      border-color: #10b981;
-      background: #ecfdf5;
-      color: #059669;
+      border-color: #28a745;
+      background: #f0f9f3;
+      color: #28a745;
     }
     
-    .input-group:focus-within .form-control { border-color: #10b981; }
+    .input-group:focus-within .form-control {
+      border-color: #28a745;
+      box-shadow: 0 0 0 4px rgba(40, 167, 69, 0.1);
+    }
     
     textarea.form-control {
       min-height: 120px;
-      max-height: 300px;
       resize: vertical;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      line-height: 1.6;
     }
     
-    .file-upload-wrapper { 
+    /* File Upload */
+    .file-upload-wrapper {
       position: relative;
-      overflow: hidden;
     }
     
     .file-upload-label {
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 1rem;
-      padding: 2rem;
-      border: 3px dashed #d1d5db;
-      border-radius: 12px;
-      background: #f9fafb;
+      gap: 16px;
+      padding: 48px 32px;
+      border: 3px dashed #e8e8e8;
+      border-radius: 16px;
+      background: #fafafa;
       cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+    
+    .file-upload-label:hover {
+      border-color: #28a745;
+      background: #f0f9f3;
+    }
+    
+    .file-upload-label.has-file {
+      border-color: #28a745;
+      background: #f0f9f3;
+      border-style: solid;
+    }
+    
+    .file-upload-icon {
+      font-size: 3rem;
+      color: #6c757d;
       transition: all 0.3s ease;
     }
     
-    .file-upload-label:hover,
-    .file-upload-label.has-file {
-      border-color: #10b981;
-      background: #ecfdf5;
+    .file-upload-label:hover .file-upload-icon,
+    .file-upload-label.has-file .file-upload-icon {
+      color: #28a745;
+      transform: scale(1.1);
+    }
+    
+    .file-upload-text {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 1rem;
+    }
+    
+    .file-upload-hint {
+      font-size: 0.875rem;
+      color: #6c757d;
     }
     
     .file-upload-input {
@@ -140,19 +266,44 @@ block content
     .file-info {
       display: none;
       align-items: center;
-      gap: 0.5rem;
-      margin-top: 0.75rem;
-      padding: 0.75rem;
-      background: #ecfdf5;
-      border-radius: 8px;
-      color: #059669;
-      font-weight: 500;
+      gap: 10px;
+      margin-top: 12px;
+      padding: 12px 16px;
+      background: #f0f9f3;
+      border-radius: 10px;
+      color: #28a745;
+      font-weight: 600;
+      border: 1px solid #e8e8e8;
     }
     
-    .file-info.show { display: flex; }
+    .file-info.show {
+      display: flex;
+    }
+    
+    .file-info i {
+      font-size: 1.2rem;
+    }
+    
+    .form-text {
+      color: #6c757d;
+      font-size: 0.875rem;
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    /* Buttons */
+    .form-actions {
+      display: flex;
+      gap: 16px;
+      margin-top: 40px;
+      padding-top: 32px;
+      border-top: 1px solid #e8e8e8;
+    }
     
     .btn {
-      padding: 0.875rem 2rem;
+      padding: 14px 32px;
       border-radius: 12px;
       font-weight: 600;
       font-size: 1rem;
@@ -161,172 +312,214 @@ block content
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 0.5rem;
+      gap: 10px;
       cursor: pointer;
+      flex: 1;
     }
     
-    .btn-success {
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    .btn-primary-action {
+      background: #28a745;
       color: white;
+      box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
     }
     
-    .btn-success:hover {
+    .btn-primary-action:hover {
+      background: #218838;
       transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.5);
+      box-shadow: 0 8px 20px rgba(40, 167, 69, 0.4);
     }
     
-    .btn-success:active { transform: translateY(0); }
+    .btn-primary-action:active {
+      transform: translateY(0);
+    }
     
-    .btn-outline-secondary {
-      border: 2px solid #e5e7eb;
-      color: #6b7280;
+    .btn-secondary-action {
       background: white;
+      color: #6c757d;
+      border: 2px solid #e8e8e8;
     }
     
-    .btn-outline-secondary:hover {
-      background: #f9fafb;
+    .btn-secondary-action:hover {
+      background: #fafafa;
       border-color: #d1d5db;
-      color: #374151;
+      color: #2c3e50;
       transform: translateY(-2px);
     }
     
-    .form-text {
-      color: #6b7280;
-      font-size: 0.875rem;
-      margin-top: 0.5rem;
-      display: block;
+    /* Grid Layout */
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 32px;
     }
     
-    .icon-wrapper {
-      width: 48px;
-      height: 48px;
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-    }
-    
-    .mb-4 { margin-bottom: 1.5rem; }
-    
-    .input-group-lg .form-control,
-    .form-control-lg {
-      padding: 0.875rem 1rem;
-      font-size: 1rem;
+    /* Responsive */
+    @media (max-width: 992px) {
+      .action-buttons {
+        width: 100%;
+      }
+      
+      .btn-action {
+        flex: 1;
+        justify-content: center;
+      }
     }
     
     @media (max-width: 768px) {
-      body { padding: 1rem; }
-      .card-header { padding: 1.5rem; }
-      .card-header h4 { font-size: 1.5rem; }
-      .card-body { padding: 1.5rem; }
-      .btn { padding: 0.75rem 1.5rem; }
+      .vendor-dashboard-header {
+        padding: 30px 0;
+      }
+      
+      .dashboard-title {
+        font-size: 1.6rem;
+      }
+      
+      .header-icon-box {
+        width: 56px;
+        height: 56px;
+        font-size: 24px;
+      }
+      
+      .form-card-body {
+        padding: 24px;
+      }
+      
+      .form-row {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+      
+      .form-actions {
+        flex-direction: column;
+      }
+      
+      .btn {
+        width: 100%;
+      }
+      
+      .file-upload-label {
+        padding: 32px 20px;
+      }
     }
 
-  .form-container
-    .card
-      .card-header.text-white
-        h4
-          .icon-wrapper
+  //- Header Section
+  .vendor-dashboard-header
+    .row.align-items-center.g-3
+      .col-lg-7
+        .d-flex.align-items-center.gap-3
+          .header-icon-box
             i.bi.bi-plus-circle
-          span Tambah Produk Baru
-      
-      .card-body
-        form#productForm(action="/vendor/products/new" method="post" enctype="multipart/form-data")
-          
-          .mb-4
-            label.form-label
-              i.bi.bi-tag
-              | Nama Produk
-            input.form-control.form-control-lg(
-              name="name" 
-              placeholder="Contoh: Beras Premium" 
-              required
-            )
-          
-          .mb-4
-            label.form-label
-              i.bi.bi-grid
-              | Kategori
-            input.form-control.form-control-lg(
-              name="category" 
-              placeholder="Contoh: Sembako, Sayur, Buah"
-            )
-          
-          .row.g-3.mb-4
-            .col-md-4
+          div
+            .dashboard-title Tambah Produk Baru
+            .dashboard-subtitle
+              i.bi.bi-box-seam.me-2
+              | Lengkapi informasi produk yang akan dijual
+  .container-fluid
+    .form-container
+      .form-card
+        .form-card-body
+          form#productForm(action="/vendor/products/new" method="post" enctype="multipart/form-data")
+            
+            //- Nama Produk
+            .form-section
               label.form-label
-                i.bi.bi-currency-dollar
-                | Harga
-              .input-group.input-group-lg
-                span.input-group-text Rp
+                i.bi.bi-tag
+                | Nama Produk
+              input.form-control(
+                name="name" 
+                placeholder="Contoh: Beras Premium" 
+                required
+              )
+            
+            //- Kategori
+            .form-section
+              label.form-label
+                i.bi.bi-grid
+                | Kategori
+              input.form-control(
+                name="category" 
+                placeholder="Contoh: Sembako, Sayur, Buah"
+              )
+            
+            //- Harga, Satuan, Stok
+            .form-row
+              div
+                label.form-label
+                  i.bi.bi-currency-dollar
+                  | Harga
+                .input-group
+                  span.input-group-text Rp
+                  input.form-control(
+                    type="number" 
+                    step="0.01" 
+                    name="price" 
+                    placeholder="0" 
+                    required
+                  )
+              
+              div
+                label.form-label
+                  i.bi.bi-rulers
+                  | Satuan
+                input.form-control(
+                  name="unit" 
+                  placeholder="kg/pcs/liter"
+                )
+              
+              div
+                label.form-label
+                  i.bi.bi-box
+                  | Stok Awal
                 input.form-control(
                   type="number" 
                   step="0.01" 
-                  name="price" 
-                  placeholder="0" 
-                  required
+                  name="stock" 
+                  value="0"
                 )
             
-            .col-md-4
+            //- Deskripsi
+            .form-section
               label.form-label
-                i.bi.bi-rulers
-                | Satuan
-              input.form-control.form-control-lg(
-                name="unit" 
-                placeholder="kg/pcs/liter"
+                i.bi.bi-card-text
+                | Deskripsi Produk
+              textarea.form-control(
+                name="description" 
+                rows="5" 
+                placeholder="Jelaskan detail produk Anda..."
               )
             
-            .col-md-4
+            //- Upload Gambar
+            .form-section
               label.form-label
-                i.bi.bi-box
-                | Stok Awal
-              input.form-control.form-control-lg(
-                type="number" 
-                step="0.01" 
-                name="stock" 
-                value="0"
-              )
-          
-          .mb-4
-            label.form-label
-              i.bi.bi-card-text
-              | Deskripsi Produk
-            textarea.form-control(
-              name="description" 
-              rows="4" 
-              placeholder="Jelaskan detail produk Anda..."
-            )
-          
-          .mb-4
-            label.form-label
-              i.bi.bi-image
-              | Gambar Produk
-            .file-upload-wrapper
-              label.file-upload-label#fileLabel(for="fileInput")
-                i.bi.bi-cloud-upload(style="font-size: 2rem; color: #6b7280;")
-                div
-                  div(style="font-weight: 600; color: #374151;") Klik untuk upload gambar
-                  div(style="font-size: 0.875rem; color: #6b7280;") atau drag & drop di sini
-              input.file-upload-input#fileInput(
-                type="file" 
-                name="image" 
-                accept="image/*"
-              )
-            .file-info#fileInfo
-              i.bi.bi-check-circle-fill
-              span#fileName
-            small.form-text Maksimal 5MB, format: JPG, PNG, atau WEBP
-          
-          .d-flex.gap-3.flex-column.flex-sm-row
-            button.btn.btn-success.flex-fill(type="submit")
-              i.bi.bi-check-circle
-              | Simpan Produk
-            a.btn.btn-outline-secondary(href="/vendor/dashboard")
-              i.bi.bi-x-circle
-              | Batal
+                i.bi.bi-image
+                | Gambar Produk
+              .file-upload-wrapper
+                label.file-upload-label#fileLabel(for="fileInput")
+                  i.bi.bi-cloud-upload.file-upload-icon
+                  div
+                    .file-upload-text Klik untuk upload gambar
+                    .file-upload-hint atau drag & drop di sini
+                input.file-upload-input#fileInput(
+                  type="file" 
+                  name="image" 
+                  accept="image/*"
+                )
+              .file-info#fileInfo
+                i.bi.bi-check-circle-fill
+                span#fileName
+              small.form-text
+                i.bi.bi-info-circle
+                | Maksimal 5MB, format: JPG, PNG, atau WEBP
+            
+            //- Action Buttons
+            .form-actions
+              button.btn.btn-primary-action(type="submit")
+                i.bi.bi-check-circle
+                | Simpan Produk
+              a.btn.btn-secondary-action(href="/vendor/dashboard" style='text-decoration: none;')
+                i.bi.bi-x-circle
+                | Batal
 
   script.
     (function() {
@@ -351,8 +544,8 @@ block content
         fileLabel.addEventListener(event, function(e) {
           e.preventDefault();
           e.stopPropagation();
-          this.style.borderColor = '#10b981';
-          this.style.background = '#ecfdf5';
+          this.style.borderColor = '#28a745';
+          this.style.background = '#f0f9f3';
         });
       });
       
@@ -361,8 +554,8 @@ block content
           e.preventDefault();
           e.stopPropagation();
           if (!fileInput.files.length) {
-            this.style.borderColor = '#d1d5db';
-            this.style.background = '#f9fafb';
+            this.style.borderColor = '#e8e8e8';
+            this.style.background = '#fafafa';
           }
         });
       });
