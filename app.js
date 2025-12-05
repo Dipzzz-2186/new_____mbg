@@ -8,6 +8,7 @@ const methodOverride = require('method-override');
 
 // ⬅️ tambahin ini
 const pool = require('./src/models/db');
+const { ensureAuthenticated } = require('./src/middleware/auth');
 
 const app = express();
 
@@ -104,9 +105,11 @@ app.use('/', authRoutes);
 app.use('/yayasan', yayasanRoutes);
 app.use('/vendor', vendorRoutes);
 app.use('/dapur', dapurRoutes);
-app.use('/market', marketRoutes);
 
-app.get('/', (req, res) => res.redirect('/market'));
+// ⬅️ DI SINI: /market diproteksi login
+app.use('/market', ensureAuthenticated, marketRoutes);
+
+app.get('/', (req, res) => res.redirect('/login'));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on ${PORT}`));
