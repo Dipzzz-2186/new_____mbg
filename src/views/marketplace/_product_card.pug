@@ -1,131 +1,449 @@
 //- src/views/marketplace/_product_card.pug
-//- safe partial: jika product tidak ada, fallback ke p atau objek kosong
 - var product = (typeof product !== 'undefined') ? product : ((typeof p !== 'undefined') ? p : {});
 - var productDetailUrl = `/market/product/${(product && product.id) || ''}`;
 
-//- Wrapper ini sekarang menjadi anchor <a> yang dapat diklik
-a.product-card-wrapper.h-100(
-  href=productDetailUrl 
-  style="text-decoration: none; color: inherit;"
-)
-  .card.h-100.border.product-card(
-    // Hapus cursor: pointer dan event onmouseover/onmouseout dari sini
-    style="border-radius: 8px; overflow: hidden; transition: all 0.2s ease;" 
-  )
-    // image area
-    .card-image-wrap.position-relative(style="overflow: hidden; background: #f5f5f5;")
+style.
+  .product-card-wrapper {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    height: 100%;
+    transition: transform 0.3s ease;
+  }
+  
+  .product-card-wrapper:hover {
+    transform: translateY(-4px);
+  }
+  
+  .product-card {
+    border: 1px solid #e8e8e8 !important;
+    border-radius: 16px !important;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    background: white;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .product-card-wrapper:hover .product-card {
+    border-color: #28a745 !important;
+    box-shadow: 0 8px 24px rgba(40, 167, 69, 0.15);
+  }
+  
+  .card-image-wrap {
+    position: relative;
+    overflow: hidden;
+    background: #fafafa;
+    height: 220px;
+  }
+  
+  .card-image-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+  
+  .product-card-wrapper:hover .card-image-wrap img {
+    transform: scale(1.05);
+  }
+  
+  .stock-badge {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .stock-badge.available {
+    color: #28a745;
+  }
+  
+  .stock-badge.unavailable {
+    color: #dc3545;
+  }
+  
+  .category-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #6c757d;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .discount-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: #dc3545;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+  }
+  
+  .card-body {
+    padding: 16px;
+    background: white;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .product-name {
+    min-height: 44px;
+    margin-bottom: 12px;
+    flex: 0 0 auto;
+  }
+  
+  .product-name-text {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #2c3e50;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-weight: 500;
+  }
+  
+  .price-section {
+    margin-bottom: 12px;
+    flex: 0 0 auto;
+  }
+  
+  .current-price {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #28a745;
+    margin-bottom: 2px;
+  }
+  
+  .price-unit {
+    font-size: 0.75rem;
+    color: #6c757d;
+  }
+  
+  .product-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    font-size: 0.75rem;
+    color: #6c757d;
+    flex: 0 0 auto;
+  }
+  
+  .rating-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  
+  .rating-star {
+    color: #ffc107;
+    font-size: 0.75rem;
+  }
+  
+  .meta-separator {
+    color: #d1d5db;
+  }
+  
+  .card-footer {
+    padding: 12px 16px;
+    background: #fafafa;
+    border-top: 1px solid #e8e8e8;
+  }
+  
+  .add-to-cart-form {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  
+  .qty-control {
+    display: flex;
+    align-items: center;
+    border: 2px solid #e8e8e8;
+    border-radius: 8px;
+    overflow: hidden;
+    background: white;
+  }
+  
+  .qty-btn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border: none;
+    color: #28a745;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .qty-btn:hover {
+    background: #f0f9f3;
+  }
+  
+  .qty-btn:active {
+    transform: scale(0.95);
+  }
+  
+  .qty-input {
+    width: 45px;
+    height: 32px;
+    border: none;
+    border-left: 1px solid #e8e8e8;
+    border-right: 1px solid #e8e8e8;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #2c3e50;
+    background: white;
+  }
+  
+  .qty-input:focus {
+    outline: none;
+  }
+  
+  .btn-add-cart {
+    flex: 1;
+    padding: 8px 16px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  
+  .btn-add-cart:hover:not(:disabled) {
+    background: #218838;
+    transform: translateY(-1px);
+  }
+  
+  .btn-add-cart:disabled {
+    background: #9e9e9e;
+    cursor: not-allowed;
+  }
+  
+  .btn-complete-profile {
+    width: 100%;
+    padding: 8px 16px;
+    background: #ffc107;
+    color: #2c3e50;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    text-decoration: none;
+  }
+  
+  .btn-complete-profile:hover {
+    background: #ffb300;
+    transform: translateY(-1px);
+    color: #2c3e50;
+  }
+  
+  .btn-view-detail {
+    width: 100%;
+    padding: 8px 16px;
+    background: white;
+    color: #28a745;
+    border: 2px solid #28a745;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    text-decoration: none;
+  }
+  
+  .btn-view-detail:hover {
+    background: #f0f9f3;
+    color: #218838;
+    border-color: #218838;
+    transform: translateY(-1px);
+  }
+  
+  .image-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+  }
+  
+  .placeholder-icon {
+    font-size: 3.5rem;
+    color: #d1d5db;
+  }
+  
+  @media (max-width: 576px) {
+    .product-card {
+      border-radius: 12px !important;
+    }
+    
+    .card-image-wrap {
+      height: 180px;
+    }
+    
+    .product-name {
+      min-height: 40px;
+    }
+    
+    .product-name-text {
+      font-size: 0.875rem;
+    }
+    
+    .current-price {
+      font-size: 1.125rem;
+    }
+    
+    .qty-control {
+      flex: 0 0 100px;
+    }
+  }
+
+a.product-card-wrapper(href=productDetailUrl)
+  .product-card.h-100
+    //- Image Area
+    .card-image-wrap
       if product && product.image
-        img.card-img-top(
-          src=product.image 
-          alt=(product.name||'Produk') 
-          loading='lazy' 
-          style="height:200px; object-fit:cover; width: 100%;"
-        )
+        img(src=product.image alt=(product.name||'Produk') loading='lazy')
       else
-        .bg-light.d-flex.align-items-center.justify-content-center(style="height:200px;")
-          i.bi.bi-image.text-muted(style="font-size: 3rem;")
+        .image-placeholder
+          i.bi.bi-image.placeholder-icon
 
-      // discount badge - top left (if applicable)
-      //- You can add discount percentage here if available
-      //- .position-absolute.top-0.start-0.m-2
-      //-   span.badge.bg-danger(style="border-radius: 4px; font-weight: 600; font-size: 0.75rem;") 50%
+      //- Discount Badge (optional - uncomment if needed)
+      //- .discount-badge 53% OFF
 
-      // stock badge - bottom left
-      .position-absolute.bottom-0.start-0.m-2
-        if product && product.stock && Number(product.stock) > 0
-          span.badge(style="background: rgba(255, 255, 255, 0.95); color: #03ac0e; border-radius: 4px; font-weight: 600; font-size: 0.7rem; padding: 4px 8px;")
-            i.bi.bi-check-circle-fill.me-1(style="font-size: 0.7rem;")
-            | Tersedia
-        else
-          span.badge(style="background: rgba(255, 255, 255, 0.95); color: #dc3545; border-radius: 4px; font-weight: 600; font-size: 0.7rem; padding: 4px 8px;")
-            | Stok Habis
+      //- Stock Badge
+      if product && product.stock && Number(product.stock) > 0
+        .stock-badge.available
+          i.bi.bi-check-circle-fill
+          span Tersedia
+      else
+        .stock-badge.unavailable
+          i.bi.bi-x-circle-fill
+          span Habis
 
-      // Category badge (optional, at top)
+      //- Category Badge
       if product && product.category
-        .position-absolute.top-0.end-0.m-2
-          span.badge.bg-light.text-dark(style="font-size: 0.65rem; font-weight: 500; border-radius: 4px;")
-            = product.category
+        .category-badge= product.category
 
-    // body
-    .card-body.p-3(style="background: white;")
-      
-      // product name
-      .product-name.mb-2(style="min-height: 40px;")
-        .text-dark.small(style="line-height:1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: 0.875rem;")
-          = (product && product.name) || 'Produk'
+    //- Card Body
+    .card-body
+      //- Product Name
+      .product-name
+        .product-name-text= (product && product.name) || 'Produk'
 
-      // price section
-      .price-section.mb-2
-        .fw-bold(style="font-size: 1.125rem; color: #212121;")
+      //- Price Section
+      .price-section
+        .current-price
           | Rp#{Number((product && product.price) || 0).toLocaleString('id-ID')}
         if product && product.unit
-          .text-muted(style="font-size: 0.75rem;")
-            | per #{product.unit}
+          .price-unit per #{product.unit}
 
-      // rating & sold
-      .d-flex.align-items-center.gap-2.mb-2
-        .d-flex.align-items-center
-          i.bi.bi-star-fill(style="color: #ffc107; font-size: 0.75rem;")
-          span.ms-1(style="font-size: 0.75rem; color: #6d6d6d;") 4.9
-        .text-muted(style="font-size: 0.75rem;") | 
-        .text-muted(style="font-size: 0.75rem;") #{Number((product && product.stock) || 0)} terjual
+      //- Rating & Stock
+      .product-meta
+        .rating-item
+          i.bi.bi-star-fill.rating-star
+          span 4.9
+        span.meta-separator |
+        span #{Number((product && product.stock) || 0)} stok
 
-    // action button (on hover or always visible)
-    .card-footer.bg-white.border-0.p-2(style="border-top: 1px solid #e5e5e5 !important;")
+    //- Card Footer - Action Area
+    .card-footer
       if currentUser && currentUser.role === 'dapur'
-        // jika belum lengkap -> arahkan ke halaman lengkapi profile
+        //- Check if profile is complete
         if !(currentUser.phone && currentUser.address)
-          a.btn.btn-sm.btn-warning.w-100(
+          a.btn-complete-profile(
             href="/dapur/profile/complete"
             onclick="event.stopPropagation()"
-            title="Lengkapi data dapur (alamat & telepon)"
+            title="Lengkapi data dapur"
           )
-            i.bi.bi-pencil-square.me-1
-            | Lengkapi Data Dapur
+            i.bi.bi-pencil-square
+            span Lengkapi Profile
         else
-          // user sudah lengkap: tampilkan form tambah keranjang
+          //- Add to Cart Form
           form.add-to-cart-form(action="/dapur/cart/add" method="post" onclick="event.stopPropagation()")
             input(type="hidden" name="product_id" value=(product && product.id))
             if typeof csrfToken !== 'undefined'
               input(type="hidden" name="_csrf" value=csrfToken)
-            .d-flex.gap-2.align-items-center
-              .input-group(style="max-width: 100px;")
-                button.btn.btn-sm.btn-outline-secondary(
-                  type="button"
-                  onclick="event.stopPropagation(); let inp=this.parentElement.querySelector('input[name=qty]'); let v=parseInt(inp.value,10); if(isNaN(v)||v<=1)v=1; else v--; inp.value=v;"
-                  style="border-radius: 4px 0 0 4px; padding: 4px 8px;"
-                )
-                  i.bi.bi-dash(style="font-size: 0.75rem;")
-
-                input.form-control.form-control-sm.text-center(
-                  type="number"
-                  name="qty"
-                  value="1"
-                  min="1"
-                  step="1"
-                  onclick="event.stopPropagation()"
-                  style="border-left: none; border-right: none; font-size: 0.75rem; padding: 4px;"
-                )
-
-                button.btn.btn-sm.btn-outline-secondary(
-                  type="button"
-                  onclick="event.stopPropagation(); let inp=this.parentElement.querySelector('input[name=qty]'); let v=parseInt(inp.value,10); if(isNaN(v)||v<1)v=1; else v++; inp.value=v;"
-                  style="border-radius: 0 4px 4px 0; padding: 4px 8px;"
-                )
-                  i.bi.bi-plus(style="font-size: 0.75rem;")
-
-              button.btn.btn-sm.btn-success.flex-fill(
-                type="submit"
-                disabled=!((product && product.stock) && Number(product.stock) > 0)
-                onclick="event.stopPropagation()"
-                style="border-radius: 4px; font-size: 0.75rem; font-weight: 600; padding: 6px 12px;"
+            
+            //- Quantity Control
+            .qty-control
+              button.qty-btn(
+                type="button"
+                onclick="event.stopPropagation(); let inp=this.parentElement.querySelector('input[name=qty]'); let v=parseInt(inp.value,10); if(isNaN(v)||v<=1)v=1; else v--; inp.value=v;"
               )
-                i.bi.bi-cart-plus.me-1
-                | Keranjang
+                i.bi.bi-dash
+              
+              input.qty-input(
+                type="number"
+                name="qty"
+                value="1"
+                min="1"
+                step="1"
+                onclick="event.stopPropagation()"
+                readonly
+              )
+              
+              button.qty-btn(
+                type="button"
+                onclick="event.stopPropagation(); let inp=this.parentElement.querySelector('input[name=qty]'); let v=parseInt(inp.value,10); if(isNaN(v)||v<1)v=1; else v++; inp.value=v;"
+              )
+                i.bi.bi-plus
+            
+            //- Add to Cart Button
+            button.btn-add-cart(
+              type="submit"
+              disabled=!((product && product.stock) && Number(product.stock) > 0)
+              onclick="event.stopPropagation()"
+            )
+              i.bi.bi-cart-plus
+              span Keranjang
       else
-        a.btn.btn-sm.btn-outline-success.w-100(
-          href=productDetailUrl
-          style="border-radius: 4px; font-size: 0.75rem; font-weight: 600; text-decoration: none;"
-        )
-          i.bi.bi-eye.me-1
-          | Lihat Detail
+        //- View Detail Button for non-dapur users
+        a.btn-view-detail(href=productDetailUrl)
+          i.bi.bi-eye
+          span Lihat Detail
