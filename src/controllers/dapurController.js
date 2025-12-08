@@ -564,9 +564,82 @@ exports.viewProfile = async (req, res) => {
 
     const user = rows[0] || sessionUser;
 
+    // ========== STAT ORDER UNTUK PROFIL ==========
+    const [statRows] = await pool.query(
+      'SELECT status, COUNT(*) AS cnt FROM orders WHERE user_id = ? GROUP BY status',
+      [user.id]
+    );
+
+    let pendingOrders = 0; // awaiting_yayasan
+    let approvedOrders = 0; // approved_yayasan
+    let completedOrders = 0; // completed
+
+    statRows.forEach(r => {
+      switch (r.status) {
+        case 'awaiting_yayasan':
+          pendingOrders = r.cnt;
+          break;
+        case 'approved_yayasan':
+          approvedOrders = r.cnt;
+          break;
+        case 'completed':
+          completedOrders = r.cnt;
+          break;
+      }
+    });
+
+    // ========== OPTIONAL: recentActivity, profileCompletion, memberSince ==========
+    // contoh simple:
+    const profileCompletion =
+      (user.email ? 1 : 0) +
+      (user.phone ? 1 : 0) +
+      (user.address ? 1 : 0);
+    const profileCompletionPercent = Math.round((profileCompletion / 3) * 100);
+
+    const memberSince = user.created_at
+      ? new Intl.DateTimeFormat('id-ID', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
+      }).format(user.created_at)
+      : '-';
+
+    // ========== 3 AKTIVITAS TERAKHIR: ORDER COMPLETED ==========
+    const [activityRows] = await pool.query(
+      `SELECT 
+      o.id,
+      o.total,
+      o.created_at,
+      o.updated_at
+   FROM orders o
+   WHERE o.user_id = ? AND o.status = 'completed'
+   ORDER BY o.updated_at DESC
+   LIMIT 3`,
+      [user.id]
+    );
+
+    // Format jadi objek yang dipakai PUG
+    const recentActivity = activityRows.map(a => ({
+      title: `Pesanan #${a.id} selesai`,
+      time: new Intl.DateTimeFormat('id-ID', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      }).format(a.updated_at || a.created_at),
+      description: `Total belanja Rp ${Number(a.total).toLocaleString('id-ID')}`
+    }));
+
     return res.render('dapur/profile', {
       title: 'Profil Dapur',
-      user
+      user,
+      pendingOrders,
+      approvedOrders,
+      completedOrders,
+      profileCompletion: profileCompletionPercent,
+      memberSince,
+      recentActivity
     });
   } catch (err) {
     console.error('viewProfile error:', err);
