@@ -319,8 +319,11 @@ if isVendorDashboard
             |  Detail
 
 else
-  //- DI HALAMAN MARKETPLACE BIASA: kardi klik -> ke detail
-  a.product-card-wrapper(href=productDetailUrl)
+  //- DI HALAMAN MARKETPLACE BIASA: card klik -> ke detail (tanpa <a> gede)
+  .product-card-wrapper(
+    role="button"
+    onclick=`window.location='${productDetailUrl}'`
+  )
     .product-card
       .card-image-wrap
         if product && product.image
@@ -356,13 +359,13 @@ else
       .card-footer
         if currentUser.role === 'dapur'
           if !(currentUser.phone && currentUser.address)
-              a.btn-complete-profile(
-                href="/dapur/profile/complete"
-                onclick="event.stopPropagation()"
-                title="Lengkapi data dapur"
-              )
-                i.bi.bi-exclamation-circle
-                |  Lengkapi Data Dapur
+            a.btn-complete-profile(
+              href="/dapur/profile/complete"
+              onclick="event.stopPropagation()"
+              title="Lengkapi data dapur"
+            )
+              i.bi.bi-exclamation-circle
+              |  Lengkapi Data Dapur
           else
             form.add-to-cart-form(
               action="/dapur/cart/add"
@@ -396,11 +399,10 @@ else
 
               button.btn-add-cart(
                 type="submit"
-                disabled=!((product && product.stock) && Number(product.stock) > 0)
               )
                 i.bi.bi-cart-plus
                 |  Keranjang
         else
-          a.btn-view-detail(href=productDetailUrl)
+          a.btn-view-detail(href=productDetailUrl onclick="event.stopPropagation()")
             i.bi.bi-eye
             |  Detail
