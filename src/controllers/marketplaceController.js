@@ -1,5 +1,19 @@
 const pool = require('../models/db');
 
+// ===============================
+// NORMALIZER KATEGORI
+// ===============================
+function normalizeCategory(cat) {
+  if (!cat) return "other";
+
+  const c = String(cat).trim().toLowerCase();
+
+  if (c.includes("sayur")) return "Sayuran";
+  if (c.includes("daging")) return "Daging";
+  if (c.includes("sembako")) return "Sembako";
+
+  return "other";
+}
 
 // ===============================
 // DETAIL PRODUK
@@ -77,7 +91,17 @@ exports.list = async (req, res) => {
 
     sql += ' ORDER BY p.created_at DESC';
 
-    const [products] = await pool.query(sql, params);
+    const [rows] = await pool.query(sql, params);
+
+    // =======================
+    // FIX PALING KRITIKAL
+    // =======================
+    const products = rows.map(p => ({
+      ...p,
+      price: Number(p.price || 0),
+      stock: Number(p.stock || 0),
+      category: normalizeCategory(p.category)
+    }));
 
     res.render('marketplace/list', {
       title: 'Marketplace Bahan Makanan',
@@ -93,8 +117,6 @@ exports.list = async (req, res) => {
   }
 };
 
-
-
 // ===============================
 // LIVE SEARCH
 // ===============================
@@ -106,27 +128,24 @@ exports.liveSearch = async (req, res) => {
       SELECT p.*, u.name AS vendor_name
       FROM products p
       JOIN users u ON u.id = p.vendor_id
-      WHERE 1 = 1
+      WHERE p.name LIKE ? OR p.category LIKE ? OR u.name LIKE ?
+      ORDER BY p.created_at DESC
     `;
-    const params = [];
 
-    if (search) {
-      sql += ' AND (p.name LIKE ? OR p.category LIKE ? OR u.name LIKE ?)';
-      const like = `%${search}%`;
-      params.push(like, like, like);
-    }
+    const like = `%${search}%`;
+    const [rows] = await pool.query(sql, [like, like, like]);
 
-    sql += ' ORDER BY p.created_at DESC';
+    const products = rows.map(p => ({
+      ...p,
+      price: Number(p.price || 0),
+      stock: Number(p.stock || 0),
+      category: normalizeCategory(p.category)   // ⬅️ pakai normalizer yang sama
+    }));
 
-    const [products] = await pool.query(sql, params);
-
-    res.json({ products });
+    res.render('marketplace/live_products', { products });
 
   } catch (err) {
     console.error(err);
-    res.status(500).json({
-      products: [],
-      error: 'Gagal melakukan pencarian'
-    });
+    res.send('');
   }
 };

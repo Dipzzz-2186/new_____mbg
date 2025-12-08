@@ -1,0 +1,20 @@
+//- src/views/marketplace/live_products.pug
+
+if products && products.length
+  .row.g-4#productsRow
+    each p in products
+      .col-lg-3.col-md-4.col-sm-6(
+        data-cat=(p.category || 'other')
+        data-price=(p.price || 0)
+      )
+        - var product = p
+        include ../marketplace/_product_card.pug
+else
+  .card.border-0.shadow.text-center.py-5.animate-fadeIn(style="border-radius: 15px;")
+    .card-body.p-5
+      .mb-4
+        i.bi.bi-basket3.text-success(style="font-size: 5rem; opacity: 0.3;")
+      h4.mt-4.mb-3.fw-bold.text-success Belum Ada Produk
+      p.text-muted.mb-0(style="font-size: 1.1rem;")
+        i.bi.bi-info-circle.me-2
+        | Produk akan ditampilkan di sini

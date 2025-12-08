@@ -504,6 +504,108 @@ html(lang="id")
         });
       }, 100);
 
+      // ===== GLOBAL: FILTER & SORT HANDLERS =====
+      function attachFilterHandlers() {
+        const categories = document.querySelectorAll(".category-item");
+        const productsRow = document.getElementById("productsRow");
+        const sortButtons = document.querySelectorAll(".btn-sort");
+
+        if (!productsRow) return;
+
+        const products = Array.from(productsRow.querySelectorAll("[data-cat]"));
+
+        // simpan urutan awal
+        products.forEach((p, idx) => p.dataset.index = idx);
+
+        // ===== FILTER KATEGORI =====
+        categories.forEach(cat => {
+          cat.onclick = () => {
+            const selected = cat.dataset.cat;
+            const isActive = cat.classList.contains("active");
+
+            categories.forEach(c => c.classList.remove("active"));
+            products.forEach(p => p.style.display = "");
+
+            if (!isActive) {
+              cat.classList.add("active");
+
+              let visibleCount = 0;
+
+              products.forEach(p => {
+                const pCat = (p.dataset.cat || '').trim();
+
+                let match = false;
+
+                if (selected === "other") {
+                  match = !["Sayuran", "Daging", "Sembako"].includes(pCat);
+                } else {
+                  match = pCat === selected;
+                }
+
+                if (!match) {
+                  p.style.display = "none";
+                } else {
+                  visibleCount++;
+                }
+              });
+
+              // === tampilkan EMPTY STATE kalau tidak ada produk ===
+              const productsGrid = document.getElementById("productsGrid");
+
+              // hapus empty state jika ada sebelumnya
+              const oldEmpty = document.getElementById("emptyCategory");
+              if (oldEmpty) oldEmpty.remove();
+
+              if (visibleCount === 0) {
+                productsGrid.insertAdjacentHTML(
+                  "beforeend",
+                  `
+                  <div id="emptyCategory" class="empty-state animate-fadeIn mt-3">
+                    <i class="bi bi-basket3"></i>
+                    <h4>Produk kategori tidak ditemukan</h4>
+                    <p><i class="bi bi-info-circle me-2"></i>Coba pilih kategori lain.</p>
+                  </div>
+                  `
+                );
+              }
+            } else {
+              // klik kategori aktif → reset filter + hapus empty state
+              const oldEmpty = document.getElementById("emptyCategory");
+              if (oldEmpty) oldEmpty.remove();
+            }
+          };
+        });
+
+
+        // ===== SORT HARGA =====
+        sortButtons.forEach(btn => {
+          btn.onclick = () => {
+            const sortType = btn.dataset.sort;
+            const isActive = btn.classList.contains("active");
+
+            sortButtons.forEach(b => b.classList.remove("active"));
+
+            if (isActive) {
+              // balikin ke urutan awal
+              [...products]
+                .sort((a, b) => Number(a.dataset.index) - Number(b.dataset.index))
+                .forEach(el => productsRow.appendChild(el));
+              return;
+            }
+
+            btn.classList.add("active");
+
+            [...products]
+              .sort((a, b) => {
+                const pa = Number(a.dataset.price);
+                const pb = Number(b.dataset.price);
+                return sortType === "asc" ? pa - pb : pb - pa;
+              })
+              .forEach(el => productsRow.appendChild(el));
+          };
+        });
+      }
+
       // ===== LIVE SEARCH MARKETPLACE =====
       (function () {
         const searchInput = document.getElementById('navSearch');
@@ -523,61 +625,17 @@ html(lang="id")
 
           try {
             const res = await fetch('/market/live-search?q=' + encodeURIComponent(query));
-            const data = await res.json();
-            renderProducts(data.products || []);
+            const html = await res.text();
+            productsGrid.innerHTML = html;
+            // setelah DOM diganti, pasang lagi filter & sort
+            attachFilterHandlers();
           } catch (err) {
             console.error(err);
           }
         }
-
-        function formatPrice(num) {
-          if (num == null) return '-';
-          try {
-            return Number(num).toLocaleString('id-ID');
-          } catch {
-            return num;
-          }
-        }
-
-        function renderProducts(products) {
-          if (!products.length) {
-            productsGrid.innerHTML = `
-              <div class="empty-state animate-fadeIn">
-                <i class="bi bi-basket3"></i>
-                <h4>Produk tidak ditemukan</h4>
-                <p><i class="bi bi-info-circle me-2"></i>Coba gunakan kata kunci lain atau cek ejaan Anda</p>
-              </div>`;
-            return;
-          }
-
-          const html = [
-            '<div class="row g-4">',
-            ...products.map(p => {
-              const img = p.image_url || p.image_path || p.image || '';
-              const price = formatPrice(p.price);
-              const vendor = p.vendor_name || '';
-              return `
-                <div class="col-lg-3 col-md-4 col-sm-6 animate-fadeIn">
-                  <div class="card product-card">
-                    ${img ? `<img src="${img}" class="card-img-top" loading="lazy" alt="${p.name || ''}">` : ''}
-                    <div class="card-body">
-                      <h5 class="card-title">${p.name || ''}</h5>
-                      ${vendor ? `<p class="text-muted mb-3"><i class="bi bi-shop"></i>${vendor}</p>` : ''}
-                      <div class="mt-auto">
-                        <div class="fw-bold mb-3">Rp ${price}</div>
-                        <a href="/market/product/${p.id}" class="btn btn-primary w-100">
-                          <i class="bi bi-cart-plus"></i>
-                          Tambah ke Keranjang
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              `;
-            }),
-            '</div>'
-          ].join('');
-
-          productsGrid.innerHTML = html;
-        }
       })();
+
+      // ===== INIT SAAT PAGE BARU LOADED =====
+      document.addEventListener("DOMContentLoaded", function () {
+        attachFilterHandlers();
+      });
