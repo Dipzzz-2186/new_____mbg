@@ -713,30 +713,31 @@ exports.updateProduct = async (req, res) => {
     (req.session && (req.session.user || req.session.currentUser)) ||
     null;
 
-  if (!currentUser) {
-    return res.redirect('/login');
-  }
+  if (!currentUser) return res.redirect('/login');
 
   const vendorId = currentUser.id;
   const { name, price, stock, unit, category } = req.body;
 
+  // ⬅ Tambahan untuk update gambar baru
+  const newImage = req.file ? `/uploads/${req.file.filename}` : null;
+
   try {
-    await pool.query(
-      `
-      UPDATE products
-      SET name = ?, price = ?, stock = ?, unit = ?, category = ?
-      WHERE id = ? AND vendor_id = ?
-      `,
-      [
-        name,
-        Number(price) || 0,
-        Number(stock) || 0,
-        unit || null,
-        category || null,
-        id,
-        vendorId,
-      ]
-    );
+    // default update tanpa gambar dulu
+    let query = `
+      UPDATE products SET name=?, price=?, stock=?, unit=?, category=?
+    `;
+    const params = [name, Number(price)||0, Number(stock)||0, unit||null, category||null];
+
+    // kalau user upload gambar baru → update kolom image juga
+    if (newImage) {
+      query += `, image=?`;
+      params.push(newImage);
+    }
+
+    query += ` WHERE id=? AND vendor_id=?`;
+    params.push(id, vendorId);
+
+    await pool.query(query, params);
 
     req.flash && req.flash('success', 'Produk berhasil diperbarui');
     return res.redirect('/vendor/dashboard');
@@ -746,6 +747,7 @@ exports.updateProduct = async (req, res) => {
     return res.redirect(`/vendor/products/${id}/edit`);
   }
 };
+
 
 // HAPUS PRODUK
 exports.deleteProduct = async (req, res) => {
