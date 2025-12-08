@@ -18,4 +18,7 @@ router.post('/checkout', dapurCtrl.checkout);
 router.get('/profile/complete', dapurCtrl.showCompleteProfileForm);
 router.post('/profile/complete', dapurCtrl.completeProfilePost);
 
+router.get('/profile/password', dapurCtrl.passwordPage);
+router.post('/profile/password', dapurCtrl.updatePassword);
+
 module.exports = router;

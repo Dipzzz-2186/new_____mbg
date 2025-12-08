@@ -1,5 +1,6 @@
 // src/controllers/dapurController.js
 const pool = require('../models/db');
+const bcrypt = require('bcrypt');
 
 // =================== DASHBOARD ===================
 exports.dashboard = async (req, res) => {
@@ -645,5 +646,89 @@ exports.viewProfile = async (req, res) => {
     console.error('viewProfile error:', err);
     req.flash('error', 'Gagal membuka profil.');
     return res.redirect('/dapur/dashboard');
+  }
+};
+
+exports.passwordPage = (req, res) => {
+  res.render('dapur/password', {
+    title: 'Ganti Password',
+    query: req.query || {},
+    messages: {
+      error: req.flash ? req.flash('error') : null,
+      success: req.flash ? req.flash('success') : null
+    }
+  });
+};
+
+// HANDLE GANTI PASSWORD
+exports.updatePassword = async (req, res) => {
+  try {
+    const currentUser =
+      req.user ||
+      res.locals.currentUser ||
+      (req.session && (req.session.user || req.session.currentUser)) ||
+      null;
+
+    if (!currentUser) {
+      return res.redirect('/login');
+    }
+
+    const userId = currentUser.id;
+
+    // ⬅️ Nama harus SAMA dengan di form Pug
+    const { current_password, new_password, confirm_password } = req.body;
+
+    // 1. Validasi basic
+    if (!current_password || !new_password || !confirm_password) {
+      req.flash('error', 'Semua field wajib diisi');
+      return res.redirect('/dapur/profile/password');
+    }
+
+    if (new_password.length < 6) {
+      req.flash('error', 'Password baru minimal 6 karakter');
+      return res.redirect('/dapur/profile/password');
+    }
+
+    if (new_password !== confirm_password) {
+      req.flash('error', 'Konfirmasi password tidak sama');
+      return res.redirect('/dapur/profile/password');
+    }
+
+    // 2. Ambil password lama dari DB
+    const [rows] = await pool.query(
+      'SELECT password FROM users WHERE id = ? LIMIT 1',
+      [userId]
+    );
+
+    if (!rows.length) {
+      req.flash('error', 'User tidak ditemukan');
+      return res.redirect('/dapur/profile/password');
+    }
+
+    const dbPassword = rows[0].password;
+
+    // 3. Cek password lama cocok atau nggak
+    const match = await bcrypt.compare(current_password, dbPassword);
+    if (!match) {
+      req.flash('error', 'Password lama salah');
+      return res.redirect('/dapur/profile/password');
+    }
+
+    // 4. Hash password baru
+    const hashed = await bcrypt.hash(new_password, 10);
+
+    // 5. Update ke DB
+    await pool.query(
+      'UPDATE users SET password = ? WHERE id = ?',
+      [hashed, userId]
+    );
+
+    // 6. Sukses
+    req.flash('success', 'Password berhasil diperbarui');
+    return res.redirect('/dapur/profile/password?success=1');
+  } catch (err) {
+    console.error('updatePassword dapur error:', err);
+    req.flash('error', 'Gagal mengganti password.');
+    return res.redirect('/dapur/profile/password');
   }
 };
