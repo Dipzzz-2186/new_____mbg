@@ -675,7 +675,6 @@ exports.updatePassword = async (req, res) => {
 
     const userId = currentUser.id;
 
-    // ⬅️ Nama harus SAMA dengan di form Pug
     const { current_password, new_password, confirm_password } = req.body;
 
     // 1. Validasi basic
@@ -723,9 +722,18 @@ exports.updatePassword = async (req, res) => {
       [hashed, userId]
     );
 
-    // 6. Sukses
-    req.flash('success', 'Password berhasil diperbarui');
-    return res.redirect('/dapur/profile/password?success=1');
+    // 6. Logout & redirect ke login
+    if (req.session) {
+      return req.session.destroy((err2) => {
+        if (err2) {
+          console.error('Session destroy error:', err2);
+        }
+        res.clearCookie('connect.sid'); // kalau nama cookie beda, samain dengan di express-session
+        return res.redirect('/login?password_changed=1');
+      });
+    }
+
+    return res.redirect('/login?password_changed=1');
   } catch (err) {
     console.error('updatePassword dapur error:', err);
     req.flash('error', 'Gagal mengganti password.');
