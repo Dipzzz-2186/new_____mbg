@@ -1,12 +1,12 @@
-//- src/views/marketplace/product_detail.pug
 extends ../layout
 
 block content
   style.
+    /* ===== ANIMATIONS ===== */
     @keyframes fadeInUp {
       from {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(15px);
       }
       to {
         opacity: 1;
@@ -14,36 +14,27 @@ block content
       }
     }
     
-    @keyframes slideInRight {
-      from {
-        opacity: 0;
-        transform: translateX(-20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
-    }
-    
     body {
       background: #f8f9fa;
     }
     
-    /* Page Header */
+    /* ===== HEADER MOBILE ===== */
     .product-header {
       background: #ffffff;
-      padding: 16px 0;
-      margin-bottom: 24px;
+      padding: 12px 0;
+      margin-bottom: 16px;
       border-bottom: 1px solid #e8e8e8;
-      animation: fadeInUp 0.6s ease-out;
+      animation: fadeInUp 0.4s ease-out;
+      position: sticky;
+      top: 56px;
+      z-index: 999;
     }
     
-    /* Breadcrumb */
     .custom-breadcrumb {
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-size: 0.875rem;
+      gap: 6px;
+      font-size: 0.8rem;
       flex-wrap: wrap;
       padding: 0;
       margin: 0;
@@ -52,55 +43,60 @@ block content
     .breadcrumb-item {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
     }
     
     .breadcrumb-item a {
       color: #28a745;
       text-decoration: none;
-      transition: color 0.2s ease;
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 3px;
+      touch-action: manipulation;
     }
     
-    .breadcrumb-item a:hover {
+    .breadcrumb-item a:active {
       color: #218838;
     }
     
     .breadcrumb-separator {
       color: #d1d5db;
-      font-size: 0.7rem;
+      font-size: 0.65rem;
     }
     
     .breadcrumb-current {
       color: #6c757d;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 120px;
     }
     
-    /* Product Container */
+    /* ===== PRODUCT CONTAINER MOBILE ===== */
     .product-container {
-      animation: fadeInUp 0.6s ease-out 0.2s both;
+      animation: fadeInUp 0.4s ease-out 0.1s both;
+      padding-bottom: 420px !important;
     }
     
-    /* Left Column - Image */
+    /* ===== IMAGE SECTION MOBILE ===== */
     .image-section {
-      margin-bottom: 24px;
+      margin-bottom: 16px;
     }
     
     .image-card {
       background: white;
       border: 1px solid #e8e8e8;
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      border-radius: 12px;
+      padding: 12px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
     }
     
     .main-image-wrapper {
       position: relative;
-      border-radius: 12px;
+      border-radius: 10px;
       overflow: hidden;
       background: #fafafa;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
       aspect-ratio: 1;
       display: flex;
       align-items: center;
@@ -124,14 +120,20 @@ block content
     
     .thumbnail-gallery {
       display: flex;
-      gap: 12px;
+      gap: 8px;
       overflow-x: auto;
       padding-bottom: 4px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    
+    .thumbnail-gallery::-webkit-scrollbar {
+      display: none;
     }
     
     .thumbnail-item {
-      width: 70px;
-      height: 70px;
+      width: 60px;
+      height: 60px;
       border: 2px solid #e8e8e8;
       border-radius: 8px;
       overflow: hidden;
@@ -140,7 +142,6 @@ block content
       transition: all 0.2s ease;
     }
     
-    .thumbnail-item:hover,
     .thumbnail-item.active {
       border-color: #28a745;
     }
@@ -151,44 +152,43 @@ block content
       object-fit: cover;
     }
     
-    /* Right Column - Info */
+    /* ===== INFO SECTION MOBILE ===== */
     .info-section {
-      animation: slideInRight 0.6s ease-out 0.3s both;
+      animation: fadeInUp 0.4s ease-out 0.2s both;
     }
     
     .info-card {
       background: white;
       border: 1px solid #e8e8e8;
-      border-radius: 16px;
-      padding: 24px;
-      margin-bottom: 16px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
     }
     
-    /* Product Title */
     .product-title {
-      font-size: 1.5rem;
+      font-size: 1.15rem;
       font-weight: 700;
       color: #2c3e50;
       line-height: 1.4;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
     }
     
-    /* Meta Info */
     .product-meta {
       display: flex;
       align-items: center;
-      gap: 20px;
-      padding-bottom: 20px;
-      margin-bottom: 20px;
+      gap: 16px;
+      padding-bottom: 16px;
+      margin-bottom: 16px;
       border-bottom: 1px solid #f0f0f0;
+      flex-wrap: wrap;
     }
     
     .meta-item {
       display: flex;
       align-items: center;
-      gap: 6px;
-      font-size: 0.875rem;
+      gap: 5px;
+      font-size: 0.8rem;
     }
     
     .rating-icon {
@@ -204,49 +204,55 @@ block content
       color: #6c757d;
     }
     
-    /* Price Section */
+    /* ===== PRICE MOBILE ===== */
     .price-section {
       background: linear-gradient(135deg, #f0f9f3 0%, #ffffff 100%);
       border: 2px solid #28a745;
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 20px;
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 16px;
     }
     
     .price-main {
-      font-size: 2rem;
+      font-size: 1.5rem;
       font-weight: 700;
       color: #28a745;
       margin-bottom: 4px;
     }
     
     .price-unit {
-      font-size: 0.875rem;
+      font-size: 0.8rem;
       color: #6c757d;
     }
     
-    /* Tabs */
+    /* ===== TABS MOBILE ===== */
     .detail-tabs {
       border-bottom: 2px solid #f0f0f0;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
       display: flex;
-      gap: 24px;
+      gap: 20px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    
+    .detail-tabs::-webkit-scrollbar {
+      display: none;
     }
     
     .tab-button {
-      padding: 12px 0;
+      padding: 10px 0;
       background: none;
       border: none;
       border-bottom: 3px solid transparent;
       color: #6c757d;
       font-weight: 600;
-      font-size: 0.95rem;
+      font-size: 0.85rem;
       cursor: pointer;
       transition: all 0.2s ease;
-    }
-    
-    .tab-button:hover {
-      color: #28a745;
+      white-space: nowrap;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
     }
     
     .tab-button.active {
@@ -262,12 +268,12 @@ block content
       display: block;
     }
     
-    /* Detail Grid */
+    /* ===== DETAIL GRID MOBILE ===== */
     .detail-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
-      margin-bottom: 20px;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
     }
     
     .detail-row {
@@ -277,12 +283,12 @@ block content
     }
     
     .detail-label {
-      font-size: 0.875rem;
+      font-size: 0.8rem;
       color: #6c757d;
     }
     
     .detail-value {
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       font-weight: 600;
       color: #2c3e50;
     }
@@ -291,92 +297,98 @@ block content
       color: #28a745;
     }
     
-    /* Description */
+    /* ===== DESCRIPTION MOBILE ===== */
     .description-box {
       background: #fafafa;
       border-left: 4px solid #28a745;
       border-radius: 8px;
-      padding: 16px;
-      margin-top: 16px;
+      padding: 12px;
+      margin-top: 12px;
     }
     
     .description-title {
       font-weight: 700;
       color: #2c3e50;
       margin-bottom: 8px;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
     }
     
     .description-text {
-      font-size: 0.875rem;
-      line-height: 1.7;
+      font-size: 0.8rem;
+      line-height: 1.6;
       color: #4a5568;
       margin: 0;
     }
     
-    /* Vendor Card */
+    /* ===== VENDOR CARD MOBILE ===== */
     .vendor-section {
-      margin-bottom: 16px;
+      margin-bottom: 12px;
     }
     
     .vendor-card {
       background: white;
       border: 1px solid #e8e8e8;
-      border-radius: 12px;
-      padding: 16px;
+      border-radius: 10px;
+      padding: 12px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
-      transition: all 0.3s ease;
+      gap: 10px;
+      transition: all 0.2s ease;
     }
     
-    .vendor-card:hover {
+    .vendor-card:active {
       border-color: #28a745;
-      box-shadow: 0 4px 12px rgba(40, 167, 69, 0.1);
+      box-shadow: 0 2px 8px rgba(40, 167, 69, 0.1);
     }
     
     .vendor-left {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       flex: 1;
+      min-width: 0;
     }
     
     .vendor-avatar {
-      width: 48px;
-      height: 48px;
+      width: 40px;
+      height: 40px;
       background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-      border-radius: 10px;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
-      font-size: 1.25rem;
+      font-size: 1.1rem;
       flex-shrink: 0;
     }
     
     .vendor-info {
       flex: 1;
+      min-width: 0;
     }
     
     .vendor-name {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       font-weight: 700;
       color: #2c3e50;
-      font-size: 0.95rem;
+      font-size: 0.85rem;
       margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     
     .verified-icon {
       color: #28a745;
-      font-size: 1rem;
+      font-size: 0.9rem;
+      flex-shrink: 0;
     }
     
     .vendor-badge {
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       color: #6c757d;
       display: flex;
       align-items: center;
@@ -384,57 +396,64 @@ block content
     }
     
     .btn-follow {
-      padding: 8px 20px;
+      padding: 6px 16px;
       background: white;
       color: #28a745;
       border: 2px solid #28a745;
       border-radius: 8px;
       font-weight: 600;
-      font-size: 0.875rem;
+      font-size: 0.8rem;
       cursor: pointer;
       transition: all 0.2s ease;
       white-space: nowrap;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
     }
     
-    .btn-follow:hover {
-      background: #28a745;
-      color: white;
+    .btn-follow:active {
+      background: #f0f9f3;
+      transform: scale(0.97);
     }
     
-    /* Purchase Card */
+    /* ===== PURCHASE CARD MOBILE (FIXED BOTTOM) ===== */
     .purchase-card {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
       background: white;
-      border: 1px solid #e8e8e8;
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-      position: sticky;
-      top: 20px;
+      border-radius: 16px 16px 0 0;
+      padding: 16px;
+      box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+      max-height: 80vh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
     
     .purchase-title {
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: 700;
       color: #2c3e50;
-      margin-bottom: 16px;
-      padding-bottom: 16px;
+      margin-bottom: 12px;
+      padding-bottom: 12px;
       border-bottom: 1px solid #f0f0f0;
     }
     
-    /* Quantity Section */
+    /* ===== QUANTITY MOBILE ===== */
     .quantity-section {
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }
     
     .quantity-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
     
     .quantity-label {
-      font-size: 0.875rem;
+      font-size: 0.8rem;
       color: #6c757d;
       font-weight: 600;
     }
@@ -470,9 +489,11 @@ block content
       font-size: 1.1rem;
       cursor: pointer;
       transition: all 0.2s ease;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
     }
     
-    .qty-btn:hover {
+    .qty-btn:active {
       background: #f0f9f3;
     }
     
@@ -484,7 +505,7 @@ block content
       border-right: 1px solid #e8e8e8;
       text-align: center;
       font-weight: 700;
-      font-size: 1rem;
+      font-size: 0.95rem;
       color: #2c3e50;
     }
     
@@ -492,58 +513,60 @@ block content
       outline: none;
     }
     
-    /* Subtotal */
+    /* ===== SUBTOTAL MOBILE ===== */
     .subtotal-box {
       background: #fafafa;
       border-radius: 10px;
-      padding: 16px;
-      margin-bottom: 16px;
+      padding: 12px;
+      margin-bottom: 12px;
     }
     
     .subtotal-label {
-      font-size: 0.875rem;
+      font-size: 0.8rem;
       color: #6c757d;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
     
     .subtotal-value {
-      font-size: 1.75rem;
+      font-size: 1.4rem;
       font-weight: 700;
       color: #28a745;
     }
     
-    /* Action Buttons */
+    /* ===== ACTION BUTTONS MOBILE ===== */
     .action-buttons {
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      margin-bottom: 16px;
+      gap: 8px;
+      margin-bottom: 12px;
     }
     
     .btn-purchase {
-      padding: 14px 20px;
+      padding: 12px 16px;
       border-radius: 10px;
       font-weight: 600;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       border: none;
       cursor: pointer;
       transition: all 0.2s ease;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 6px;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      min-height: 44px;
     }
     
     .btn-add-cart {
       background: #28a745;
       color: white;
-      box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+      box-shadow: 0 2px 6px rgba(40, 167, 69, 0.3);
     }
     
-    .btn-add-cart:hover:not(:disabled) {
+    .btn-add-cart:active:not(:disabled) {
       background: #218838;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+      transform: scale(0.98);
     }
     
     .btn-add-cart:disabled {
@@ -558,17 +581,17 @@ block content
       border: 2px solid #28a745;
     }
     
-    .btn-buy-now:hover {
+    .btn-buy-now:active {
       background: #f0f9f3;
-      transform: translateY(-1px);
+      transform: scale(0.98);
     }
     
-    /* Quick Actions */
+    /* ===== QUICK ACTIONS MOBILE ===== */
     .quick-actions {
       display: flex;
-      justify-content: center;
-      gap: 24px;
-      padding-top: 16px;
+      justify-content: space-around;
+      gap: 16px;
+      padding-top: 12px;
       border-top: 1px solid #f0f0f0;
     }
     
@@ -579,56 +602,59 @@ block content
       gap: 4px;
       color: #6c757d;
       text-decoration: none;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       transition: all 0.2s ease;
       cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
     }
     
-    .quick-action:hover {
+    .quick-action:active {
       color: #28a745;
+      transform: scale(0.95);
     }
     
     .quick-action i {
-      font-size: 1.25rem;
+      font-size: 1.15rem;
     }
     
-    /* Login Alert */
+    /* ===== LOGIN ALERT ===== */
     .login-alert {
       background: #e7f5ff;
       border: 1px solid #bee5eb;
       border-left: 4px solid #17a2b8;
-      border-radius: 10px;
-      padding: 16px;
+      border-radius: 8px;
+      padding: 12px;
       display: flex;
       align-items: center;
-      gap: 12px;
-      font-size: 0.875rem;
+      gap: 10px;
+      font-size: 0.8rem;
       color: #0c5460;
     }
     
     .login-alert i {
-      font-size: 1.25rem;
+      font-size: 1.15rem;
       color: #17a2b8;
       flex-shrink: 0;
     }
     
-    /* Related Products */
+    /* ===== RELATED PRODUCTS MOBILE ===== */
     .related-section {
-      margin-top: 40px;
-      animation: fadeInUp 0.6s ease-out 0.4s both;
+      margin-top: 20px;
+      animation: fadeInUp 0.4s ease-out 0.3s both;
     }
     
     .section-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 20px;
-      padding-bottom: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
       border-bottom: 2px solid #e8e8e8;
     }
     
     .section-title {
-      font-size: 1.25rem;
+      font-size: 1.05rem;
       font-weight: 700;
       color: #2c3e50;
       margin: 0;
@@ -638,17 +664,17 @@ block content
       color: #28a745;
       text-decoration: none;
       font-weight: 600;
-      font-size: 0.875rem;
+      font-size: 0.8rem;
       display: flex;
       align-items: center;
       gap: 4px;
-      transition: all 0.2s ease;
+      white-space: nowrap;
     }
     
-    .view-all-link:hover {
+    .view-all-link:active {
       color: #218838;
-      gap: 8px;
     }
+
     .btn-complete-profile {
       width: 100%;
       padding: 8px 14px;
@@ -662,38 +688,22 @@ block content
       justify-content: center;
       gap: 6px;
       text-decoration: none;
-    }
-    .btn-complete-profile {
       background: #ffc107;
       color: #2c3e50;
     }
-    .btn-complete-profile:hover {
+    .btn-complete-profile:active {
       background: #ffb300;
+      transform: scale(0.98);
     }
-
     
-    /* Mobile Responsive */
-    @media (max-width: 991px) {
-      .purchase-card {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        border-radius: 16px 16px 0 0;
-        z-index: 1000;
-        box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.1);
-        max-height: 85vh;
-        overflow-y: auto;
-      }
-      
+    /* ===== RESPONSIVE TABLET ===== */
+    @media (min-width: 576px) {
       .product-container {
-        padding-bottom: 100px;
+        padding-bottom: 420px !important;
       }
-    }
-    
-    @media (max-width: 576px) {
+
       .product-title {
-        font-size: 1.25rem;
+        font-size: 1.3rem;
       }
       
       .price-main {
@@ -701,25 +711,76 @@ block content
       }
       
       .detail-grid {
-        grid-template-columns: 1fr;
-        gap: 12px;
+        grid-template-columns: repeat(2, 1fr);
       }
       
-      .info-card {
-        padding: 16px;
+      .breadcrumb-current {
+        max-width: 200px;
+      }
+      
+      .meta-item {
+        font-size: 0.85rem;
+      }
+      
+      .tab-button {
+        font-size: 0.9rem;
+        gap: 24px;
+      }
+      
+      .vendor-name {
+        font-size: 0.9rem;
+      }
+      
+      .btn-follow {
+        padding: 8px 20px;
+        font-size: 0.85rem;
+      }
+    }
+    
+    /* ===== RESPONSIVE DESKTOP ===== */
+    @media (min-width: 992px) {
+      .product-container {
+        padding-bottom: 0 !important;
       }
       
       .purchase-card {
-        padding: 16px;
+        position: sticky;
+        top: 20px;
+        border-radius: 16px;
+        max-height: none;
+        padding: 20px;
       }
       
-      .product-meta {
-        gap: 12px;
+      .product-header {
+        position: static;
       }
       
-      .detail-tabs {
-        gap: 16px;
-        overflow-x: auto;
+      .custom-breadcrumb {
+        font-size: 0.875rem;
+      }
+      
+      .breadcrumb-current {
+        max-width: none;
+      }
+      
+      .product-title {
+        font-size: 1.5rem;
+      }
+      
+      .price-main {
+        font-size: 2rem;
+      }
+      
+      .info-card {
+        padding: 24px;
+      }
+      
+      .purchase-card {
+        padding: 20px;
+      }
+      
+      .purchase-title {
+        font-size: 1rem;
       }
     }
 
@@ -729,19 +790,19 @@ block content
         .breadcrumb-item
           a(href="/market")
             i.bi.bi-house-door-fill
-            span Home
+            span.d-none.d-sm-inline Home
         span.breadcrumb-separator
           i.bi.bi-chevron-right
         if product && product.category
           .breadcrumb-item
             a(href=`/market?category=${product.category}`)= product.category
-          span.breadcrumb-separator
+          span.breadcrumb-separator.d-none.d-sm-inline
             i.bi.bi-chevron-right
-        span.breadcrumb-current= (product && product.name) || 'Detail Produk'
+        span.breadcrumb-current= (product && product.name) || 'Detail'
 
-  .container.py-4.product-container
-    .row.g-4
-      //- Left Column: Image
+  .container.py-3.py-md-4.product-container
+    .row.g-3.g-md-4
+      //- Left: Image
       .col-lg-5
         .image-section
           .image-card
@@ -750,16 +811,16 @@ block content
                 img(src=product.image alt=(product.name||'Produk'))
               else
                 .image-placeholder
-                  i.bi.bi-image.text-muted(style="font-size: 4rem;")
+                  i.bi.bi-image.text-muted(style="font-size: 3rem;")
 
             .thumbnail-gallery
               .thumbnail-item.active
                 if product && product.image
                   img(src=product.image alt="Thumbnail")
 
-      //- Right Column: Info & Purchase
+      //- Right: Info & Purchase
       .col-lg-7.info-section
-        //- Product Info Card
+        //- Info Card
         .info-card
           h1.product-title= (product && product.name) || 'Nama Produk'
           
@@ -767,7 +828,7 @@ block content
             .meta-item
               i.bi.bi-star-fill.rating-icon
               span.meta-value 4.9
-              span.meta-label (94 ulasan)
+              span.meta-label.d-none.d-sm-inline (94 ulasan)
             
             .meta-item
               i.bi.bi-box-seam.text-success
@@ -783,10 +844,10 @@ block content
 
           //- Tabs
           .detail-tabs
-            button.tab-button.active(onclick="switchTab('detail')") Detail Produk
-            button.tab-button(onclick="switchTab('info')") Info Penting
+            button.tab-button.active(onclick="switchTab('detail')") Detail
+            button.tab-button(onclick="switchTab('info')") Info
 
-          //- Tab Content: Detail
+          //- Tab: Detail
           .tab-content.active#tab-detail
             .detail-grid
               .detail-row
@@ -807,14 +868,14 @@ block content
 
             if product && product.description
               .description-box
-                .description-title Deskripsi Produk
+                .description-title Deskripsi
                 p.description-text= product.description
 
-          //- Tab Content: Info
+          //- Tab: Info
           .tab-content#tab-info
             .description-box
               .description-title Informasi Penting
-              p.description-text Produk ini dijual oleh vendor terpercaya dan telah melalui proses verifikasi kualitas. Pastikan untuk memeriksa kondisi produk saat diterima.
+              p.description-text Produk dijual oleh vendor terpercaya dan telah melalui verifikasi kualitas.
 
         //- Vendor Card
         if product && product.yayasan_name
@@ -829,24 +890,23 @@ block content
                     i.bi.bi-patch-check-fill.verified-icon
                   .vendor-badge
                     i.bi.bi-shield-check
-                    span Terverifikasi
+                    span.d-none.d-sm-inline Terverifikasi
               button.btn-follow
                 i.bi.bi-plus-circle.me-1
                 | Ikuti
 
-        //- Purchase Card
+        //- Purchase Card (Fixed on mobile)
         .purchase-card
           if currentUser && currentUser.role === 'dapur' 
             if !(currentUser.phone && currentUser.address)
-                a.btn-complete-profile(
-                  href="/dapur/profile/complete"
-                  onclick="event.stopPropagation()"
-                  title="Lengkapi data dapur"
-                )
-                  i.bi.bi-exclamation-circle
-                  |  Lengkapi Data Dapur
+              a.btn-complete-profile(
+                href="/dapur/profile/complete"
+                title="Lengkapi data dapur"
+              )
+                i.bi.bi-exclamation-circle
+                |  Lengkapi Data Dapur
             else
-              .purchase-title Atur Jumlah Pembelian
+              .purchase-title Atur Jumlah
 
               form(action="/dapur/cart/add" method="post")
                 input(type="hidden" name="product_id" value=(product && product.id))
@@ -882,7 +942,8 @@ block content
                     disabled=!((product && product.stock) && Number(product.stock) > 0)
                   )
                     i.bi.bi-cart-plus
-                    span Tambah ke Keranjang
+                    span.d-none.d-sm-inline Tambah ke Keranjang
+                    span.d-inline.d-sm-none Keranjang
                   
                   button.btn-purchase.btn-buy-now(type="button")
                     i.bi.bi-lightning-charge-fill
@@ -901,7 +962,7 @@ block content
           else
             .login-alert
               i.bi.bi-info-circle-fill
-              span Silakan login sebagai Dapur untuk menambahkan produk ke keranjang
+              span Login sebagai Dapur untuk menambahkan ke keranjang
 
     //- Related Products
     if relatedProducts && relatedProducts.length > 0
@@ -912,13 +973,12 @@ block content
             span Lihat Semua
             i.bi.bi-arrow-right
 
-        .row.g-3
+        .row.g-2.g-md-3
           each relProduct in relatedProducts.slice(0, 6)
             .col-6.col-md-4.col-lg-2
               - var product = relProduct
               include _product_card
 
-  //- JavaScript
   script.
     const productPrice = #{(product && product.price) || 0};
     
@@ -939,29 +999,3 @@ block content
         input.value = current - 1;
         updateSubtotal();
       }
-    }
-
-    function updateSubtotal() {
-      const qty = parseInt(document.getElementById('qtyInput').value, 10) || 1;
-      const subtotal = productPrice * qty;
-      document.getElementById('subtotalPrice').textContent = 
-        'Rp' + subtotal.toLocaleString('id-ID');
-    }
-    
-    function switchTab(tabId) {
-      // Hide all tabs
-      document.querySelectorAll('.tab-content').forEach(tab => {
-        tab.classList.remove('active');
-      });
-      
-      // Remove active from all buttons
-      document.querySelectorAll('.tab-button').forEach(btn => {
-        btn.classList.remove('active');
-      });
-      
-      // Show selected tab
-      document.getElementById('tab-' + tabId).classList.add('active');
-      
-      // Add active to clicked button
-      event.target.classList.add('active');
-    }

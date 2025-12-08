@@ -2,7 +2,7 @@ doctype html
 html(lang="id")
   head
     meta(charset="utf-8")
-    meta(name="viewport" content="width=device-width,initial-scale=1")
+    meta(name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5")
     title= title || 'FreshMart - Marketplace Bahan Makanan'
     //- Bootstrap CDN
     link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-" crossorigin="anonymous")
@@ -35,13 +35,14 @@ html(lang="id")
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
         color: var(--text-dark);
         line-height: 1.6;
+        padding-bottom: 60px;
       }
       
-      /* ===== NAVBAR ELEGANT ===== */
+      /* ===== NAVBAR MOBILE-FIRST ===== */
       .navbar {
         background: var(--white) !important;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-        padding: 1rem 0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        padding: 0.75rem 0;
         position: sticky;
         top: 0;
         z-index: 1000;
@@ -49,117 +50,114 @@ html(lang="id")
       }
       
       .navbar.scrolled {
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
         padding: 0.5rem 0;
       }
       
       .navbar-brand {
         font-weight: 700;
         color: var(--text-dark) !important;
-        font-size: 1.5rem;
+        font-size: 1.25rem;
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 0.4rem;
         transition: all 0.3s ease;
       }
       
       .navbar-brand i {
         color: var(--primary-green);
-        font-size: 1.8rem;
+        font-size: 1.5rem;
         transition: transform 0.3s ease;
       }
       
-      .navbar-brand:hover i {
-        transform: rotate(15deg) scale(1.1);
+      .navbar-toggler {
+        border: none;
+        padding: 0.5rem;
+        font-size: 1.5rem;
+      }
+      
+      .navbar-toggler:focus {
+        box-shadow: none;
+      }
+      
+      .navbar-collapse {
+        background: var(--white);
+        margin: 0 -1rem;
+        padding: 1rem;
+        border-radius: 0 0 12px 12px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
       }
       
       .nav-link {
         color: var(--text-light) !important;
         font-weight: 500;
-        position: relative;
-        padding: 0.5rem 1rem !important;
+        padding: 0.75rem 1rem !important;
         transition: all 0.3s ease;
+        border-radius: 8px;
+        margin: 0.25rem 0;
       }
       
       .nav-link i {
-        margin-right: 0.4rem;
+        margin-right: 0.5rem;
         font-size: 1.1rem;
         transition: transform 0.3s ease;
       }
       
-      .nav-link:hover {
+      .nav-link:hover,
+      .nav-link:active {
         color: var(--primary-green) !important;
+        background: var(--light-green);
       }
       
-      .nav-link:hover i {
-        transform: translateY(-2px);
-      }
-      
-      .nav-link::before {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        width: 0;
-        height: 2px;
-        background: var(--primary-green);
-        transform: translateX(-50%);
-        transition: width 0.3s ease;
-      }
-      
-      .nav-link:hover::before {
-        width: 70%;
-      }
-      
-      /* ===== CONTAINER ===== */
+      /* ===== CONTAINER MOBILE ===== */
       .container {
-        max-width: 1200px;
+        max-width: 100%;
+        padding-left: 1rem;
+        padding-right: 1rem;
       }
       
-      /* ===== SEARCH BAR MODERN ===== */
+      /* ===== SEARCH BAR MOBILE ===== */
       .search-wrapper {
         position: relative;
-        max-width: 500px;
-        margin: 0 auto;
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
       }
       
       .search-wrapper input {
         border: 2px solid var(--border-light);
-        border-radius: 50px;
-        padding: 0.75rem 1.5rem 0.75rem 3rem;
+        border-radius: 12px;
+        padding: 0.75rem 1rem 0.75rem 2.75rem;
         font-size: 0.95rem;
         transition: all 0.3s ease;
         background: var(--white);
+        width: 100%;
       }
       
       .search-wrapper input:focus {
         border-color: var(--primary-green);
-        box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
         outline: none;
       }
       
       .search-wrapper i {
         position: absolute;
-        left: 1.2rem;
+        left: 1rem;
         top: 50%;
         transform: translateY(-50%);
         color: var(--text-light);
         font-size: 1.1rem;
-        transition: color 0.3s ease;
       }
       
-      .search-wrapper input:focus + i {
-        color: var(--primary-green);
-      }
-      
-      /* ===== FLASH MESSAGES MINIMAL ===== */
+      /* ===== FLASH MESSAGES MOBILE ===== */
       .alert {
         border: none;
-        border-radius: 12px;
-        padding: 1rem 1.5rem;
+        border-radius: 10px;
+        padding: 0.875rem 1rem;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         animation: slideInDown 0.4s ease-out;
         border-left: 4px solid;
+        font-size: 0.9rem;
       }
       
       @keyframes slideInDown {
@@ -191,13 +189,16 @@ html(lang="id")
         border-left-color: #3b82f6;
       }
       
-      /* ===== BUTTONS MODERN ===== */
+      /* ===== BUTTONS MOBILE ===== */
       .btn {
         border-radius: 10px;
-        padding: 0.65rem 1.5rem;
+        padding: 0.75rem 1.25rem;
         font-weight: 600;
         transition: all 0.3s ease;
         border: none;
+        font-size: 0.95rem;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
       }
       
       .btn-primary {
@@ -206,9 +207,9 @@ html(lang="id")
         box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
       }
       
-      .btn-primary:hover {
+      .btn-primary:hover,
+      .btn-primary:active {
         background: var(--dark-green);
-        transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
       }
       
@@ -218,54 +219,50 @@ html(lang="id")
         background: transparent;
       }
       
-      .btn-outline-primary:hover {
+      .btn-outline-primary:hover,
+      .btn-outline-primary:active {
         background: var(--primary-green);
         color: white;
-        transform: translateY(-2px);
       }
       
       .btn-sm {
-        padding: 0.5rem 1rem;
+        padding: 0.6rem 1rem;
         font-size: 0.875rem;
       }
       
-      /* ===== PRODUCT CARDS ELEGANT ===== */
+      /* ===== PRODUCT CARDS MOBILE ===== */
       .product-card {
         border: 1px solid var(--border-light);
-        border-radius: 16px;
+        border-radius: 12px;
         overflow: hidden;
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: all 0.3s ease;
         background: var(--white);
         height: 100%;
         display: flex;
         flex-direction: column;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
       }
       
-      .product-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
-        border-color: var(--primary-green);
+      .product-card:active {
+        transform: scale(0.98);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       }
       
       .product-card .card-img-top {
-        height: 220px;
+        height: 160px;
         object-fit: cover;
-        transition: transform 0.4s ease;
-      }
-      
-      .product-card:hover .card-img-top {
-        transform: scale(1.08);
+        transition: transform 0.3s ease;
       }
       
       .product-card .card-body {
-        padding: 1.25rem;
+        padding: 1rem;
         display: flex;
         flex-direction: column;
         flex: 1;
       }
       
       .product-card .card-title {
-        font-size: 1rem;
+        font-size: 0.95rem;
         font-weight: 600;
         color: var(--text-dark);
         margin-bottom: 0.5rem;
@@ -273,129 +270,151 @@ html(lang="id")
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
+        line-height: 1.4;
       }
       
       .product-card .text-muted {
-        font-size: 0.85rem;
+        font-size: 0.8rem;
         color: var(--text-light);
         display: flex;
         align-items: center;
-        gap: 0.3rem;
+        gap: 0.25rem;
+        margin-bottom: 0.5rem;
       }
       
       .product-card .text-muted i {
-        font-size: 0.75rem;
+        font-size: 0.7rem;
       }
       
       .product-card .fw-bold {
-        font-size: 1.25rem;
+        font-size: 1.1rem;
         color: var(--primary-green);
         font-weight: 700;
+        margin-bottom: 0.75rem;
       }
       
       .product-card .btn {
         border-radius: 8px;
-        font-size: 0.9rem;
-        padding: 0.6rem;
+        font-size: 0.85rem;
+        padding: 0.65rem;
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 0.5rem;
-        transition: all 0.3s ease;
+        gap: 0.4rem;
       }
       
-      .product-card .btn i {
-        transition: transform 0.3s ease;
-      }
-      
-      .product-card .btn:hover i {
-        transform: scale(1.2);
-      }
-      
-      /* ===== EMPTY STATE ===== */
+      /* ===== EMPTY STATE MOBILE ===== */
       .empty-state {
         text-align: center;
-        padding: 4rem 2rem;
+        padding: 2.5rem 1.5rem;
         background: var(--white);
-        border-radius: 20px;
+        border-radius: 16px;
         border: 1px solid var(--border-light);
+        margin: 1rem 0;
       }
       
       .empty-state i {
-        font-size: 4rem;
+        font-size: 3rem;
         color: var(--primary-green);
         opacity: 0.3;
-        margin-bottom: 1.5rem;
+        margin-bottom: 1rem;
         display: inline-block;
-        animation: float 3s ease-in-out infinite;
-      }
-      
-      @keyframes float {
-        0%, 100% {
-          transform: translateY(0);
-        }
-        50% {
-          transform: translateY(-15px);
-        }
       }
       
       .empty-state h4 {
         color: var(--text-dark);
         font-weight: 600;
-        margin-bottom: 0.75rem;
+        margin-bottom: 0.5rem;
+        font-size: 1.1rem;
       }
       
       .empty-state p {
         color: var(--text-light);
-        font-size: 0.95rem;
+        font-size: 0.9rem;
       }
       
       /* ===== BADGE ===== */
       .badge {
-        border-radius: 8px;
-        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+        padding: 0.35rem 0.7rem;
         font-weight: 600;
-        font-size: 0.85rem;
+        font-size: 0.8rem;
       }
       
-      /* ===== FORM CONTROLS ===== */
+      /* ===== FORM CONTROLS MOBILE ===== */
       .form-control,
       .form-select {
         border: 2px solid var(--border-light);
         border-radius: 10px;
-        padding: 0.65rem 1rem;
+        padding: 0.75rem 1rem;
         transition: all 0.3s ease;
+        font-size: 1rem;
       }
       
       .form-control:focus,
       .form-select:focus {
         border-color: var(--primary-green);
-        box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
         outline: none;
       }
       
-      /* ===== FOOTER MINIMAL ===== */
-      footer {
-        background: var(--text-dark);
-        color: var(--text-light);
-        padding: 2.5rem 0;
-        margin-top: 5rem;
-        border-top: 1px solid var(--border-light);
+      /* ===== FOOTER MOBILE ===== */
+      .footer-green {
+        background: linear-gradient(135deg, #0ba36a, #047245);
+        color: #fff;
+        border-top-left-radius: 16px;
+        border-top-right-radius: 16px;
+        box-shadow: 0 -4px 20px rgba(0,0,0,.08);
+        margin-top: 3rem;
+      }
+
+      .footer-green .logo-text {
+        font-weight: 700;
+        letter-spacing: -.5px;
+        font-size: 1.4rem;
+      }
+
+      .footer-links li {
+        margin-bottom: .4rem;
       }
       
-      footer a {
-        color: var(--text-light);
-        text-decoration: none;
-        transition: color 0.3s ease;
+      .footer-links a {
+        color: #e7fff2 !important;
+        transition: .3s;
+        font-size: 0.9rem;
+        display: inline-block;
       }
       
-      footer a:hover {
-        color: var(--primary-green);
+      .footer-links a:hover {
+        color: #fff !important;
+      }
+
+      .social-icon i {
+        font-size: 1.3rem;
+        color: white;
+        padding: 0.6rem;
+        background: rgba(255,255,255,.18);
+        border-radius: 10px;
+        transition: .3s;
       }
       
-      /* ===== SCROLLBAR ===== */
+      .social-icon:active i {
+        background: #fff;
+        color: #0ba36a;
+        transform: scale(0.95);
+      }
+      
+      /* ===== CARD GENERAL ===== */
+      .card {
+        border: 1px solid var(--border-light);
+        border-radius: 12px;
+        background: var(--white);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      }
+      
+      /* ===== SCROLLBAR MOBILE ===== */
       ::-webkit-scrollbar {
-        width: 8px;
+        width: 6px;
       }
       
       ::-webkit-scrollbar-track {
@@ -404,11 +423,7 @@ html(lang="id")
       
       ::-webkit-scrollbar-thumb {
         background: #d1d5db;
-        border-radius: 4px;
-      }
-      
-      ::-webkit-scrollbar-thumb:hover {
-        background: var(--primary-green);
+        border-radius: 3px;
       }
       
       /* ===== LOADING ANIMATION ===== */
@@ -417,165 +432,245 @@ html(lang="id")
         border-right-color: var(--primary-green);
       }
       
-      /* ===== CARD GENERAL ===== */
-      .card {
-        border: 1px solid var(--border-light);
-        border-radius: 16px;
-        background: var(--white);
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-        transition: all 0.3s ease;
-      }
-      
-      .card:hover {
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-      }
-      
-      /* ===== RESPONSIVE ===== */
-      @media (max-width: 768px) {
-        .navbar-brand {
-          font-size: 1.3rem;
-        }
-        
-        .product-card .card-img-top {
-          height: 180px;
-        }
-        
-        .empty-state {
-          padding: 3rem 1.5rem;
-        }
-        
-        .empty-state i {
-          font-size: 3rem;
-        }
-      }
-      
-      /* ===== FADE IN ANIMATION ===== */
+      /* ===== ANIMATIONS ===== */
       .animate-fadeIn {
-        animation: fadeIn 0.5s ease-out;
+        animation: fadeIn 0.4s ease-out;
       }
       
       @keyframes fadeIn {
         from {
           opacity: 0;
-          transform: translateY(20px);
+          transform: translateY(15px);
         }
         to {
           opacity: 1;
           transform: translateY(0);
         }
       }
-
-      /* === FOOTER GREEN PREMIUM === */
-        .footer-green {
-          background: linear-gradient(135deg, #0ba36a, #047245);
-          color: #fff;
-          border-top-left-radius: 20px;
-          border-top-right-radius: 20px;
-          box-shadow: 0 -4px 20px rgba(0,0,0,.08);
+      
+      /* ===== CATEGORY FILTERS MOBILE ===== */
+      .category-item {
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+        white-space: nowrap;
+      }
+      
+      /* ===== RESPONSIVE TABLET ===== */
+      @media (min-width: 576px) {
+        .container {
+          max-width: 540px;
+          padding-left: 1rem;
+          padding-right: 1rem;
         }
-
+        
+        .product-card .card-img-top {
+          height: 180px;
+        }
+        
+        .product-card .card-title {
+          font-size: 1rem;
+        }
+        
+        .search-wrapper {
+          max-width: 400px;
+          margin: 0 auto;
+        }
+      }
+      
+      @media (min-width: 768px) {
+        .container {
+          max-width: 720px;
+        }
+        
+        body {
+          padding-bottom: 0;
+        }
+        
+        .navbar-brand {
+          font-size: 1.5rem;
+        }
+        
+        .navbar-brand i {
+          font-size: 1.8rem;
+        }
+        
+        .product-card .card-img-top {
+          height: 200px;
+        }
+        
+        .product-card:hover {
+          transform: translateY(-6px);
+          box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+        
+        .product-card:hover .card-img-top {
+          transform: scale(1.05);
+        }
+        
+        .empty-state {
+          padding: 3rem 2rem;
+        }
+        
+        .empty-state i {
+          font-size: 3.5rem;
+        }
+        
+        .empty-state h4 {
+          font-size: 1.25rem;
+        }
+        
+        .nav-link::before {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 50%;
+          width: 0;
+          height: 2px;
+          background: var(--primary-green);
+          transform: translateX(-50%);
+          transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::before {
+          width: 70%;
+        }
+        
+        .search-wrapper {
+          max-width: 500px;
+        }
+        
+        .search-wrapper input {
+          border-radius: 50px;
+          padding: 0.75rem 1.5rem 0.75rem 3rem;
+        }
+        
+        .search-wrapper i {
+          left: 1.2rem;
+        }
+        
         .footer-green .logo-text {
-          font-weight: 700;
-          letter-spacing: -.5px;
           font-size: 1.6rem;
         }
-
-        .footer-links li {
-          margin-bottom: .5rem;
-        }
-        .footer-links a {
-          color: #e7fff2 !important;
-          transition:.3s;
-        }
-        .footer-links a:hover {
-          color:#fff !important;
-          padding-left:4px;
-        }
-
-        .social-icon i {
-          font-size: 1.4rem;
-          color: white;
-          padding:.5rem .55rem;
-          background:rgba(255,255,255,.18);
-          border-radius:10px;
-          transition:.3s;
-        }
+        
         .social-icon:hover i {
-          background:#fff;
-          color:#0ba36a;
-          transform:translateY(-3px) scale(1.1);
-          box-shadow:0 6px 15px rgba(0,0,0,.15);
+          background: #fff;
+          color: #0ba36a;
+          transform: translateY(-3px) scale(1.1);
+          box-shadow: 0 6px 15px rgba(0,0,0,.15);
         }
+      }
+      
+      @media (min-width: 992px) {
+        .container {
+          max-width: 960px;
+        }
+        
+        .product-card .card-img-top {
+          height: 220px;
+        }
+      }
+      
+      @media (min-width: 1200px) {
+        .container {
+          max-width: 1140px;
+        }
+      }
+      
+      /* ===== TOUCH IMPROVEMENTS ===== */
+      @media (hover: none) and (pointer: coarse) {
+        .btn {
+          min-height: 44px;
+          min-width: 44px;
+        }
+        
+        .nav-link {
+          min-height: 44px;
+        }
+        
+        a, button {
+          -webkit-tap-highlight-color: rgba(16, 185, 129, 0.1);
+        }
+      }
+      
+      /* ===== SAFE AREA FOR NOTCH DEVICES ===== */
+      @supports (padding: max(0px)) {
+        body {
+          padding-left: max(0px, env(safe-area-inset-left));
+          padding-right: max(0px, env(safe-area-inset-right));
+        }
+        
+        .navbar {
+          padding-left: max(0px, env(safe-area-inset-left));
+          padding-right: max(0px, env(safe-area-inset-right));
+        }
+      }
 
   body
     include ./partials/navbar.pug
 
-    .container.mt-4
+    .container.mt-3
       include ./partials/flash.pug
       block content
 
-  footer.footer-green.mt-5
-    .container.py-5
-      .row.g-4
-        .col-md-4
-          h4.logo-text FreshMart
-          p.text-white-50.mb-3 Marketplace pangan antara Vendor dan Yayasan — cepat, mudah & transparan.
-          a.btn.btn-light.btn-sm.rounded-pill(href="/market")
-            i.bi.bi-shop.me-1
-            | Belanja Sekarang
+    footer.footer-green
+      .container.py-4
+        .row.g-3.g-md-4
+          .col-12.col-md-4
+            h4.logo-text FreshMart
+            p.text-white-50.mb-3.small Marketplace pangan antara Vendor dan Yayasan — cepat, mudah & transparan.
+            a.btn.btn-light.btn-sm.rounded-pill(href="/market")
+              i.bi.bi-shop.me-1
+              | Belanja Sekarang
 
-        .col-md-2
-          h6.text-white.mb-3 Navigasi
-          ul.list-unstyled.footer-links
-            li: a(href="/market") Produk
+          .col-6.col-md-2
+            h6.text-white.mb-3.small.text-uppercase Navigasi
+            ul.list-unstyled.footer-links
+              li: a(href="/market") Produk
 
-            // Jika login sebagai dapur
-            if currentUser && currentUser.role === 'dapur'
-              li: a(href="/dapur/dashboard") Dashboard Dapur
-              li: a(href="/dapur/orders") Pesanan Saya
+              if currentUser && currentUser.role === 'dapur'
+                li: a(href="/dapur/dashboard") Dashboard
+                li: a(href="/dapur/orders") Pesanan
 
-            // Jika login sebagai vendor
-            if currentUser && currentUser.role === 'vendor'
-              li: a(href="/vendor/dashboard") Dashboard Vendor
-              li: a(href="/vendor/orders") Pesanan Masuk
+              if currentUser && currentUser.role === 'vendor'
+                li: a(href="/vendor/dashboard") Dashboard
+                li: a(href="/vendor/orders") Pesanan
 
-            // Jika login sebagai yayasan (admin)
-            if currentUser && currentUser.role === 'yayasan'
-              li: a(href="/yayasan/dashboard") Dashboard Yayasan
-              li: a(href="/yayasan/pending") Order Menunggu
+              if currentUser && currentUser.role === 'yayasan'
+                li: a(href="/yayasan/dashboard") Dashboard
+                li: a(href="/yayasan/pending") Orders
 
-            // Jika belum login
-            if !currentUser
-              li: a(href="/login") Login
+              if !currentUser
+                li: a(href="/login") Login
 
-        .col-md-3
-          h6.text-white.mb-3 Kontak
-          p.text-white-50.mb-1
-            i.bi.bi-whatsapp.me-2
-            | 0857-7947-3129
-          p.text-white-50.mb-1
-            i.bi.bi-envelope.me-2
-            | support@freshmart.id
-          p.text-white-50
-            i.bi.bi-geo-alt.me-2
-            | Jakarta, Indonesia
+          .col-6.col-md-3
+            h6.text-white.mb-3.small.text-uppercase Kontak
+            p.text-white-50.mb-2.small
+              i.bi.bi-whatsapp.me-2
+              | 0857-7947-3129
+            p.text-white-50.mb-2.small
+              i.bi.bi-envelope.me-2
+              | support@freshmart.id
+            p.text-white-50.small
+              i.bi.bi-geo-alt.me-2
+              | Jakarta, Indonesia
 
-        .col-md-3
-          h6.text-white.mb-3 Ikuti Kami
-          .d-flex.gap-3
-            a.social-icon(href="https://www.instagram.com/nadif.y.ramadhan/"): i.bi.bi-instagram
-            a.social-icon(href="#"): i.bi.bi-facebook
-            a.social-icon(href="https://www.youtube.com/watch?v=xvFZjo5PgG0"): i.bi.bi-youtube
+          .col-12.col-md-3
+            h6.text-white.mb-3.small.text-uppercase Ikuti Kami
+            .d-flex.gap-3.justify-content-center.justify-content-md-start
+              a.social-icon(href="https://www.instagram.com/nadif.y.ramadhan/" aria-label="Instagram"): i.bi.bi-instagram
+              a.social-icon(href="#" aria-label="Facebook"): i.bi.bi-facebook
+              a.social-icon(href="https://www.youtube.com/watch?v=xvFZjo5PgG0" aria-label="YouTube"): i.bi.bi-youtube
 
-    .text-center.text-white-50.py-3.border-top.border-success-subtle
-      small © #{new Date().getFullYear()} FreshMart — All Rights Reserved.
+      .text-center.text-white-50.py-3.border-top.border-success-subtle
+        small.d-block © #{new Date().getFullYear()} FreshMart
+        small All Rights Reserved
 
     script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-" crossorigin="anonymous")
     script.
       // Navbar scroll effect
       window.addEventListener('scroll', function() {
         const navbar = document.querySelector('.navbar');
-        if (window.scrollY > 50) {
+        if (window.scrollY > 30) {
           navbar.classList.add('scrolled');
         } else {
           navbar.classList.remove('scrolled');
@@ -611,8 +706,6 @@ html(lang="id")
         if (!productsRow) return;
 
         const products = Array.from(productsRow.querySelectorAll("[data-cat]"));
-
-        // simpan urutan awal
         products.forEach((p, idx) => p.dataset.index = idx);
 
         // ===== FILTER KATEGORI =====
@@ -626,12 +719,10 @@ html(lang="id")
 
             if (!isActive) {
               cat.classList.add("active");
-
               let visibleCount = 0;
 
               products.forEach(p => {
                 const pCat = (p.dataset.cat || '').trim();
-
                 let match = false;
 
                 if (selected === "other") {
@@ -647,33 +738,26 @@ html(lang="id")
                 }
               });
 
-              // === tampilkan EMPTY STATE kalau tidak ada produk ===
               const productsGrid = document.getElementById("productsGrid");
-
-              // hapus empty state jika ada sebelumnya
               const oldEmpty = document.getElementById("emptyCategory");
               if (oldEmpty) oldEmpty.remove();
 
               if (visibleCount === 0) {
                 productsGrid.insertAdjacentHTML(
                   "beforeend",
-                  `
-                  <div id="emptyCategory" class="empty-state animate-fadeIn mt-3">
+                  `<div id="emptyCategory" class="empty-state animate-fadeIn mt-3">
                     <i class="bi bi-basket3"></i>
-                    <h4>Produk kategori tidak ditemukan</h4>
+                    <h4>Produk tidak ditemukan</h4>
                     <p><i class="bi bi-info-circle me-2"></i>Coba pilih kategori lain.</p>
-                  </div>
-                  `
+                  </div>`
                 );
               }
             } else {
-              // klik kategori aktif → reset filter + hapus empty state
               const oldEmpty = document.getElementById("emptyCategory");
               if (oldEmpty) oldEmpty.remove();
             }
           };
         });
-
 
         // ===== SORT HARGA =====
         sortButtons.forEach(btn => {
@@ -684,7 +768,6 @@ html(lang="id")
             sortButtons.forEach(b => b.classList.remove("active"));
 
             if (isActive) {
-              // balikin ke urutan awal
               [...products]
                 .sort((a, b) => Number(a.dataset.index) - Number(b.dataset.index))
                 .forEach(el => productsRow.appendChild(el));
@@ -725,7 +808,6 @@ html(lang="id")
             const res = await fetch('/market/live-search?q=' + encodeURIComponent(query));
             const html = await res.text();
             productsGrid.innerHTML = html;
-            // setelah DOM diganti, pasang lagi filter & sort
             attachFilterHandlers();
           } catch (err) {
             console.error(err);
@@ -733,7 +815,7 @@ html(lang="id")
         }
       })();
 
-      // ===== INIT SAAT PAGE BARU LOADED =====
+      // ===== INIT =====
       document.addEventListener("DOMContentLoaded", function () {
         attachFilterHandlers();
       });
