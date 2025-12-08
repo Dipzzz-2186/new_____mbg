@@ -1,48 +1,540 @@
 extends ../layout
 
 block content
-  .container.py-5
-    h2.mb-4.text-success Edit Produk
+  style.
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    
+    /* Page Header - Clean & Minimal */
+    .vendor-dashboard-header {
+      background: #ffffff;
+      padding: 40px 0;
+      margin-bottom: 40px;
+      border-bottom: 1px solid #e8e8e8;
+      animation: fadeInUp 0.6s ease-out;
+    }
+    
+    .header-icon-box {
+      width: 64px;
+      height: 64px;
+      background: #f8f9fa;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      color: #28a745;
+      border: 1px solid #e8e8e8;
+      transition: all 0.4s ease;
+      flex-shrink: 0;
+    }
+    
+    .header-icon-box:hover {
+      background: #28a745;
+      color: white;
+      transform: rotate(10deg) scale(1.1);
+      border-color: #28a745;
+    }
+    
+    .dashboard-title {
+      font-size: 2rem;
+      color: #2c3e50;
+      font-weight: 700;
+      margin-bottom: 6px;
+      letter-spacing: -0.5px;
+    }
+    
+    .dashboard-subtitle {
+      color: #6c757d;
+      font-size: 1rem;
+      margin: 0;
+    }
 
-    form(method="POST" action=`/vendor/products/${product.id}/edit` enctype="multipart/form-data")
+    /* Form Container */
+    .form-container {
+      max-width: 900px;
+      margin: 0 auto;
+      animation: fadeInUp 0.6s ease-out 0.2s both;
+    }
+    
+    .form-card {
+      background: #ffffff;
+      border: 1px solid #e8e8e8;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    }
+    
+    .form-card-body {
+      padding: 40px;
+    }
+    
+    /* Form Elements */
+    .form-section {
+      margin-bottom: 32px;
+    }
+    
+    .form-section:last-child {
+      margin-bottom: 0;
+    }
+    
+    .form-label {
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.95rem;
+    }
+    
+    .form-label i {
+      color: #28a745;
+      font-size: 1.1rem;
+    }
+    
+    .form-control, .input-group {
+      border-radius: 12px;
+      border: 2px solid #e8e8e8;
+      font-size: 1rem;
+      transition: all 0.2s ease;
+    }
+    
+    .form-control {
+      padding: 12px 16px;
+    }
+    
+    .form-control:focus {
+      border-color: #28a745;
+      box-shadow: 0 0 0 4px rgba(40, 167, 69, 0.1);
+      outline: none;
+    }
+    
+    .form-control:hover {
+      border-color: #d1d5db;
+    }
+    
+    .input-group-text {
+      background: #f8f9fa;
+      border: 2px solid #e8e8e8;
+      border-right: none;
+      font-weight: 600;
+      color: #6c757d;
+      border-radius: 12px 0 0 12px;
+      transition: all 0.2s ease;
+      padding: 0 16px;
+    }
+    
+    .input-group .form-control {
+      border-left: none;
+      border-radius: 0 12px 12px 0;
+    }
+    
+    .input-group:focus-within .input-group-text {
+      border-color: #28a745;
+      background: #f0f9f3;
+      color: #28a745;
+    }
+    
+    .input-group:focus-within .form-control {
+      border-color: #28a745;
+      box-shadow: 0 0 0 4px rgba(40, 167, 69, 0.1);
+    }
+    
+    /* File Upload / Image Preview */
+    .image-preview-wrapper {
+      margin-bottom: 16px;
+    }
+    
+    .image-preview {
+      width: 140px;
+      height: 140px;
+      object-fit: cover;
+      border-radius: 12px;
+      border: 2px solid #e8e8e8;
+    }
+    
+    .file-upload-wrapper {
+      position: relative;
+    }
+    
+    .file-upload-label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding: 48px 32px;
+      border: 3px dashed #e8e8e8;
+      border-radius: 16px;
+      background: #fafafa;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+    
+    .file-upload-label:hover {
+      border-color: #28a745;
+      background: #f0f9f3;
+    }
+    
+    .file-upload-label.has-file {
+      border-color: #28a745;
+      background: #f0f9f3;
+      border-style: solid;
+    }
+    
+    .file-upload-icon {
+      font-size: 3rem;
+      color: #6c757d;
+      transition: all 0.3s ease;
+    }
+    
+    .file-upload-label:hover .file-upload-icon,
+    .file-upload-label.has-file .file-upload-icon {
+      color: #28a745;
+      transform: scale(1.1);
+    }
+    
+    .file-upload-text {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 1rem;
+    }
+    
+    .file-upload-hint {
+      font-size: 0.875rem;
+      color: #6c757d;
+    }
+    
+    .file-upload-input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+    
+    .file-info {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      margin-top: 12px;
+      padding: 12px 16px;
+      background: #f0f9f3;
+      border-radius: 10px;
+      color: #28a745;
+      font-weight: 600;
+      border: 1px solid #e8e8e8;
+    }
+    
+    .file-info.show {
+      display: flex;
+    }
+    
+    .file-info i {
+      font-size: 1.2rem;
+    }
+    
+    .form-text {
+      color: #6c757d;
+      font-size: 0.875rem;
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    /* Buttons */
+    .form-actions {
+      display: flex;
+      gap: 16px;
+      margin-top: 40px;
+      padding-top: 32px;
+      border-top: 1px solid #e8e8e8;
+    }
+    
+    .btn {
+      padding: 14px 32px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 1rem;
+      border: none;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+      flex: 1;
+    }
+    
+    .btn-primary-action {
+      background: #28a745;
+      color: white;
+      box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+    }
+    
+    .btn-primary-action:hover {
+      background: #218838;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(40, 167, 69, 0.4);
+    }
+    
+    .btn-primary-action:active {
+      transform: translateY(0);
+    }
+    
+    .btn-secondary-action {
+      background: white;
+      color: #6c757d;
+      border: 2px solid #e8e8e8;
+    }
+    
+    .btn-secondary-action:hover {
+      background: #fafafa;
+      border-color: #d1d5db;
+      color: #2c3e50;
+      transform: translateY(-2px);
+    }
+    
+    /* Grid Layout */
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .vendor-dashboard-header {
+        padding: 30px 0;
+      }
+      
+      .dashboard-title {
+        font-size: 1.6rem;
+      }
+      
+      .header-icon-box {
+        width: 56px;
+        height: 56px;
+        font-size: 24px;
+      }
+      
+      .form-card-body {
+        padding: 24px;
+      }
+      
+      .form-row {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+      
+      .form-actions {
+        flex-direction: column;
+      }
+      
+      .btn {
+        width: 100%;
+      }
+      
+      .file-upload-label {
+        padding: 32px 20px;
+      }
+    }
 
-      .row
-        .col-md-6.mb-3
-          label.form-label Nama Produk
-          input.form-control(type="text" name="name" required value=product.name)
+  //- Header Section
+  .vendor-dashboard-header
+    .container-fluid
+      .row.align-items-center.g-3
+        .col-lg-7
+          .d-flex.align-items-center.gap-3
+            .header-icon-box
+              i.bi.bi-pencil-square
+            div
+              .dashboard-title Edit Produk
+              .dashboard-subtitle
+                i.bi.bi-box-seam.me-2
+                | Perbarui informasi produk Anda
 
-        .col-md-3.mb-3
-          label.form-label Harga
-          input.form-control(type="number" name="price" min="0" value=product.price required)
+  .container-fluid
+    .form-container
+      .form-card
+        .form-card-body
+          form(method="POST" action=`/vendor/products/${product.id}/edit` enctype="multipart/form-data")
+            
+            //- Nama Produk
+            .form-section
+              label.form-label
+                i.bi.bi-tag
+                | Nama Produk
+              input.form-control(
+                type="text"
+                name="name" 
+                required 
+                value=product.name
+                placeholder="Contoh: Beras Premium"
+              )
+            
+            //- Kategori
+            .form-section
+              label.form-label
+                i.bi.bi-grid
+                | Kategori
+              select.form-control(name="category" required)
+                option(value="" disabled) Pilih kategori
+                option(selected=product.category==="Sayuran" value="Sayuran") Sayuran
+                option(selected=product.category==="Daging" value="Daging") Daging
+                option(selected=product.category==="Sembako" value="Sembako") Sembako
+                option(selected=product.category!=="Sayuran" && product.category!=="Daging" && product.category!=="Sembako" value="other") Lainnya
+              small.form-text
+                i.bi.bi-info-circle
+                |  Pilih kategori yang sesuai dengan produk Anda
+            
+            //- Harga, Satuan, Stok
+            .form-row
+              div
+                label.form-label
+                  i.bi.bi-currency-dollar
+                  | Harga
+                .input-group
+                  span.input-group-text Rp
+                  input.form-control(
+                    type="number" 
+                    name="price" 
+                    min="0"
+                    value=product.price
+                    required
+                    placeholder="0"
+                  )
+              
+              div
+                label.form-label
+                  i.bi.bi-rulers
+                  | Satuan
+                input.form-control(
+                  type="text"
+                  name="unit" 
+                  value=product.unit
+                  placeholder="kg/pcs/liter"
+                )
+              
+              div
+                label.form-label
+                  i.bi.bi-box
+                  | Stok
+                input.form-control(
+                  type="number" 
+                  name="stock" 
+                  min="0"
+                  value=product.stock
+                  required
+                  placeholder="0"
+                )
+            
+            //- Gambar Produk
+            .form-section
+              label.form-label
+                i.bi.bi-image
+                | Gambar Produk
+              
+              if product.image
+                .image-preview-wrapper
+                  img.image-preview(src=product.image alt="Product Image")
+              
+              .file-upload-wrapper
+                label.file-upload-label#fileLabel(for="fileInput")
+                  i.bi.bi-cloud-upload.file-upload-icon
+                  div
+                    .file-upload-text Klik untuk upload gambar baru
+                    .file-upload-hint atau drag & drop di sini
+                input.file-upload-input#fileInput(
+                  type="file" 
+                  name="image" 
+                  accept="image/*"
+                )
+              .file-info#fileInfo
+                i.bi.bi-check-circle-fill
+                span#fileName
+              small.form-text
+                i.bi.bi-info-circle
+                | Opsional - Maksimal 5MB, format: JPG, PNG, atau WEBP
+            
+            //- Action Buttons
+            .form-actions
+              button.btn.btn-primary-action(type="submit")
+                i.bi.bi-check-circle
+                | Simpan Perubahan
+              a.btn.btn-secondary-action(href="/vendor/dashboard" style='text-decoration: none;')
+                i.bi.bi-x-circle
+                | Batal
 
-        .col-md-3.mb-3
-          label.form-label Stok
-          input.form-control(type="number" name="stock" min="0" value=product.stock required)
-
-      .row
-        .col-md-4.mb-3
-          label.form-label Satuan
-          input.form-control(type="text" name="unit" value=product.unit placeholder="kg, pcs, liter...")
-
-        .col-md-4.mb-3
-          label.form-label Kategori
-          select.form-select(name="category")
-            option(selected=product.category==="Sayuran") Sayuran
-            option(selected=product.category==="Daging") Daging
-            option(selected=product.category==="Sembako") Sembako
-            option(selected=product.category==="other") Lainnya
-
-      .mb-3
-        label.form-label Ganti Gambar (opsional)
-        input.form-control(type="file" name="image")
-        if product.image
-          img(src=product.image width="120" class="mt-2 rounded border")
-
-      .mt-4.d-flex.gap-3
-        button.btn.btn-success.btn-lg(type="submit")
-          i.bi.bi-save.me-2
-          | Simpan Perubahan
-
-        a.btn.btn-outline-secondary.btn-lg(href="/vendor/dashboard")
-          i.bi.bi-arrow-left.me-1
-          | Batal
+  script.
+    (function() {
+      // ========= FILE UPLOAD =========
+      const fileInput = document.getElementById('fileInput');
+      const fileLabel = document.getElementById('fileLabel');
+      const fileInfo = document.getElementById('fileInfo');
+      const fileName = document.getElementById('fileName');
+      
+      if (fileInput && fileLabel && fileInfo && fileName) {
+        // File change handler
+        fileInput.addEventListener('change', function() {
+          if (this.files && this.files[0]) {
+            fileLabel.classList.add('has-file');
+            fileName.textContent = this.files[0].name;
+            fileInfo.classList.add('show');
+          }
+        });
+        
+        // Drag and drop handlers
+        ['dragover', 'dragenter'].forEach(event => {
+          fileLabel.addEventListener(event, function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            this.style.borderColor = '#28a745';
+            this.style.background = '#f0f9f3';
+          });
+        });
+        
+        ['dragleave', 'dragend'].forEach(event => {
+          fileLabel.addEventListener(event, function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (!fileInput.files.length) {
+              this.style.borderColor = '#e8e8e8';
+              this.style.background = '#fafafa';
+            }
+          });
+        });
+        
+        fileLabel.addEventListener('drop', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          
+          const files = e.dataTransfer.files;
+          if (files.length > 0) {
+            fileInput.files = files;
+            fileInput.dispatchEvent(new Event('change', { bubbles: true }));
+          }
+        });
+      }
+    })();
