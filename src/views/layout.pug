@@ -514,8 +514,6 @@ html(lang="id")
       include ./partials/flash.pug
       block content
 
-
-         // ===== FOOTER GREEN PREMIUM =====
   footer.footer-green.mt-5
     .container.py-5
       .row.g-4
@@ -529,10 +527,26 @@ html(lang="id")
         .col-md-2
           h6.text-white.mb-3 Navigasi
           ul.list-unstyled.footer-links
-            li: a(href="/") Beranda
             li: a(href="/market") Produk
-            li: a(href="/orders") Pesanan
-            li: a(href="/vendor/dashboard") Dashboard Vendor
+
+            // Jika login sebagai dapur
+            if currentUser && currentUser.role === 'dapur'
+              li: a(href="/dapur/dashboard") Dashboard Dapur
+              li: a(href="/dapur/orders") Pesanan Saya
+
+            // Jika login sebagai vendor
+            if currentUser && currentUser.role === 'vendor'
+              li: a(href="/vendor/dashboard") Dashboard Vendor
+              li: a(href="/vendor/orders") Pesanan Masuk
+
+            // Jika login sebagai yayasan (admin)
+            if currentUser && currentUser.role === 'yayasan'
+              li: a(href="/yayasan/dashboard") Dashboard Yayasan
+              li: a(href="/yayasan/pending") Order Menunggu
+
+            // Jika belum login
+            if !currentUser
+              li: a(href="/login") Login
 
         .col-md-3
           h6.text-white.mb-3 Kontak
