@@ -654,89 +654,92 @@ exports.passwordPage = (req, res) => {
     title: 'Ganti Password',
     query: req.query || {},
     messages: {
-      error: req.flash ? req.flash('error') : null,
-      success: req.flash ? req.flash('success') : null
+      error: res.locals.error || [],
+      success: res.locals.success || []
     }
   });
 };
 
-// HANDLE GANTI PASSWORD
+// HANDLE GANTI PASSWORD (DAPUR)
 exports.updatePassword = async (req, res) => {
   try {
-    const currentUser =
-      req.user ||
-      res.locals.currentUser ||
-      (req.session && (req.session.user || req.session.currentUser)) ||
-      null;
+    // ambil user dari session (karena route dapur sudah pakai ensureAuthenticated + ensureRole)
+    const sessionUser = req.session && req.session.user ? req.session.user : null;
 
-    if (!currentUser) {
+    if (!sessionUser || sessionUser.role !== 'dapur') {
+      req.flash('error', 'Silakan login sebagai dapur.');
       return res.redirect('/login');
     }
 
-    const userId = currentUser.id;
+    const userId = sessionUser.id;
 
     const { current_password, new_password, confirm_password } = req.body;
 
     // 1. Validasi basic
     if (!current_password || !new_password || !confirm_password) {
-      req.flash('error', 'Semua field wajib diisi');
+      req.flash('error', 'Semua field wajib diisi.');
       return res.redirect('/dapur/profile/password');
     }
 
+    // 2. Validasi panjang
     if (new_password.length < 6) {
-      req.flash('error', 'Password baru minimal 6 karakter');
+      req.flash('error', 'Password baru minimal 6 karakter.');
       return res.redirect('/dapur/profile/password');
     }
 
+    // 3. Validasi pola (huruf besar, huruf kecil, angka)
+    const strongPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
+    if (!strongPattern.test(new_password)) {
+      req.flash(
+        'error',
+        'Password baru harus mengandung huruf besar, huruf kecil, dan minimal 1 angka.'
+      );
+      return res.redirect('/dapur/profile/password');
+    }
+
+    // 4. Konfirmasi sama
     if (new_password !== confirm_password) {
-      req.flash('error', 'Konfirmasi password tidak sama');
+      req.flash('error', 'Konfirmasi password tidak sama dengan password baru.');
       return res.redirect('/dapur/profile/password');
     }
 
-    // 2. Ambil password lama dari DB
+    // 5. Ambil password lama dari DB
     const [rows] = await pool.query(
       'SELECT password FROM users WHERE id = ? LIMIT 1',
       [userId]
     );
 
     if (!rows.length) {
-      req.flash('error', 'User tidak ditemukan');
+      req.flash('error', 'User tidak ditemukan.');
       return res.redirect('/dapur/profile/password');
     }
 
     const dbPassword = rows[0].password;
 
-    // 3. Cek password lama cocok atau nggak
+    // 6. Cek password lama cocok atau tidak
     const match = await bcrypt.compare(current_password, dbPassword);
     if (!match) {
-      req.flash('error', 'Password lama salah');
+      req.flash('error', 'Password lama yang Anda masukkan salah.');
       return res.redirect('/dapur/profile/password');
     }
 
-    // 4. Hash password baru
+    // 7. Hash password baru
     const hashed = await bcrypt.hash(new_password, 10);
 
-    // 5. Update ke DB
+    // 8. Update ke DB
     await pool.query(
       'UPDATE users SET password = ? WHERE id = ?',
       [hashed, userId]
     );
 
-    // 6. Logout & redirect ke login
-    if (req.session) {
-      return req.session.destroy((err2) => {
-        if (err2) {
-          console.error('Session destroy error:', err2);
-        }
-        res.clearCookie('connect.sid'); // kalau nama cookie beda, samain dengan di express-session
-        return res.redirect('/login?password_changed=1');
-      });
-    }
+    // 9. Beri notif sukses
+    req.flash('success', 'Password berhasil diperbarui.');
 
-    return res.redirect('/login?password_changed=1');
+    // boleh tetap di halaman password (pakai query ?success=1)
+    return res.redirect('/dapur/profile/password?success=1');
   } catch (err) {
     console.error('updatePassword dapur error:', err);
-    req.flash('error', 'Gagal mengganti password.');
+    req.flash('error', 'Gagal mengganti password, silakan coba lagi.');
     return res.redirect('/dapur/profile/password');
   }
 };
