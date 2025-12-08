@@ -465,12 +465,96 @@ html(lang="id")
         }
       }
 
+      /* === FOOTER GREEN PREMIUM === */
+        .footer-green {
+          background: linear-gradient(135deg, #0ba36a, #047245);
+          color: #fff;
+          border-top-left-radius: 20px;
+          border-top-right-radius: 20px;
+          box-shadow: 0 -4px 20px rgba(0,0,0,.08);
+        }
+
+        .footer-green .logo-text {
+          font-weight: 700;
+          letter-spacing: -.5px;
+          font-size: 1.6rem;
+        }
+
+        .footer-links li {
+          margin-bottom: .5rem;
+        }
+        .footer-links a {
+          color: #e7fff2 !important;
+          transition:.3s;
+        }
+        .footer-links a:hover {
+          color:#fff !important;
+          padding-left:4px;
+        }
+
+        .social-icon i {
+          font-size: 1.4rem;
+          color: white;
+          padding:.5rem .55rem;
+          background:rgba(255,255,255,.18);
+          border-radius:10px;
+          transition:.3s;
+        }
+        .social-icon:hover i {
+          background:#fff;
+          color:#0ba36a;
+          transform:translateY(-3px) scale(1.1);
+          box-shadow:0 6px 15px rgba(0,0,0,.15);
+        }
+
   body
     include ./partials/navbar.pug
 
     .container.mt-4
       include ./partials/flash.pug
       block content
+
+
+         // ===== FOOTER GREEN PREMIUM =====
+  footer.footer-green.mt-5
+    .container.py-5
+      .row.g-4
+        .col-md-4
+          h4.logo-text FreshMart
+          p.text-white-50.mb-3 Marketplace pangan antara Vendor dan Yayasan — cepat, mudah & transparan.
+          a.btn.btn-light.btn-sm.rounded-pill(href="/market")
+            i.bi.bi-shop.me-1
+            | Belanja Sekarang
+
+        .col-md-2
+          h6.text-white.mb-3 Navigasi
+          ul.list-unstyled.footer-links
+            li: a(href="/") Beranda
+            li: a(href="/market") Produk
+            li: a(href="/orders") Pesanan
+            li: a(href="/vendor/dashboard") Dashboard Vendor
+
+        .col-md-3
+          h6.text-white.mb-3 Kontak
+          p.text-white-50.mb-1
+            i.bi.bi-whatsapp.me-2
+            | 0812-3456-789
+          p.text-white-50.mb-1
+            i.bi.bi-envelope.me-2
+            | support@freshmart.id
+          p.text-white-50
+            i.bi.bi-geo-alt.me-2
+            | Jakarta, Indonesia
+
+        .col-md-3
+          h6.text-white.mb-3 Ikuti Kami
+          .d-flex.gap-3
+            a.social-icon(href="#"): i.bi.bi-instagram
+            a.social-icon(href="#"): i.bi.bi-facebook
+            a.social-icon(href="#"): i.bi.bi-youtube
+
+    .text-center.text-white-50.py-3.border-top.border-success-subtle
+      small © #{new Date().getFullYear()} FreshMart — All Rights Reserved.
 
     script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-" crossorigin="anonymous")
     script.
