@@ -7,6 +7,11 @@ block content
       to   { opacity: 1; transform: translateY(0); }
     }
     
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(30px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    
     @keyframes float {
       0%, 100% { transform: translateY(0); }
       50%      { transform: translateY(-8px); }
@@ -17,45 +22,43 @@ block content
       50%      { transform: scale(1.05); }
     }
 
-    /* Dashboard Header - Mobile Optimized */
-    .vendor-dashboard-header {
+    /* Global */
+    * {
+      box-sizing: border-box;
+    }
+    
+    body {
+      background: #fafafa;
+    }
+
+    /* Dashboard Header */
+    .dashboard-header {
       background: #ffffff;
-      padding: 25px 0 20px;
-      margin-bottom: 20px;
-      border-bottom: 2px solid #f0f0f0;
+      padding: 24px 0;
+      margin-bottom: 24px;
+      border-bottom: 1px solid #e8e8e8;
       animation: fadeInUp 0.6s ease-out;
     }
     
     .header-icon-box {
-      width: 60px;
-      height: 60px;
+      width: 56px;
+      height: 56px;
       background: #f0f9f3;
-      border-radius: 16px;
+      border-radius: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 26px;
       color: #28a745;
-      border: 2px solid #e8f5e9;
-      transition: all 0.3s ease;
+      border: 1px solid #e8e8e8;
+      transition: all 0.4s ease;
       flex-shrink: 0;
-      margin-bottom: 15px;
-    }
-    
-    @media (min-width: 768px) {
-      .header-icon-box {
-        width: 72px;
-        height: 72px;
-        font-size: 32px;
-        margin-bottom: 0;
-        margin-right: 20px;
-      }
     }
     
     .header-icon-box:hover {
       background: #28a745;
       color: white;
-      transform: rotate(5deg) scale(1.05);
+      transform: rotate(10deg) scale(1.1);
       border-color: #28a745;
     }
     
@@ -64,71 +67,45 @@ block content
       color: #2c3e50;
       font-weight: 700;
       margin-bottom: 4px;
-      letter-spacing: -0.2px;
-    }
-    
-    @media (min-width: 768px) {
-      .dashboard-title {
-        font-size: 2.2rem;
-        margin-bottom: 6px;
-      }
+      letter-spacing: -0.5px;
     }
     
     .dashboard-subtitle {
       color: #6c757d;
       font-size: 0.9rem;
       margin: 0;
-      font-weight: 400;
     }
-    
-    @media (min-width: 768px) {
-      .dashboard-subtitle {
-        font-size: 1.05rem;
-      }
-    }
-    
-    /* Action Buttons - Mobile Stack */
+
+    /* Action Buttons */
     .action-buttons-wrapper {
       display: flex;
-      flex-direction: column;
-      gap: 10px;
-      width: 100%;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
       margin-top: 20px;
     }
     
-    @media (min-width: 768px) {
-      .action-buttons-wrapper {
-        flex-direction: row;
-        justify-content: flex-end;
-        margin-top: 0;
-        width: auto;
-      }
-    }
-    
     .btn-action-main {
-      padding: 14px 20px;
+      padding: 14px 24px;
       border-radius: 12px;
       font-weight: 600;
       font-size: 0.95rem;
       border: none;
       transition: all 0.3s ease;
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      justify-content: center;
       gap: 8px;
       position: relative;
       overflow: hidden;
+      flex: 1 1 auto;
+      min-width: 200px;
+      justify-content: center;
       text-decoration: none;
-      width: 100%;
-      text-align: center;
     }
     
-    @media (min-width: 768px) {
-      .btn-action-main {
-        padding: 16px 24px;
-        width: auto;
-        display: inline-flex;
-      }
+    .btn-action-main:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
     }
     
     .btn-action-primary {
@@ -156,22 +133,196 @@ block content
       background: #dc3545;
       color: white;
       padding: 3px 8px;
-      border-radius: 10px;
+      border-radius: 12px;
       font-size: 0.8rem;
       font-weight: 700;
       animation: pulse 2s infinite;
       margin-left: 8px;
     }
 
-    /* Stats Cards - Mobile Grid */
-    .stats-section {
-      margin-bottom: 25px;
+    /* Section Card */
+    .section-card {
+      background: #ffffff;
+      border: 1px solid #e8e8e8;
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 24px;
+      transition: all 0.3s ease;
+      animation: fadeInUp 0.6s ease-out;
     }
     
+    .section-card:hover {
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+      border-color: #d0d0d0;
+    }
+    
+    .section-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid #e8e8e8;
+      position: relative;
+      cursor: pointer;
+      user-select: none;
+      padding-right: 40px;
+    }
+    
+    .section-header.collapsible-header {
+      cursor: pointer;
+      padding-right: 40px;
+    }
+    
+    .section-header.non-collapsible {
+      cursor: default;
+      padding-right: 0;
+    }
+    
+    .section-header::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 60px;
+      height: 2px;
+      background: #28a745;
+    }
+    
+    .section-icon {
+      width: 48px;
+      height: 48px;
+      background: #f0f9f3;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      color: #28a745;
+      flex-shrink: 0;
+      border: 1px solid #e8e8e8;
+      transition: all 0.3s ease;
+    }
+    
+    .section-card:hover .section-icon {
+      background: #28a745;
+      color: white;
+      transform: rotate(5deg) scale(1.05);
+    }
+    
+    .section-title {
+      color: #2c3e50;
+      font-weight: 700;
+      font-size: 1.15rem;
+      margin: 0 0 4px 0;
+      letter-spacing: -0.3px;
+      line-height: 1.3;
+    }
+    
+    .section-description {
+      color: #6c757d;
+      font-size: 0.85rem;
+      margin: 0;
+      line-height: 1.4;
+    }
+
+    /* Collapsible Sections */
+    .collapsible-section .section-header {
+      position: relative;
+      padding-right: 40px;
+    }
+    
+    .collapsible-section .section-toggle-icon {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      transition: transform 0.3s ease;
+      font-size: 20px;
+      color: #28a745;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      background: #f8f9fa;
+      flex-shrink: 0;
+    }
+    
+    .collapsible-section .section-toggle-icon:hover {
+      background: #e9ecef;
+    }
+    
+    .collapsible-section .section-toggle-icon.collapsed {
+      transform: translateY(-50%) rotate(-180deg);
+    }
+    
+    .collapsible-section .section-content {
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    /* Desktop: semua section bisa di-toggle, default terbuka */
+    @media (min-width: 768px) {
+      .collapsible-section .section-content {
+        max-height: 5000px;
+        opacity: 1;
+      }
+      
+      .collapsible-section .section-content.collapsed {
+        max-height: 0;
+        opacity: 0;
+        margin-top: 0;
+        padding-top: 0;
+        overflow: hidden;
+      }
+    }
+    
+    /* Mobile: semua section tertutup otomatis */
+    @media (max-width: 767.98px) {
+      .collapsible-section .section-content {
+        max-height: 0;
+        opacity: 0;
+        margin-top: 0;
+        padding-top: 0;
+        overflow: hidden;
+      }
+      
+      .collapsible-section .section-content:not(.collapsed) {
+        max-height: 5000px;
+        opacity: 1;
+        margin-top: 20px;
+        padding-top: 0;
+      }
+      
+      .collapsible-section .section-toggle-icon.collapsed {
+        transform: translateY(-50%) rotate(0deg);
+      }
+      
+      .collapsible-section .section-toggle-icon:not(.collapsed) {
+        transform: translateY(-50%) rotate(-180deg);
+      }
+    }
+
+    /* Non-collapsible product section */
+    .non-collapsible-section .section-header {
+      cursor: default;
+      padding-right: 0;
+    }
+    
+    .non-collapsible-section .section-content {
+      display: block !important;
+      max-height: none !important;
+      opacity: 1 !important;
+    }
+
+    /* Stats Cards Grid */
     .stats-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      gap: 16px;
+      margin-bottom: 24px;
     }
     
     @media (min-width: 768px) {
@@ -195,8 +346,7 @@ block content
     
     @media (min-width: 768px) {
       .stat-card {
-        padding: 25px;
-        border-radius: 16px;
+        padding: 20px;
       }
     }
     
@@ -221,15 +371,6 @@ block content
       transition: all 0.3s ease;
     }
     
-    @media (min-width: 768px) {
-      .stat-icon-wrapper {
-        width: 60px;
-        height: 60px;
-        font-size: 26px;
-        margin-bottom: 20px;
-      }
-    }
-    
     .stat-card:hover .stat-icon-wrapper {
       background: #28a745;
       color: white;
@@ -246,13 +387,6 @@ block content
       display: block;
     }
     
-    @media (min-width: 768px) {
-      .stat-label {
-        font-size: 0.9rem;
-        margin-bottom: 10px;
-      }
-    }
-    
     .stat-value {
       font-size: 1.5rem;
       font-weight: 700;
@@ -264,7 +398,7 @@ block content
     
     @media (min-width: 768px) {
       .stat-value {
-        font-size: 2.4rem;
+        font-size: 2rem;
       }
     }
     
@@ -276,65 +410,244 @@ block content
       align-items: center;
       gap: 4px;
     }
+
+    /* Info Box */
+    .info-box {
+      background: #f8f9fa;
+      border-left: 4px solid #6c757d;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+    }
     
-    @media (min-width: 768px) {
-      .stat-description {
-        font-size: 0.85rem;
-        margin-top: 8px;
-      }
+    .info-box:hover {
+      background: #f0f0f0;
+      padding-left: 16px;
+    }
+    
+    .info-box-success {
+      background: #f0f9f3;
+      border-left-color: #28a745;
+    }
+    
+    .info-box-warning {
+      background: #fff9f0;
+      border-left-color: #ffc107;
+    }
+    
+    .info-box-info {
+      background: #f0f4ff;
+      border-left-color: #4361ee;
     }
 
-    /* Driver Management Section - Mobile Column */
-    .driver-management-section {
-      margin-bottom: 30px;
-      animation: fadeInUp 0.6s ease-out;
-      animation-delay: 0.2s;
+    /* Form Elements */
+    .form-group-custom {
+      margin-bottom: 20px;
     }
     
-    .section-card {
+    .label-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      gap: 8px;
+    }
+    
+    .form-label-custom {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin: 0;
+    }
+    
+    .form-label-custom i {
+      color: #28a745;
+      font-size: 16px;
+    }
+    
+    .required-badge {
+      background: #e8f5eb;
+      color: #28a745;
+      padding: 3px 8px;
+      border-radius: 10px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      border: 1px solid #d4edda;
+      white-space: nowrap;
+    }
+    
+    .form-control-custom {
+      border: 2px solid #e8e8e8;
+      border-radius: 10px;
+      padding: 12px 14px;
+      width: 100%;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      background: #ffffff;
+    }
+    
+    .form-control-custom:focus {
+      border-color: #28a745;
+      box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.1);
+      outline: none;
+      background: #fafafa;
+    }
+    
+    .form-control-custom:hover {
+      border-color: #c0c0c0;
+    }
+    
+    .input-hint {
+      font-size: 0.8rem;
+      color: #6c757d;
+      margin-top: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Buttons */
+    .btn-custom {
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      border: none;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    
+    .btn-custom:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    }
+    
+    .btn-primary-custom {
+      background: #28a745;
+      color: white;
+    }
+    
+    .btn-primary-custom:hover {
+      background: #218838;
+    }
+
+    /* Table Styles */
+    .table-custom {
+      width: 100%;
       background: white;
-      border-radius: 14px;
-      padding: 20px;
-      margin-bottom: 15px;
-      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
-      border: 1px solid #e8e8e8;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    
+    .table-custom thead {
+      background: #f8f9fa;
+      border-bottom: 2px solid #28a745;
+    }
+    
+    .table-custom thead th {
+      padding: 14px 12px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #495057;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border: none;
+    }
+    
+    .table-custom tbody td {
+      padding: 16px 12px;
+      border: none;
+      border-bottom: 1px solid #f0f0f0;
+      vertical-align: middle;
+      font-size: 0.9rem;
+    }
+    
+    .table-custom tbody tr {
       transition: all 0.3s ease;
     }
     
-    @media (min-width: 768px) {
-      .section-card {
-        padding: 25px;
-        border-radius: 16px;
-        margin-bottom: 20px;
-      }
+    .table-custom tbody tr:hover {
+      background: #f8fdf9;
     }
     
-    .section-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
-    }
-    
-    .section-header {
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      background: #f0f9f3;
+      border-radius: 50%;
       display: flex;
-      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #28a745;
+      font-size: 16px;
+      border: 2px solid #e8e8e8;
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+    }
+    
+    .table-custom tbody tr:hover .user-avatar {
+      background: #28a745;
+      color: white;
+      transform: rotate(5deg);
+      border-color: #28a745;
+    }
+
+    /* Products Section - Non Collapsible */
+    .products-section {
+      background: #ffffff;
+      border: 1px solid #e8e8e8;
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 24px;
+      animation: fadeInUp 0.6s ease-out;
+      animation-delay: 0.3s;
+    }
+    
+    .products-section:hover {
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+      border-color: #d0d0d0;
+    }
+    
+    .products-header {
+      display: flex;
       align-items: flex-start;
+      justify-content: space-between;
       gap: 12px;
       margin-bottom: 20px;
-      padding-bottom: 15px;
-      border-bottom: 2px solid #f0f2f5;
+      padding-bottom: 16px;
+      border-bottom: 2px solid #e8e8e8;
+      position: relative;
     }
     
-    @media (min-width: 576px) {
-      .section-header {
-        flex-direction: row;
-        align-items: center;
-        gap: 15px;
-      }
+    .products-header::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 60px;
+      height: 2px;
+      background: #28a745;
     }
     
-    .section-icon {
-      width: 50px;
-      height: 50px;
+    .products-title-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .products-icon {
+      width: 48px;
+      height: 48px;
       background: #f0f9f3;
       border-radius: 12px;
       display: flex;
@@ -343,308 +656,38 @@ block content
       font-size: 22px;
       color: #28a745;
       flex-shrink: 0;
-      border: 1px solid #d4edda;
-    }
-    
-    @media (min-width: 768px) {
-      .section-icon {
-        width: 56px;
-        height: 56px;
-        font-size: 24px;
-      }
-    }
-    
-    .section-title {
-      color: #2c3e50;
-      font-weight: 700;
-      font-size: 1.2rem;
-      margin: 0;
-    }
-    
-    @media (min-width: 768px) {
-      .section-title {
-        font-size: 1.3rem;
-      }
-    }
-    
-    .section-subtitle {
-      color: #6c757d;
-      font-size: 0.85rem;
-      margin-top: 4px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    /* Form Elements - Mobile Optimized */
-    .form-group-custom {
-      margin-bottom: 18px;
-    }
-    
-    .form-label-custom {
-      font-weight: 600;
-      color: #2c3e50;
-      font-size: 0.85rem;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-bottom: 6px;
-    }
-    
-    .form-label-custom i {
-      color: #28a745;
-      font-size: 14px;
-    }
-    
-    .form-control-custom {
-      border: 2px solid #e8e8e8;
-      border-radius: 10px;
-      padding: 12px 16px;
-      width: 100%;
-      font-size: 0.9rem;
+      border: 1px solid #e8e8e8;
       transition: all 0.3s ease;
-      background: #ffffff;
     }
     
-    @media (min-width: 768px) {
-      .form-control-custom {
-        padding: 14px 18px;
-        font-size: 0.95rem;
-      }
-    }
-    
-    .form-control-custom:focus {
-      border-color: #28a745;
-      box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.1);
-      outline: none;
-    }
-    
-    .form-control-custom:hover {
-      border-color: #c0c0c0;
-    }
-    
-    .input-hint {
-      font-size: 0.75rem;
-      color: #6c757d;
-      margin-top: 5px;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    /* Buttons - Mobile Full Width */
-    .btn-custom {
-      padding: 12px 20px;
-      border-radius: 10px;
-      font-weight: 600;
-      font-size: 0.9rem;
-      border: none;
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      cursor: pointer;
-      text-decoration: none;
-      width: 100%;
-    }
-    
-    @media (min-width: 768px) {
-      .btn-custom {
-        padding: 14px 24px;
-        font-size: 0.95rem;
-        width: auto;
-        display: inline-flex;
-      }
-    }
-    
-    .btn-custom:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-    
-    .btn-success-custom {
+    .products-section:hover .products-icon {
       background: #28a745;
       color: white;
+      transform: rotate(5deg) scale(1.05);
     }
     
-    .btn-success-custom:hover {
-      background: #218838;
-    }
-
-    /* Driver Table - Mobile Scrollable */
-    .driver-table-wrapper {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      margin: 0 -20px;
-      padding: 0 20px;
-    }
-    
-    @media (min-width: 768px) {
-      .driver-table-wrapper {
-        margin: 0;
-        padding: 0;
-      }
-    }
-    
-    .driver-table {
-      width: 100%;
-      min-width: 500px;
-      background: white;
-      border-radius: 12px;
-      overflow: hidden;
-      border: 1px solid #e8e8e8;
-    }
-    
-    .driver-table thead {
-      background: #f8f9fa;
-      border-bottom: 2px solid #28a745;
-    }
-    
-    .driver-table thead th {
-      padding: 14px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: #495057;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      border: none;
-      white-space: nowrap;
-    }
-    
-    .driver-table tbody td {
-      padding: 14px;
-      border: none;
-      border-bottom: 1px solid #f0f0f0;
-      vertical-align: middle;
-      font-size: 0.85rem;
-    }
-    
-    .driver-table tbody tr {
-      transition: all 0.2s ease;
-    }
-    
-    .driver-table tbody tr:hover {
-      background: #f8fdf9;
-    }
-    
-    .driver-avatar {
-      width: 40px;
-      height: 40px;
-      background: #f0f9f3;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      color: #28a745;
-      flex-shrink: 0;
-      border: 1px solid #d4edda;
-    }
-
-    /* Empty State - Mobile Optimized */
-    .empty-state-card {
-      background: white;
-      border: 2px dashed #e8e8e8;
-      border-radius: 16px;
-      padding: 40px 20px;
-      text-align: center;
-      animation: fadeInUp 0.6s ease-out;
-    }
-    
-    @media (min-width: 768px) {
-      .empty-state-card {
-        padding: 60px 30px;
-        border-radius: 18px;
-      }
-    }
-    
-    .empty-icon {
-      font-size: 60px;
-      color: #d4edda;
-      margin-bottom: 15px;
-      animation: float 3s ease-in-out infinite;
-    }
-    
-    @media (min-width: 768px) {
-      .empty-icon {
-        font-size: 80px;
-        margin-bottom: 20px;
-      }
-    }
-    
-    .empty-title {
+    .products-title {
       color: #2c3e50;
       font-weight: 700;
-      font-size: 1.3rem;
-      margin-bottom: 10px;
+      font-size: 1.15rem;
+      margin: 0 0 4px 0;
+      letter-spacing: -0.3px;
+      line-height: 1.3;
     }
     
-    @media (min-width: 768px) {
-      .empty-title {
-        font-size: 1.5rem;
-        margin-bottom: 12px;
-      }
-    }
-    
-    .empty-text {
+    .products-description {
       color: #6c757d;
-      font-size: 0.9rem;
-      margin-bottom: 25px;
-      max-width: 400px;
-      margin-left: auto;
-      margin-right: auto;
-      line-height: 1.5;
+      font-size: 0.85rem;
+      margin: 0;
+      line-height: 1.4;
     }
 
-    /* Product Grid Header */
-    .product-grid-header {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      margin-bottom: 20px;
-      animation: fadeInUp 0.6s ease-out;
-      animation-delay: 0.3s;
-    }
-    
-    @media (min-width: 576px) {
-      .product-grid-header {
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        gap: 20px;
-      }
-    }
-    
-    .grid-title {
-      color: #2c3e50;
-      font-weight: 700;
-      font-size: 1.3rem;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    
-    .grid-title-icon {
-      width: 44px;
-      height: 44px;
-      background: #f0f9f3;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      color: #28a745;
-      border: 1px solid #d4edda;
-      flex-shrink: 0;
-    }
-
-    /* Products Grid - Mobile Responsive */
+    /* Products Grid */
     .products-grid {
       display: grid;
       grid-template-columns: 1fr;
       gap: 15px;
-      margin-bottom: 30px;
+      margin-bottom: 0;
     }
     
     @media (min-width: 576px) {
@@ -672,50 +715,162 @@ block content
       }
     }
 
-    /* Layout Spacing */
-    .container-fluid {
-      padding-left: 15px;
-      padding-right: 15px;
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
     }
     
-    @media (min-width: 768px) {
-      .container-fluid {
-        padding-left: 25px;
-        padding-right: 25px;
+    .empty-icon {
+      font-size: 60px;
+      color: #e8e8e8;
+      margin-bottom: 12px;
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    .empty-text {
+      color: #6c757d;
+      font-size: 0.95rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .dashboard-header {
+        padding: 16px 0;
+        margin-bottom: 16px;
+      }
+      
+      .action-buttons-wrapper {
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 16px;
+      }
+      
+      .btn-action-main {
+        width: 100%;
+        min-width: unset;
+        padding: 12px 20px;
+        font-size: 0.9rem;
+      }
+      
+      .section-card {
+        padding: 16px;
+        margin-bottom: 16px;
+      }
+      
+      .section-header {
+        padding-right: 36px;
+        gap: 10px;
+        margin-bottom: 16px;
+        padding-bottom: 12px;
+      }
+      
+      .section-header.non-collapsible {
+        padding-right: 0;
+      }
+      
+      .section-icon {
+        width: 42px;
+        height: 42px;
+        font-size: 20px;
+      }
+      
+      .section-title {
+        font-size: 1rem;
+      }
+      
+      .section-description {
+        font-size: 0.8rem;
+      }
+      
+      .products-section {
+        padding: 16px;
+      }
+      
+      .products-header {
+        margin-bottom: 16px;
+        padding-bottom: 12px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+      }
+      
+      .products-title-wrapper {
+        gap: 10px;
+      }
+      
+      .products-icon {
+        width: 42px;
+        height: 42px;
+        font-size: 20px;
+      }
+      
+      .form-group-custom {
+        margin-bottom: 16px;
+      }
+      
+      .form-control-custom {
+        padding: 11px 12px;
+        font-size: 0.9rem;
+      }
+      
+      .stats-grid {
+        gap: 12px;
+      }
+      
+      .stat-card {
+        padding: 16px;
+      }
+      
+      .stat-icon-wrapper {
+        width: 42px;
+        height: 42px;
+        font-size: 18px;
+        margin-bottom: 12px;
+      }
+      
+      .stat-value {
+        font-size: 1.3rem;
       }
     }
 
-  .container-fluid
-    // ===== HEADER SECTION =====
-    .vendor-dashboard-header
-      .container
-        .row
-          .col-12.col-md-8
-            .d-flex.flex-column.flex-md-row.align-items-start.align-items-md-center.gap-3
-              .header-icon-box
-                i.bi.bi-shop
-              div
-                .dashboard-title Dashboard Vendor
-                .dashboard-subtitle
-                  i.bi.bi-box-seam.me-2
-                  | Kelola produk dan tim pengiriman Anda
+  //- Header Section
+  .dashboard-header.animate-fade-up
+    .container-fluid
+      .text-center
+        .d-inline-flex.align-items-center.justify-content-center.mb-3
+          .header-icon-box.me-2
+            i.bi.bi-shop
+          div.text-start
+            .dashboard-title Dashboard Vendor
+            .dashboard-subtitle
+              i.bi.bi-box-seam.me-1
+              | Kelola produk dan tim pengiriman Anda
+        
+        .action-buttons-wrapper
+          a.btn-action-main.btn-action-primary(href="/vendor/products/new" style='text-decoration: none;')
+            i.bi.bi-plus-circle
+            span Tambah Produk
           
-          .col-12.col-md-4
-            .action-buttons-wrapper
-              a.btn-action-main.btn-action-primary(href="/vendor/products/new")
-                i.bi.bi-plus-circle
-                span Tambah Produk
-              
-              a.btn-action-main.btn-action-secondary(href="/vendor/orders")
-                i.bi.bi-cart
-                span Pesanan
-                if typeof pendingCount !== 'undefined' && pendingCount > 0
-                  span.badge-notification= pendingCount
+          a.btn-action-main.btn-action-secondary(href="/vendor/orders" style='text-decoration: none;')
+            i.bi.bi-cart
+            span Pesanan
+            if typeof pendingCount !== 'undefined' && pendingCount > 0
+              span.badge-notification= pendingCount
 
-    .container
-      // ===== STATISTICS SECTION =====
-      if products && products.length
-        .stats-section
+  .container-fluid
+    //- Statistics Section - Collapsible
+    if products && products.length
+      .section-card.animate-fade-up.collapsible-section(style='animation-delay: 0.1s;')
+        .section-header.collapsible-header
+          .section-icon
+            i.bi.bi-graph-up
+          div.flex-grow-1
+            .section-title Statistik Inventori
+            .section-description Ringkasan produk dan tim Anda
+          i.bi.bi-chevron-down.section-toggle-icon
+
+        .section-content
           .stats-grid
             .stat-card
               .stat-icon-wrapper
@@ -756,104 +911,131 @@ block content
                 i.bi.bi-people.me-1
                 = driverCount === 1 ? 'supir aktif' : 'supir aktif'
 
-      // ===== DRIVER MANAGEMENT SECTION =====
-      .driver-management-section
-        .row.g-3.g-lg-4
-          .col-12.col-lg-6
-            .section-card
-              .section-header
-                .section-icon
-                  i.bi.bi-person-plus
-                div
-                  .section-title Tambah Supir Baru
-                  .section-subtitle
-                    i.bi.bi-shield-check.me-1
-                    | Supir dapat mengelola pengiriman pesanan
+    .row
+      //- Section: Tambah Supir Baru - Collapsible
+      .col-lg-6.col-12.mb-4
+        .section-card.animate-fade-up.collapsible-section(style='animation-delay: 0.2s;')
+          .section-header.collapsible-header
+            .section-icon
+              i.bi.bi-person-plus
+            div.flex-grow-1
+              .section-title Tambah Supir Baru
+              .section-description Daftarkan supir untuk mengelola pengiriman
+            i.bi.bi-chevron-down.section-toggle-icon
 
-              form(action='/vendor/drivers' method='post')
-                .form-group-custom
+          .section-content
+            .info-box.info-box-success
+              i.bi.bi-lightbulb-fill.me-2
+              strong Tips: 
+              | Supir akan dapat login dan melihat pesanan yang perlu dikirim
+
+            form(action='/vendor/drivers' method='post')
+              .form-group-custom
+                .label-wrapper
                   label.form-label-custom
                     i.bi.bi-person
                     | Nama Supir
-                  input.form-control-custom(type='text' name='name' required placeholder='Contoh: Budi Saputra')
-                  .input-hint
-                    i.bi.bi-info-circle
-                    | Nama lengkap untuk identifikasi
+                  span.required-badge Wajib
+                input.form-control-custom(type='text' name='name' required placeholder='Contoh: Budi Saputra')
+                .input-hint
+                  i.bi.bi-info-circle
+                  | Nama lengkap untuk identifikasi
 
-                .form-group-custom
+              .form-group-custom
+                .label-wrapper
                   label.form-label-custom
                     i.bi.bi-envelope
                     | Email
-                  input.form-control-custom(type='email' name='email' required placeholder='supir@email.com')
-                  .input-hint
-                    i.bi.bi-info-circle
-                    | Email untuk login
+                  span.required-badge Wajib
+                input.form-control-custom(type='email' name='email' required placeholder='supir@email.com')
+                .input-hint
+                  i.bi.bi-info-circle
+                  | Email ini digunakan untuk login
 
-                .form-group-custom
+              .form-group-custom
+                .label-wrapper
                   label.form-label-custom
                     i.bi.bi-key
                     | Password
-                  input.form-control-custom(type='text' name='password' placeholder='Kosongkan untuk password default')
-                  .input-hint
-                    i.bi.bi-info-circle
-                    | Default: 
-                    strong password123
+                  span.required-badge(style='background: #fff9f0; color: #856404; border-color: #ffeaa7;') Opsional
+                input.form-control-custom(type='text' name='password' placeholder='Kosongkan untuk password default')
+                .input-hint
+                  i.bi.bi-info-circle
+                  | Default: 
+                  strong password123
 
-                button.btn-custom.btn-success-custom(type='submit')
-                  i.bi.bi-person-plus-fill
-                  | Tambah Supir
+              button.btn-custom.btn-primary-custom.w-100(type='submit')
+                i.bi.bi-person-plus-fill
+                | Tambah Supir
 
-          .col-12.col-lg-6
-            .section-card(style='height: 100%;')
-              .section-header
-                .section-icon
-                  i.bi.bi-people
-                div
-                  .section-title Daftar Supir
-                  .section-subtitle
-                    i.bi.bi-person-check.me-1
-                    | Semua supir yang terdaftar
+      //- Section: Daftar Supir - Collapsible
+      .col-lg-6.col-12.mb-4
+        .section-card.animate-slide-right.collapsible-section(style='animation-delay: 0.2s;')
+          .section-header.collapsible-header
+            .section-icon
+              i.bi.bi-people
+            div.flex-grow-1
+              .section-title Daftar Supir
+              .section-description Semua supir yang terdaftar di sistem Anda
+            i.bi.bi-chevron-down.section-toggle-icon
 
-              if drivers && drivers.length
-                .driver-table-wrapper
-                  table.driver-table
-                    thead
+          .section-content
+            if drivers && drivers.length
+              .table-responsive
+                table.table-custom
+                  thead
+                    tr
+                      th
+                        i.bi.bi-person.me-2
+                        | Nama Supir
+                      th
+                        i.bi.bi-envelope.me-2
+                        | Email
+                  tbody
+                    each d in drivers
                       tr
-                        th
-                          i.bi.bi-person.me-2
-                          | Nama
-                        th
-                          i.bi.bi-envelope.me-2
-                          | Email
-                    tbody
-                      each d in drivers
-                        tr
-                          td
-                            .d-flex.align-items-center.gap-3
-                              .driver-avatar
-                                i.bi.bi-truck-front
-                              strong= d.name
-                          td.text-muted.small= d.email
-              else
-                .empty-state-card(style='padding: 25px 15px; margin: 0;')
-                  .empty-icon
-                    i.bi.bi-people
-                  .empty-title Belum Ada Supir
-                  .empty-text
-                    | Tambahkan supir untuk mengelola pengiriman pesanan
+                        td
+                          .d-flex.align-items-center.gap-3
+                            .user-avatar
+                              i.bi.bi-truck-front
+                            strong= d.name
+                        td.text-muted.small= d.email
+            else
+              .empty-state
+                .empty-icon
+                  i.bi.bi-people
+                .empty-text Belum ada supir yang terdaftar
+                a.btn-custom.btn-primary-custom.mt-3(
+                  href="javascript:void(0)" 
+                  onclick="document.querySelector('.collapsible-section .section-header').click()"
+                  style='text-decoration: none;'
+                )
+                  i.bi.bi-person-plus
+                  | Tambah Supir Pertama
 
-      // ===== PRODUCTS SECTION =====
-      if products && products.length
-        .product-grid-header
-          .grid-title
-            .grid-title-icon
+    //- Section: Produk Anda - NON Collapsible
+    if products && products.length
+      .products-section
+        .products-header
+          .products-title-wrapper
+            .products-icon
               i.bi.bi-box-seam
-            span Produk Anda
+            div
+              .products-title Produk Anda
+              .products-description Semua produk yang terdaftar di inventori Anda
           
-          .d-flex.gap-2
-            a.btn-action-secondary.btn-action-main(href="/vendor/products/new" style='padding: 12px 16px;')
+          .d-flex.align-items-center.gap-2
+            a.btn-action-secondary.btn-action-main(
+              href="/vendor/products/new" 
+              style='padding: 10px 16px; font-size: 0.9rem; text-decoration: none;'
+            )
               i.bi.bi-plus-lg
               span.d-none.d-sm-inline Tambah
+
+        .info-box.info-box-info.mb-3
+          i.bi.bi-eye.me-2
+          strong Cara Pakai: 
+          | Klik produk untuk mengedit detail atau mengatur stok
 
         .products-grid
           each p, index in products
@@ -861,19 +1043,100 @@ block content
             - var fromVendorDashboard = true
             include ../marketplace/_product_card.pug
     
-      else
-        // ===== EMPTY STATE =====
-        .empty-state-card.mb-5
-          .empty-icon
+    else
+      //- Empty State - Collapsible
+      .section-card.animate-fade-up.collapsible-section(style='animation-delay: 0.3s;')
+        .section-header.collapsible-header
+          .section-icon
             i.bi.bi-inbox
-          .empty-title Inventori Kosong
-          .empty-text
-            | Mulai tambahkan produk untuk ditampilkan di marketplace
-          .d-flex.flex-column.flex-sm-row.gap-2.justify-content-center.mt-4
-            a.btn-action-primary.btn-action-main(href="/vendor/products/new")
-              i.bi.bi-plus-circle
-              span Tambah Produk
-            
-            a.btn-action-secondary.btn-action-main(href="/vendor/orders")
-              i.bi.bi-cart
-              span Lihat Pesanan
+          div.flex-grow-1
+            .section-title Inventori Kosong
+            .section-description Mulai tambahkan produk untuk ditampilkan di marketplace
+          i.bi.bi-chevron-down.section-toggle-icon
+
+        .section-content
+          .empty-state
+            .empty-icon
+              i.bi.bi-inbox
+            .empty-text
+              | Belum ada produk yang terdaftar. Mulai tambahkan produk untuk ditampilkan di marketplace.
+            .d-flex.flex-column.flex-sm-row.gap-2.justify-content-center.mt-4
+              a.btn-action-primary.btn-action-main(
+                href="/vendor/products/new"
+                style='text-decoration: none;'
+              )
+                i.bi.bi-plus-circle
+                span Tambah Produk
+              
+              a.btn-action-secondary.btn-action-main(
+                href="/vendor/orders"
+                style='text-decoration: none;'
+              )
+                i.bi.bi-cart
+                span Lihat Pesanan
+
+  //- JavaScript for Collapsible Sections
+  script.
+    document.addEventListener('DOMContentLoaded', function() {
+      function setupCollapsible() {
+        const sections = document.querySelectorAll('.collapsible-section');
+        const isMobile = window.innerWidth < 768;
+        
+        sections.forEach(function(section) {
+          let header = section.querySelector('.section-header');
+          let content = section.querySelector('.section-content');
+          let icon   = section.querySelector('.section-toggle-icon');
+          
+          if (!header || !content || !icon) return;
+
+          // Reset listener lama: clone header SELALU
+          const newHeader = header.cloneNode(true);
+          header.parentNode.replaceChild(newHeader, header);
+
+          header  = newHeader;
+          content = section.querySelector('.section-content');
+          icon    = section.querySelector('.section-toggle-icon');
+
+          // SET STATE AWAL BERDASARKAN DEVICE
+          if (isMobile) {
+            // Mobile: semua section tertutup
+            content.classList.add('collapsed');
+            icon.classList.add('collapsed');
+          } else {
+            // Desktop: semua section terbuka, tapi bisa ditoggle
+            content.classList.remove('collapsed');
+            icon.classList.remove('collapsed');
+          }
+
+          header.addEventListener('click', function(e) {
+            const isFormElement =
+              e.target.tagName === 'INPUT' ||
+              e.target.tagName === 'SELECT' ||
+              e.target.tagName === 'BUTTON' ||
+              e.target.tagName === 'TEXTAREA' ||
+              e.target.tagName === 'A';
+
+            const isInsideForm    = e.target.closest('form');
+            const isInsideButton  = e.target.closest('.btn-custom');
+            const isInsideActionButton = e.target.closest('.btn-action-main');
+
+            if (isFormElement || isInsideForm || isInsideButton || isInsideActionButton) {
+              return;
+            }
+
+            content.classList.toggle('collapsed');
+            icon.classList.toggle('collapsed');
+          });
+        });
+      }
+
+      // Initial setup
+      setupCollapsible();
+
+      // Re-setup on resize
+      let resizeTimer;
+      window.addEventListener('resize', function() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(setupCollapsible, 250);
+      });
+    });
