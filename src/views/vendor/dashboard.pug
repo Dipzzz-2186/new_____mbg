@@ -17,62 +17,63 @@ block content
       50%      { transform: scale(1.05); }
     }
 
-    /* Dashboard Header */
+    /* Dashboard Header - Hijau Minimalis */
     .vendor-dashboard-header {
       background: #ffffff;
-      padding: 40px 0 32px;
-      margin-bottom: 24px;
-      border-bottom: 1px solid #e8e8e8;
+      padding: 50px 0 35px;
+      margin-bottom: 25px;
+      border-bottom: 2px solid #f0f0f0;
       animation: fadeInUp 0.6s ease-out;
     }
     
     .header-icon-box {
-      width: 64px;
-      height: 64px;
-      background: #f8f9fa;
-      border-radius: 16px;
+      width: 72px;
+      height: 72px;
+      background: #f0f9f3;
+      border-radius: 18px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 28px;
+      font-size: 32px;
       color: #28a745;
-      border: 1px solid #e8e8e8;
-      transition: all 0.4s ease;
+      border: 2px solid #e8f5e9;
+      transition: all 0.3s ease;
       flex-shrink: 0;
     }
     
     .header-icon-box:hover {
       background: #28a745;
       color: white;
-      transform: rotate(10deg) scale(1.1);
+      transform: rotate(5deg) scale(1.05);
       border-color: #28a745;
     }
     
     .dashboard-title {
-      font-size: 2rem;
+      font-size: 2.2rem;
       color: #2c3e50;
       font-weight: 700;
       margin-bottom: 6px;
-      letter-spacing: -0.5px;
+      letter-spacing: -0.3px;
     }
     
     .dashboard-subtitle {
       color: #6c757d;
-      font-size: 1rem;
+      font-size: 1.05rem;
       margin: 0;
+      font-weight: 400;
     }
     
-    /* Action Buttons */
-    .action-buttons {
+    /* Action Buttons - Hijau Sederhana */
+    .action-buttons-wrapper {
       display: flex;
       gap: 12px;
       flex-wrap: wrap;
       justify-content: flex-end;
     }
     
-    .btn-action {
-      padding: 14px 24px;
-      border-radius: 10px;
+    .btn-action-main {
+      padding: 16px 24px;
+      border-radius: 12px;
       font-weight: 600;
       font-size: 1rem;
       border: none;
@@ -81,36 +82,37 @@ block content
       align-items: center;
       gap: 10px;
       position: relative;
+      overflow: hidden;
       text-decoration: none;
     }
     
-    .btn-action:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    .btn-action-main:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
     }
     
-    .btn-primary-action {
+    .btn-action-primary {
       background: #28a745;
       color: white;
     }
     
-    .btn-primary-action:hover {
+    .btn-action-primary:hover {
       background: #218838;
     }
     
-    .btn-outline-action {
+    .btn-action-secondary {
       background: white;
-      color: #6c757d;
-      border: 2px solid #e8e8e8;
-    }
-    
-    .btn-outline-action:hover {
-      background: #fafafa;
-      border-color: #28a745;
       color: #28a745;
+      border: 2px solid #28a745;
     }
     
-    .notification-badge {
+    .btn-action-secondary:hover {
+      background: #f8fdf9;
+      color: #218838;
+      border-color: #218838;
+    }
+    
+    .badge-notification {
       background: #dc3545;
       color: white;
       padding: 4px 10px;
@@ -120,47 +122,32 @@ block content
       animation: pulse 2s infinite;
     }
 
-    /* Stats Cards */
-    .stats-row {
-      margin-bottom: 24px;
+    /* Stats Cards - Hijau Minimal */
+    .stats-section {
+      margin-bottom: 30px;
     }
     
     .stat-card {
       background: #ffffff;
-      border: 1px solid #e8e8e8;
       border-radius: 16px;
-      padding: 24px;
-      transition: all 0.4s ease;
+      padding: 25px;
+      transition: all 0.3s ease;
       position: relative;
       overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      border: 1px solid #e8e8e8;
       animation: fadeInUp 0.6s ease-out;
     }
     
-    .stat-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 4px;
-      background: #28a745;
-      transform: scaleX(0);
-      transition: transform 0.4s ease;
-    }
-    
-    .stat-card:hover::before {
-      transform: scaleX(1);
-    }
-    
     .stat-card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 12px 28px rgba(40, 167, 69, 0.12);
-      border-color: #28a745;
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(40, 167, 69, 0.1);
+      border-color: #d4edda;
     }
     
     .stat-icon-wrapper {
-      width: 56px;
-      height: 56px;
+      width: 60px;
+      height: 60px;
       background: #f0f9f3;
       border-radius: 14px;
       display: flex;
@@ -168,16 +155,15 @@ block content
       justify-content: center;
       font-size: 26px;
       color: #28a745;
-      margin-bottom: 18px;
-      border: 1px solid #e8e8e8;
+      margin-bottom: 20px;
+      border: 1px solid #d4edda;
       transition: all 0.3s ease;
     }
     
     .stat-card:hover .stat-icon-wrapper {
       background: #28a745;
       color: white;
-      transform: rotate(5deg) scale(1.05);
-      border-color: #28a745;
+      transform: scale(1.05);
     }
     
     .stat-label {
@@ -186,66 +172,311 @@ block content
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
     
     .stat-value {
-      font-size: 2rem;
+      font-size: 2.4rem;
       font-weight: 700;
       color: #2c3e50;
       line-height: 1;
     }
     
     .stat-description {
-      color: #6c757d;
+      color: #8a94a6;
       font-size: 0.85rem;
       margin-top: 8px;
+      padding-left: 2px;
     }
 
-    /* Empty State */
-    .empty-state-card {
-      background: #ffffff;
+    /* Driver Management Section - Simpel */
+    .driver-management-section {
+      margin-bottom: 35px;
+      animation: fadeInUp 0.6s ease-out;
+      animation-delay: 0.2s;
+    }
+    
+    .section-card {
+      background: white;
+      border-radius: 16px;
+      padding: 25px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
       border: 1px solid #e8e8e8;
-      border-radius: 20px;
-      padding: 80px 40px;
+      transition: all 0.3s ease;
+    }
+    
+    .section-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    }
+    
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #f0f2f5;
+    }
+    
+    .section-icon {
+      width: 56px;
+      height: 56px;
+      background: #f0f9f3;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: #28a745;
+      flex-shrink: 0;
+      border: 1px solid #d4edda;
+    }
+    
+    .section-title {
+      color: #2c3e50;
+      font-weight: 700;
+      font-size: 1.3rem;
+      margin: 0;
+    }
+    
+    .section-subtitle {
+      color: #6c757d;
+      font-size: 0.9rem;
+      margin-top: 4px;
+    }
+
+    /* Form Elements - Sederhana */
+    .form-group-custom {
+      margin-bottom: 20px;
+    }
+    
+    .form-label-custom {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    
+    .form-label-custom i {
+      color: #28a745;
+      font-size: 16px;
+    }
+    
+    .form-control-custom {
+      border: 2px solid #e8e8e8;
+      border-radius: 10px;
+      padding: 14px 18px;
+      width: 100%;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      background: #ffffff;
+    }
+    
+    .form-control-custom:focus {
+      border-color: #28a745;
+      box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.1);
+      outline: none;
+    }
+    
+    .form-control-custom:hover {
+      border-color: #c0c0c0;
+    }
+    
+    .input-hint {
+      font-size: 0.8rem;
+      color: #6c757d;
+      margin-top: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Buttons - Hijau Sederhana */
+    .btn-custom {
+      padding: 14px 24px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      border: none;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    
+    .btn-custom:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-success-custom {
+      background: #28a745;
+      color: white;
+    }
+    
+    .btn-success-custom:hover {
+      background: #218838;
+    }
+
+    /* Driver Table - Simpel */
+    .driver-table {
+      width: 100%;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid #e8e8e8;
+    }
+    
+    .driver-table thead {
+      background: #f8f9fa;
+      border-bottom: 2px solid #28a745;
+    }
+    
+    .driver-table thead th {
+      padding: 16px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #495057;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border: none;
+    }
+    
+    .driver-table tbody td {
+      padding: 16px;
+      border: none;
+      border-bottom: 1px solid #f0f0f0;
+      vertical-align: middle;
+      font-size: 0.9rem;
+    }
+    
+    .driver-table tbody tr {
+      transition: all 0.2s ease;
+    }
+    
+    .driver-table tbody tr:hover {
+      background: #f8fdf9;
+    }
+    
+    .driver-avatar {
+      width: 44px;
+      height: 44px;
+      background: #f0f9f3;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      color: #28a745;
+      flex-shrink: 0;
+      border: 1px solid #d4edda;
+    }
+
+    /* Empty State - Minimalis */
+    .empty-state-card {
+      background: white;
+      border: 2px dashed #e8e8e8;
+      border-radius: 18px;
+      padding: 60px 30px;
       text-align: center;
       animation: fadeInUp 0.6s ease-out;
     }
     
     .empty-icon {
-      font-size: 120px;
-      color: #e8e8e8;
-      margin-bottom: 24px;
+      font-size: 80px;
+      color: #d4edda;
+      margin-bottom: 20px;
       animation: float 3s ease-in-out infinite;
     }
     
     .empty-title {
       color: #2c3e50;
       font-weight: 700;
-      font-size: 1.8rem;
+      font-size: 1.5rem;
       margin-bottom: 12px;
     }
     
     .empty-text {
       color: #6c757d;
-      font-size: 1.05rem;
-      margin-bottom: 32px;
+      font-size: 1rem;
+      margin-bottom: 30px;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
+    /* Product Grid Header */
+    .product-grid-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+      animation: fadeInUp 0.6s ease-out;
+      animation-delay: 0.3s;
+    }
+    
+    .grid-title {
+      color: #2c3e50;
+      font-weight: 700;
+      font-size: 1.4rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .grid-title-icon {
+      width: 48px;
+      height: 48px;
+      background: #f0f9f3;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      color: #28a745;
+      border: 1px solid #d4edda;
+    }
+
+    /* Responsive */
     @media (max-width: 992px) {
-      .action-buttons {
+      .action-buttons-wrapper {
         width: 100%;
+        justify-content: stretch;
+        margin-top: 20px;
       }
       
-      .btn-action {
+      .btn-action-main {
         flex: 1;
         justify-content: center;
+        min-width: 200px;
+      }
+      
+      .dashboard-title {
+        font-size: 1.8rem;
+      }
+      
+      .header-icon-box {
+        width: 64px;
+        height: 64px;
+        font-size: 28px;
+      }
+      
+      .stat-value {
+        font-size: 2rem;
       }
     }
     
     @media (max-width: 768px) {
       .vendor-dashboard-header {
-        padding: 30px 0 24px;
+        padding: 35px 0 25px;
       }
       
       .dashboard-title {
@@ -258,149 +489,216 @@ block content
         font-size: 24px;
       }
       
+      .btn-action-main {
+        padding: 14px 20px;
+        font-size: 0.95rem;
+      }
+      
       .stat-card {
         padding: 20px;
       }
       
-      .stat-value {
-        font-size: 1.8rem;
+      .stat-icon-wrapper {
+        width: 52px;
+        height: 52px;
+        font-size: 22px;
       }
     }
 
   .container-fluid
-    // ===== HEADER =====
+    // ===== HEADER SECTION =====
     .vendor-dashboard-header
-      .row.align-items-center.g-3
-        .col-lg-7
-          .d-flex.align-items-center.gap-3
-            .header-icon-box
-              i.bi.bi-shop
-            div
-              .dashboard-title Dashboard Vendor
-              .dashboard-subtitle
-                i.bi.bi-box-seam.me-2
-                | Kelola produk dan inventori Anda
-        
-        .col-lg-5.text-lg-end
-          .action-buttons
-            a.btn-action.btn-primary-action(href="/vendor/products/new")
-              i.bi.bi-plus-circle
-              span Tambah Produk
-            
-            a.btn-action.btn-outline-action(href="/vendor/orders")
-              i.bi.bi-bell
-              span Pesanan Saya
-              if typeof pendingCount !== 'undefined' && pendingCount > 0
-                span.notification-badge= pendingCount
+      .container
+        .row.align-items-center.g-3
+          .col-lg-8
+            .d-flex.align-items-center.gap-4
+              .header-icon-box
+                i.bi.bi-shop
+              div
+                .dashboard-title Dashboard Vendor
+                .dashboard-subtitle
+                  i.bi.bi-box-seam.me-2
+                  | Kelola produk dan tim pengiriman Anda
+          
+          .col-lg-4.text-lg-end
+            .action-buttons-wrapper
+              a.btn-action-main.btn-action-primary(href="/vendor/products/new")
+                i.bi.bi-plus-circle
+                span Tambah Produk
+              
+              a.btn-action-main.btn-action-secondary(href="/vendor/orders")
+                i.bi.bi-cart
+                span Pesanan
+                if typeof pendingCount !== 'undefined' && pendingCount > 0
+                  span.badge-notification= pendingCount
 
-    // 🔹 SECTION KELOLA SUPIR
-    .mt-3.mb-4
-      .row.g-4
-        .col-lg-6
-          .card.shadow-sm.border-0.rounded-4
-            .card-body
-              h5.mb-3
-                i.bi.bi-truck-front.me-2
-                | Tambah Akun Supir
-              p.text-muted.small.mb-3
-                | Supir hanya bisa melihat pesanan vendor Anda yang sudah 
-                b disiapkan
-                |  dan mengubah statusnya menjadi 
-                b dikirim
-                | .
+    .container
+      // ===== STATISTICS SECTION =====
+      if products && products.length
+        .stats-section
+          .row.g-4
+            .col-lg-3.col-md-6
+              .stat-card
+                .stat-icon-wrapper
+                  i.bi.bi-box-seam
+                .stat-label Total Produk
+                .stat-value= products.length
+                .stat-description
+                  i.bi.bi-check-circle.me-1
+                  = products.length === 1 ? 'produk terdaftar' : 'produk terdaftar'
+            
+            .col-lg-3.col-md-6
+              .stat-card
+                .stat-icon-wrapper
+                  i.bi.bi-check-circle
+                .stat-label Stok Tersedia
+                - const totalStock = products.reduce((sum, p) => sum + (parseFloat(p.stock) || 0), 0)
+                .stat-value= totalStock.toFixed(1)
+                .stat-description
+                  i.bi.bi-info-circle.me-1
+                  | unit total
+            
+            .col-lg-3.col-md-6
+              .stat-card
+                .stat-icon-wrapper
+                  i.bi.bi-currency-dollar
+                .stat-label Nilai Inventori
+                - const totalValue = products.reduce((sum, p) => sum + ((parseFloat(p.price) || 0) * (parseFloat(p.stock) || 0)), 0)
+                .stat-value= 'Rp ' + totalValue.toLocaleString('id-ID')
+                .stat-description
+                  i.bi.bi-calculator.me-1
+                  | nilai saat ini
+            
+            .col-lg-3.col-md-6
+              .stat-card
+                .stat-icon-wrapper
+                  i.bi.bi-truck
+                .stat-label Tim Supir
+                - const driverCount = drivers ? drivers.length : 0
+                .stat-value= driverCount
+                .stat-description
+                  i.bi.bi-people.me-1
+                  = driverCount === 1 ? 'supir aktif' : 'supir aktif'
+
+      // ===== DRIVER MANAGEMENT SECTION =====
+      .driver-management-section
+        .row.g-4
+          .col-lg-6
+            .section-card
+              .section-header
+                .section-icon
+                  i.bi.bi-person-plus
+                div
+                  .section-title Tambah Supir Baru
+                  .section-subtitle
+                    i.bi.bi-shield-check.me-1
+                    | Supir dapat mengelola pengiriman pesanan
 
               form(action='/vendor/drivers' method='post')
-                .mb-3
-                  label.form-label Nama Supir
-                  input.form-control(type='text' name='name' required placeholder='Contoh: Budi Saputra')
-                .mb-3
-                  label.form-label Email Supir
-                  input.form-control(type='email' name='email' required placeholder='supir@vendor.com')
-                .mb-3
-                  label.form-label
+                .form-group-custom
+                  label.form-label-custom
+                    i.bi.bi-person
+                    | Nama Supir
+                  input.form-control-custom(type='text' name='name' required placeholder='Contoh: Budi Saputra')
+                  .input-hint
+                    i.bi.bi-info-circle
+                    | Nama lengkap untuk identifikasi
+
+                .form-group-custom
+                  label.form-label-custom
+                    i.bi.bi-envelope
+                    | Email
+                  input.form-control-custom(type='email' name='email' required placeholder='supir@email.com')
+                  .input-hint
+                    i.bi.bi-info-circle
+                    | Email untuk login
+
+                .form-group-custom
+                  label.form-label-custom
+                    i.bi.bi-key
                     | Password
-                    span.text-muted.ms-1 (kosongkan = 
-                      code password123
-                      | )
-                  input.form-control(type='text' name='password' placeholder='Opsional, default: password123')
+                  input.form-control-custom(type='text' name='password' placeholder='Kosongkan untuk password default')
+                  .input-hint
+                    i.bi.bi-info-circle
+                    | Default: 
+                    strong password123
 
-                button.btn.btn-success(type='submit')
-                  i.bi.bi-person-plus.me-1
-                  | Simpan Supir
+                button.btn-custom.btn-success-custom.w-100(type='submit')
+                  i.bi.bi-person-plus-fill
+                  | Tambah Supir
 
-        .col-lg-6
-          .card.shadow-sm.border-0.rounded-4
-            .card-body
-              h5.mb-3
-                i.bi.bi-people.me-2
-                | Daftar Supir Anda
+          .col-lg-6
+            .section-card(style='height: 100%;')
+              .section-header
+                .section-icon
+                  i.bi.bi-people
+                div
+                  .section-title Daftar Supir
+                  .section-subtitle
+                    i.bi.bi-person-check.me-1
+                    | Semua supir yang terdaftar
+
               if drivers && drivers.length
-                table.table.table-sm.align-middle.mb-0
-                  thead
-                    tr
-                      th(scope='col') Nama
-                      th(scope='col') Email
-                  tbody
-                    each d in drivers
+                .table-responsive
+                  table.driver-table
+                    thead
                       tr
-                        td
-                          i.bi.bi-truck-front.me-2.text-success
-                          = d.name
-                        td.text-muted.small= d.email
+                        th
+                          i.bi.bi-person.me-2
+                          | Nama
+                        th
+                          i.bi.bi-envelope.me-2
+                          | Email
+                    tbody
+                      each d in drivers
+                        tr
+                          td
+                            .d-flex.align-items-center.gap-3
+                              .driver-avatar
+                                i.bi.bi-truck-front
+                              strong= d.name
+                          td.text-muted.small= d.email
               else
-                .d-flex.align-items-center.gap-3
-                  i.bi.bi-inbox.fs-3.text-muted
-                  div
-                    div.text-muted.mb-0 Belum ada supir yang terdaftar
-                    small.text-muted Tambahkan supir pertama Anda melalui form di sebelah kiri.
+                .empty-state-card(style='padding: 30px; margin: 0;')
+                  .empty-icon
+                    i.bi.bi-people
+                  .empty-title Belum Ada Supir
+                  .empty-text
+                    | Tambahkan supir untuk mengelola pengiriman pesanan
 
-    if products && products.length
-      // ===== STATS =====
-      .stats-row
-        .row.g-4
-          .col-lg-4.col-md-6
-            .stat-card
-              .stat-icon-wrapper
-                i.bi.bi-box-seam
-              .stat-label Total Produk
-              .stat-value= products.length
-              .stat-description= products.length === 1 ? 'produk terdaftar' : 'produk terdaftar'
+      // ===== PRODUCTS SECTION =====
+      if products && products.length
+        .product-grid-header
+          .grid-title
+            .grid-title-icon
+              i.bi.bi-box-seam
+            span Produk Anda
           
-          .col-lg-4.col-md-6
-            .stat-card
-              .stat-icon-wrapper
-                i.bi.bi-check-circle
-              .stat-label Stok Tersedia
-              - const totalStock = products.reduce((sum, p) => sum + (parseFloat(p.stock) || 0), 0)
-              .stat-value= totalStock.toFixed(1)
-              .stat-description unit total stok
-          
-          .col-lg-4.col-md-12
-            .stat-card
-              .stat-icon-wrapper
-                i.bi.bi-currency-dollar
-              .stat-label Nilai Total
-              - const totalValue = products.reduce((sum, p) => sum + ((parseFloat(p.price) || 0) * (parseFloat(p.stock) || 0)), 0)
-              .stat-value= 'Rp ' + totalValue.toLocaleString('id-ID')
-              .stat-description nilai inventori saat ini
+          .d-flex.gap-2
+            a.btn-action-secondary.btn-action-main(href="/vendor/products/new" style='padding: 12px 20px;')
+              i.bi.bi-plus-lg
+              | Tambah
 
-      // ===== PRODUCT GRID (NO CSS GRID, PAKAI BOOTSTRAP ROW) =====
-      .mt-3
-        .row.g-4
+        .row.g-4.mb-5
           each p, index in products
             .col-xl-3.col-lg-4.col-md-6
               - var product = p
               - var fromVendorDashboard = true
               include ../marketplace/_product_card.pug
     
-    else
-      // ===== EMPTY STATE =====
-      .mt-4
-        .empty-state-card
+      else
+        // ===== EMPTY STATE =====
+        .empty-state-card.mb-5
           .empty-icon
             i.bi.bi-inbox
-          .empty-title Belum Ada Produk
-          .empty-text Mulai tambahkan produk untuk ditampilkan di marketplace
-          a.btn-action.btn-primary-action(href="/vendor/products/new" style='padding: 16px 32px; font-size: 1.1rem;')
-            i.bi.bi-plus-circle
-            span Tambah Produk Pertama
+          .empty-title Inventori Kosong
+          .empty-text
+            | Mulai tambahkan produk untuk ditampilkan di marketplace
+          .d-flex.gap-3.justify-content-center.mt-4
+            a.btn-action-primary.btn-action-main(href="/vendor/products/new" style='padding: 16px 28px;')
+              i.bi.bi-plus-circle
+              span Tambah Produk
+            
+            a.btn-action-secondary.btn-action-main(href="/vendor/orders" style='padding: 16px 28px;')
+              i.bi.bi-cart
+              span Lihat Pesanan
