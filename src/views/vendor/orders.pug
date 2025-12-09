@@ -143,20 +143,25 @@ block content
                       // shipped state: allow edit once if tracking_number not set and dapur belum konfirmasi
                       if o.vendor_status === 'shipped'
                         if !o.tracking_number && !o.delivery_confirmed
-                          a.btn.btn-outline-success.btn-sm.w-100(href=`/driver/orders/${o.order_id}/sign`)
-                            i.bi.bi-pencil.me-1
-                            | Edit Surat Jalan
+                          button.btn.btn-outline-success.btn-sm.w-100.btn-open-signature(
+                            type="button"
+                            data-order-id=o.order_id
+                            data-order-number=o.order_id
+                            data-dapur-name=o.dapur_name || 'Dapur'
+                          )
+                            i.bi.bi-pen.me-1
+                            | TTD Dapur
                         else
                           button.btn.btn-outline-secondary.btn-sm.w-100(disabled)
                             i.bi.bi-lock.me-1
-                            | Surat Jalan Sudah Dikirim
+                            | Sudah TTD
                     else
                       button.btn.btn-primary.btn-sm.w-100.btn-open-ship(
                         type="button"
                         data-order-id=o.order_id
                       )
                         i.bi.bi-send-check.me-2
-                        | Kirim Pesanan & Buat Surat Jalan
+                        | Kirim Pesanan
 
     else
       .empty-state
@@ -269,7 +274,106 @@ block content
               i.bi.bi-send-check.me-2
               | Kirim Surat Jalan
 
-  //- CSS (sama seperti punyamu, tidak diubah)
+  // ============================
+  //   MODAL TANDA TANGAN DAPUR (DRIVER)
+  // ============================
+  .modal.fade#deliverySignatureModal(tabindex='-1' aria-hidden='true')
+    .modal-dialog.modal-lg.modal-dialog-scrollable
+      .modal-content.border-0
+        .modal-header.border-0.pb-2
+          h5.modal-title.fw-bold#deliverySignatureTitle
+            i.bi.bi-pen.me-2(style='color: #28a745;')
+            | Tanda Tangan Dapur
+          button.btn-close(type='button' data-bs-dismiss='modal')
+        
+        form#deliverySignatureForm(method='post' enctype='multipart/form-data')
+          .modal-body.p-4
+            input(type='hidden' name='order_id' id='ds-order-id')
+            
+            .form-section.mb-4
+              .section-header.mb-3
+                i.bi.bi-clock.me-2(style='color: #28a745;')
+                h6.fw-bold.mb-0.d-inline Waktu Penerimaan
+              .section-body
+                .row.g-3
+                  .col-md-6
+                    label.form-label
+                      i.bi.bi-calendar-event.me-2
+                      | Tanggal & Waktu
+                    input.form-control.form-control-lg(type='datetime-local' name='arrived_at' id='ds-arrived-at' required)
+                  .col-md-6
+                    label.form-label
+                      i.bi.bi-person-badge.me-2
+                      | Nama Penerima
+                    input.form-control.form-control-lg(type='text' name='receiver_name' id='ds-receiver-name' placeholder='Nama pihak dapur' required)
+
+            .form-section.mb-4
+              .section-header.mb-3
+                i.bi.bi-chat-left-text.me-2(style='color: #28a745;')
+                h6.fw-bold.mb-0.d-inline Catatan (Opsional)
+              .section-body
+                textarea.form-control(name='notes' id='ds-notes' rows='3' placeholder='Catatan untuk yayasan...')
+
+            .row.g-4
+              // Kolom Kiri: Foto Bukti
+              .col-md-6
+                .form-section.h-100
+                  .section-header.mb-3
+                    i.bi.bi-camera.me-2(style='color: #28a745;')
+                    h6.fw-bold.mb-0.d-inline Foto Bukti
+                      span.text-danger  *
+                  .section-body
+                    .mb-3
+                      input.form-control.form-control-lg(
+                        type='file'
+                        name='proof_file'
+                        id='ds-proof-file'
+                        accept='image/*'
+                        capture='environment'
+                        required
+                      )
+                      .form-text
+                        i.bi.bi-info-circle.me-1
+                        | Ambil foto dari kamera atau upload dari galeri
+                    
+                    .preview-container.mt-3.text-center
+                      img#ds-proof-preview(
+                        src=''
+                        alt='Preview foto bukti'
+                        style='width:100%; max-height:260px; object-fit:cover; border:2px dashed #e5e7eb; border-radius:12px; display:none;'
+                      )
+                      small#ds-no-preview.text-muted(style='display:block;')
+                        i.bi.bi-image.me-1
+                        | Preview akan muncul setelah memilih file
+
+              // Kolom Kanan: Tanda Tangan
+              .col-md-6
+                .form-section.h-100
+                  .section-header.mb-3
+                    i.bi.bi-pen.me-2(style='color: #28a745;')
+                    h6.fw-bold.mb-0.d-inline Tanda Tangan
+                      span.text-danger  *
+                  .section-body
+                    .signature-area-small
+                      canvas#ds-signature-pad(style='width:100%; height:200px;')
+                    .signature-controls
+                      .text-muted.small.mb-2
+                        i.bi.bi-hand-index.me-1
+                        | Minta pihak dapur menandatangani di area ini
+                      button.btn.btn-outline-danger.btn-sm(type='button' id='ds-clear-signature')
+                        i.bi.bi-eraser.me-2
+                        | Hapus Tanda Tangan
+                    input(type='hidden' name='signature_data' id='ds-signature-data')
+
+          .modal-footer.border-0.bg-light
+            button.btn.btn-lg.btn-outline-secondary(type='button' data-bs-dismiss='modal')
+              i.bi.bi-x-circle.me-2
+              | Batal
+            button.btn.btn-lg.px-5(type='submit' style='background: #28a745; color: white; border: none;')
+              i.bi.bi-save.me-2
+              | Simpan Surat Jalan
+
+  //- CSS
   style.
     @keyframes fadeInUp {
       from { opacity: 0; transform: translateY(30px); }
@@ -664,6 +768,54 @@ block content
       border-radius: 8px;
       display: block;
     }
+    .signature-area-small {
+      background: white;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      height: 240px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #ds-signature-pad {
+      width: 100%;
+      height: 100%;
+      border-radius: 8px;
+      background: white;
+      cursor: crosshair;
+    }
+    .preview-container {
+      min-height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f8f9fa;
+      border-radius: 12px;
+      border: 2px dashed #e5e7eb;
+      transition: all 0.3s ease;
+    }
+    .preview-container:hover {
+      border-color: #28a745;
+      background: #f0f9f3;
+    }
+    #ds-proof-preview {
+      transition: all 0.3s ease;
+    }
+    #ds-no-preview {
+      padding: 40px;
+    }
+    .form-section.h-100 {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    .form-section.h-100 .section-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
     .signature-controls {
       display: flex;
       justify-content: space-between;
@@ -697,15 +849,6 @@ block content
       background: rgba(220, 53, 69, 0.15);
       color: #dc3545;
     }
-    @media (max-width: 992px) {
-      .action-buttons {
-        width: 100%;
-      }
-      .btn-action {
-        flex: 1;
-        justify-content: center;
-      }
-    }
     @media (max-width: 768px) {
       .vendor-dashboard-header {
         padding: 30px 0;
@@ -730,9 +873,33 @@ block content
       .total-value-compact {
         font-size: 1.3rem;
       }
+      .signature-area-small {
+        height: 180px;
+      }
+      #ds-proof-preview {
+        max-height: 180px;
+      }
+      .preview-container {
+        min-height: 150px;
+      }
+      .modal-dialog {
+        margin: 10px;
+      }
+      .modal-body {
+        padding: 16px;
+      }
+    }
+    @media (max-width: 992px) {
+      .action-buttons {
+        width: 100%;
+      }
+      .btn-action {
+        flex: 1;
+        justify-content: center;
+      }
     }
 
-  //- JS: khusus driver untuk modal surat jalan
+  //- JS: untuk modal surat jalan dan tanda tangan dapur
   script.
     (function(){
       var isDriver = !{JSON.stringify(!!(currentUser && currentUser.role === 'driver'))};
@@ -740,159 +907,494 @@ block content
       document.addEventListener('DOMContentLoaded', function(){
         if (!isDriver) return;
 
+        // ============================
+        //  MODAL SURAT JALAN (KIRIM PESANAN)
+        // ============================
         var deliveryModalEl = document.getElementById('deliveryNoteModal');
-        if (!deliveryModalEl) return;
-        var deliveryModal = new bootstrap.Modal(deliveryModalEl, { backdrop: true });
-        var dnForm = document.getElementById('deliveryNoteForm');
-        var dnOrderId = document.getElementById('dn-order-id');
-        var dnShippedAt = document.getElementById('dn-shipped-at');
-        var dnTitle = document.getElementById('deliveryNoteTitle');
+        if (deliveryModalEl) {
+          var deliveryModal = new bootstrap.Modal(deliveryModalEl, { backdrop: true });
+          var dnForm = document.getElementById('deliveryNoteForm');
+          var dnOrderId = document.getElementById('dn-order-id');
+          var dnShippedAt = document.getElementById('dn-shipped-at');
+          var dnTitle = document.getElementById('deliveryNoteTitle');
 
-        var sigCanvas = document.getElementById('signature-pad');
-        var sigInput = document.getElementById('dn-signature-data');
-        var sigClearBtn = document.getElementById('dn-clear-signature');
-        var sigCtx = sigCanvas ? sigCanvas.getContext('2d') : null;
-        var drawing = false;
-        var hasDrawn = false;
-        var lastPos = { x: 0, y: 0 };
+          var sigCanvas = document.getElementById('signature-pad');
+          var sigInput = document.getElementById('dn-signature-data');
+          var sigClearBtn = document.getElementById('dn-clear-signature');
+          var sigCtx = sigCanvas ? sigCanvas.getContext('2d') : null;
+          var drawing = false;
+          var hasDrawn = false;
+          var lastPos = { x: 0, y: 0 };
 
-        function resizeSignatureCanvas(){
-          if (!sigCanvas || !sigCtx) return;
-          var rect = sigCanvas.getBoundingClientRect();
-          if (!rect.width || !rect.height) return;
-          sigCanvas.width = rect.width;
-          sigCanvas.height = rect.height;
-          sigCtx.lineWidth = 2;
-          sigCtx.lineCap = 'round';
-          sigCtx.strokeStyle = '#000';
-          sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
-          hasDrawn = false;
-          if (sigInput) sigInput.value = '';
-        }
+          function resizeSignatureCanvas(){
+            if (!sigCanvas || !sigCtx) return;
+            var rect = sigCanvas.getBoundingClientRect();
+            if (!rect.width || !rect.height) return;
+            sigCanvas.width = rect.width;
+            sigCanvas.height = rect.height;
+            sigCtx.lineWidth = 2;
+                        sigCtx.lineCap = 'round';
+            sigCtx.strokeStyle = '#000';
+            sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
+            hasDrawn = false;
+            if (sigInput) sigInput.value = '';
+          }
 
-        function getPos(e){
-          var rect = sigCanvas.getBoundingClientRect();
-          return {
-            x: e.clientX - rect.left,
-            y: e.clientY - rect.top
-          };
-        }
+          function getPos(e){
+            var rect = sigCanvas.getBoundingClientRect();
+            return {
+              x: e.clientX - rect.left,
+              y: e.clientY - rect.top
+            };
+          }
 
-        function startDraw(e){
-          if (!sigCanvas || !sigCtx) return;
-          e.preventDefault();
-          e.stopPropagation();
-          drawing = true;
-          hasDrawn = true;
-          lastPos = getPos(e);
-        }
+          function startDraw(e){
+            if (!sigCanvas || !sigCtx) return;
+            e.preventDefault();
+            e.stopPropagation();
+            drawing = true;
+            hasDrawn = true;
+            lastPos = getPos(e);
+          }
 
-        function draw(e){
-          if (!drawing || !sigCanvas || !sigCtx) return;
-          e.preventDefault();
-          e.stopPropagation();
-          var pos = getPos(e);
-          sigCtx.beginPath();
-          sigCtx.moveTo(lastPos.x, lastPos.y);
-          sigCtx.lineTo(pos.x, pos.y);
-          sigCtx.stroke();
-          lastPos = pos;
-        }
+          function draw(e){
+            if (!drawing || !sigCanvas || !sigCtx) return;
+            e.preventDefault();
+            e.stopPropagation();
+            var pos = getPos(e);
+            sigCtx.beginPath();
+            sigCtx.moveTo(lastPos.x, lastPos.y);
+            sigCtx.lineTo(pos.x, pos.y);
+            sigCtx.stroke();
+            lastPos = pos;
+          }
 
-        function endDraw(e){
-          if (!drawing) return;
-          e.stopPropagation();
-          drawing = false;
-        }
+          function endDraw(e){
+            if (!drawing) return;
+            e.stopPropagation();
+            drawing = false;
+          }
 
-        if (sigCanvas && sigCtx) {
-          deliveryModalEl.addEventListener('shown.bs.modal', function(){
-            resizeSignatureCanvas();
-          });
-          window.addEventListener('resize', function(){
-            resizeSignatureCanvas();
-          });
-          sigCanvas.addEventListener('pointerdown', startDraw);
-          sigCanvas.addEventListener('pointermove', draw);
-          sigCanvas.addEventListener('pointerup', endDraw);
-          sigCanvas.addEventListener('pointerleave', endDraw);
-          if (sigClearBtn) {
-            sigClearBtn.addEventListener('click', function(){
-              sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
-              hasDrawn = false;
-              if (sigInput) sigInput.value = '';
+          if (sigCanvas && sigCtx) {
+            deliveryModalEl.addEventListener('shown.bs.modal', function(){
+              resizeSignatureCanvas();
             });
-          }
-        }
-
-        function nowLocalInputValue() {
-          var d = new Date();
-          var pad = function(n){ return n.toString().padStart(2,'0'); };
-          var yyyy = d.getFullYear();
-          var mm = pad(d.getMonth()+1);
-          var dd = pad(d.getDate());
-          var hh = pad(d.getHours());
-          var mi = pad(d.getMinutes());
-          return yyyy + '-' + mm + '-' + dd + 'T' + hh + ':' + mi;
-        }
-
-        // tombol Kirim Pesanan (driver)
-        document.querySelectorAll('.btn-open-ship').forEach(function(btn){
-          btn.addEventListener('click', function(){
-            var orderId = btn.getAttribute('data-order-id');
-            dnOrderId.value = orderId;
-            dnShippedAt.value = nowLocalInputValue();
-            dnTitle.innerHTML = '<i class="bi bi-file-earmark-text me-2" style="color: #28a745;"></i>Surat Jalan — Order #' + orderId;
-            if (sigCanvas && sigCtx) {
-              sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
-              hasDrawn = false;
-              if (sigInput) sigInput.value = '';
+            window.addEventListener('resize', function(){
+              resizeSignatureCanvas();
+            });
+            sigCanvas.addEventListener('pointerdown', startDraw);
+            sigCanvas.addEventListener('pointermove', draw);
+            sigCanvas.addEventListener('pointerup', endDraw);
+            sigCanvas.addEventListener('pointerleave', endDraw);
+            if (sigClearBtn) {
+              sigClearBtn.addEventListener('click', function(){
+                sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
+                hasDrawn = false;
+                if (sigInput) sigInput.value = '';
+              });
             }
-            deliveryModal.show();
+          }
+
+          function nowLocalInputValue() {
+            var d = new Date();
+            var pad = function(n){ return n.toString().padStart(2,'0'); };
+            var yyyy = d.getFullYear();
+            var mm = pad(d.getMonth()+1);
+            var dd = pad(d.getDate());
+            var hh = pad(d.getHours());
+            var mi = pad(d.getMinutes());
+            return yyyy + '-' + mm + '-' + dd + 'T' + hh + ':' + mi;
+          }
+
+          // tombol Kirim Pesanan (driver)
+          document.querySelectorAll('.btn-open-ship').forEach(function(btn){
+            btn.addEventListener('click', function(){
+              var orderId = btn.getAttribute('data-order-id');
+              dnOrderId.value = orderId;
+              dnShippedAt.value = nowLocalInputValue();
+              dnTitle.innerHTML = '<i class="bi bi-file-earmark-text me-2" style="color: #28a745;"></i>Surat Jalan — Order #' + orderId;
+              if (sigCanvas && sigCtx) {
+                sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
+                hasDrawn = false;
+                if (sigInput) sigInput.value = '';
+              }
+              deliveryModal.show();
+            });
           });
-        });
 
-        dnForm.addEventListener('submit', function(ev){
-          ev.preventDefault();
-          if (sigCanvas && sigInput) {
-            if (!hasDrawn) {
-              alert('Mohon isi tanda tangan pengirim terlebih dahulu.');
-              return;
+          dnForm.addEventListener('submit', function(ev){
+            ev.preventDefault();
+            if (sigCanvas && sigInput) {
+              if (!hasDrawn) {
+                alert('Mohon isi tanda tangan pengirim terlebih dahulu.');
+                return;
+              }
+              try {
+                sigInput.value = sigCanvas.toDataURL('image/png');
+              } catch (e) {
+                console.error('toDataURL error:', e);
+                alert('Gagal mengambil tanda tangan. Coba lagi.');
+                return;
+              }
             }
-            try {
-              sigInput.value = sigCanvas.toDataURL('image/png');
-            } catch (e) {
-              console.error('toDataURL error:', e);
-              alert('Gagal mengambil tanda tangan. Coba lagi.');
-              return;
-            }
-          }
-          var fd = new FormData(dnForm);
-          var orderId = fd.get('order_id');
-          var submitBtn = dnForm.querySelector('button[type="submit"]');
-          var originalText = submitBtn.innerHTML;
-          submitBtn.disabled = true;
-          submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Mengirim...';
-          fetch('/driver/orders/' + encodeURIComponent(orderId) + '/ship', {
-            method: 'POST',
-            body: fd
-          }).then(function(resp){
-            if (resp.ok) return resp.json();
-            return resp.text().then(function(t){ throw new Error(t||'Server error'); });
-          }).then(function(json){
-            if (json && json.success) {
-              deliveryModal.hide();
-              location.reload();
-            } else {
-              alert('Gagal submit surat jalan: ' + (json && json.error ? json.error : 'Unknown'));
+            var fd = new FormData(dnForm);
+            var orderId = fd.get('order_id');
+            var submitBtn = dnForm.querySelector('button[type="submit"]');
+            var originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Mengirim...';
+            fetch('/driver/orders/' + encodeURIComponent(orderId) + '/ship', {
+              method: 'POST',
+              body: fd
+            }).then(function(resp){
+              if (resp.ok) return resp.json();
+              return resp.text().then(function(t){ throw new Error(t||'Server error'); });
+            }).then(function(json){
+              if (json && json.success) {
+                deliveryModal.hide();
+                location.reload();
+              } else {
+                alert('Gagal submit surat jalan: ' + (json && json.error ? json.error : 'Unknown'));
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+              }
+            }).catch(function(err){
+              alert('Gagal submit surat jalan: ' + (err.message || err));
               submitBtn.disabled = false;
               submitBtn.innerHTML = originalText;
-            }
-          }).catch(function(err){
-            alert('Gagal submit surat jalan: ' + (err.message || err));
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = originalText;
+            });
           });
+        }
+
+        // ============================
+        //  MODAL TANDA TANGAN DAPUR
+        // ============================
+        var signatureModalEl = document.getElementById('deliverySignatureModal');
+        if (signatureModalEl) {
+          var signatureModal = new bootstrap.Modal(signatureModalEl, { backdrop: true });
+          var signatureForm = document.getElementById('deliverySignatureForm');
+          var dsOrderId = document.getElementById('ds-order-id');
+          var dsArrivedAt = document.getElementById('ds-arrived-at');
+          var dsReceiverName = document.getElementById('ds-receiver-name');
+          var dsTitle = document.getElementById('deliverySignatureTitle');
+
+          // Elements untuk signature
+          var dsSigCanvas = document.getElementById('ds-signature-pad');
+          var dsSigInput = document.getElementById('ds-signature-data');
+          var dsSigClearBtn = document.getElementById('ds-clear-signature');
+          var dsSigCtx = dsSigCanvas ? dsSigCanvas.getContext('2d') : null;
+          var dsDrawing = false;
+          var dsHasDrawn = false;
+          var dsLastPos = { x: 0, y: 0 };
+
+          // Elements untuk file preview
+          var dsProofFile = document.getElementById('ds-proof-file');
+          var dsProofPreview = document.getElementById('ds-proof-preview');
+          var dsNoPreview = document.getElementById('ds-no-preview');
+
+          // Fungsi resize canvas signature
+          function resizeDsSignatureCanvas() {
+            if (!dsSigCanvas || !dsSigCtx) return;
+            var rect = dsSigCanvas.getBoundingClientRect();
+            if (!rect.width || !rect.height) return;
+            dsSigCanvas.width = rect.width;
+            dsSigCanvas.height = rect.height;
+            dsSigCtx.lineWidth = 2;
+            dsSigCtx.lineCap = 'round';
+            dsSigCtx.strokeStyle = '#000';
+            dsSigCtx.clearRect(0, 0, dsSigCanvas.width, dsSigCanvas.height);
+            dsHasDrawn = false;
+            if (dsSigInput) dsSigInput.value = '';
+          }
+
+          // Fungsi get position untuk signature
+          function getDsPos(e) {
+            var rect = dsSigCanvas.getBoundingClientRect();
+            return {
+              x: e.clientX - rect.left,
+              y: e.clientY - rect.top
+            };
+          }
+
+          // Event handlers untuk signature
+          function startDsDraw(e) {
+            if (!dsSigCanvas || !dsSigCtx) return;
+            e.preventDefault();
+            e.stopPropagation();
+            dsDrawing = true;
+            dsHasDrawn = true;
+            dsLastPos = getDsPos(e);
+          }
+
+          function drawDs(e) {
+            if (!dsDrawing || !dsSigCanvas || !dsSigCtx) return;
+            e.preventDefault();
+            e.stopPropagation();
+            var pos = getDsPos(e);
+            dsSigCtx.beginPath();
+            dsSigCtx.moveTo(dsLastPos.x, dsLastPos.y);
+            dsSigCtx.lineTo(pos.x, pos.y);
+            dsSigCtx.stroke();
+            dsLastPos = pos;
+          }
+
+          function endDsDraw(e) {
+            if (!dsDrawing) return;
+            e.stopPropagation();
+            dsDrawing = false;
+          }
+
+          // Setup signature canvas
+          if (dsSigCanvas && dsSigCtx) {
+            signatureModalEl.addEventListener('shown.bs.modal', function() {
+              resizeDsSignatureCanvas();
+            });
+            
+            window.addEventListener('resize', resizeDsSignatureCanvas);
+            
+            dsSigCanvas.addEventListener('pointerdown', startDsDraw);
+            dsSigCanvas.addEventListener('pointermove', drawDs);
+            dsSigCanvas.addEventListener('pointerup', endDsDraw);
+            dsSigCanvas.addEventListener('pointerleave', endDsDraw);
+            
+            if (dsSigClearBtn) {
+              dsSigClearBtn.addEventListener('click', function() {
+                dsSigCtx.clearRect(0, 0, dsSigCanvas.width, dsSigCanvas.height);
+                dsHasDrawn = false;
+                if (dsSigInput) dsSigInput.value = '';
+              });
+            }
+          }
+
+          // Preview foto bukti
+          if (dsProofFile && dsProofPreview && dsNoPreview) {
+            dsProofFile.addEventListener('change', function() {
+              var file = dsProofFile.files && dsProofFile.files[0];
+              if (!file) {
+                dsProofPreview.style.display = 'none';
+                dsNoPreview.style.display = 'block';
+                dsProofPreview.src = '';
+                return;
+              }
+              
+              var reader = new FileReader();
+              reader.onload = function(e) {
+                dsProofPreview.src = e.target.result;
+                dsProofPreview.style.display = 'block';
+                dsNoPreview.style.display = 'none';
+              };
+              reader.readAsDataURL(file);
+            });
+          }
+
+          // Fungsi untuk waktu sekarang
+          function nowLocalInputValue() {
+            var d = new Date();
+            var pad = function(n) { return n.toString().padStart(2, '0'); };
+            var yyyy = d.getFullYear();
+            var mm = pad(d.getMonth() + 1);
+            var dd = pad(d.getDate());
+            var hh = pad(d.getHours());
+            var mi = pad(d.getMinutes());
+            return yyyy + '-' + mm + '-' + dd + 'T' + hh + ':' + mi;
+          }
+
+          // Tombol TTD Dapur di order card
+          document.querySelectorAll('.btn-open-signature').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+              var orderId = btn.getAttribute('data-order-id');
+              var orderNumber = btn.getAttribute('data-order-number');
+              var dapurName = btn.getAttribute('data-dapur-name');
+              
+              dsOrderId.value = orderId;
+              dsArrivedAt.value = nowLocalInputValue();
+              dsReceiverName.value = '';
+              dsTitle.innerHTML = '<i class="bi bi-pen me-2" style="color: #28a745;"></i>Tanda Tangan Dapur — Order #' + orderNumber;
+              
+              // Reset signature
+              if (dsSigCanvas && dsSigCtx) {
+                resizeDsSignatureCanvas();
+              }
+              
+              // Reset file preview
+              if (dsProofFile && dsProofPreview && dsNoPreview) {
+                dsProofFile.value = '';
+                dsProofPreview.style.display = 'none';
+                dsProofPreview.src = '';
+                dsNoPreview.style.display = 'block';
+              }
+              
+              // Show modal
+              signatureModal.show();
+            });
+          });
+
+          // Handle form submission
+          signatureForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Validasi signature
+            if (!dsHasDrawn) {
+              alert('Mohon minta pihak dapur menandatangani terlebih dahulu.');
+              return;
+            }
+            
+            // Validasi file
+            if (!dsProofFile.files || dsProofFile.files.length === 0) {
+              alert('Harap upload foto bukti penerimaan.');
+              return;
+            }
+            
+            // Convert signature to data URL
+            if (dsSigCanvas && dsSigCtx) {
+              try {
+                var sigDataUrl = dsSigCanvas.toDataURL('image/png');
+                dsSigInput.value = sigDataUrl;
+              } catch (error) {
+                console.error('Error converting signature:', error);
+                alert('Gagal mengambil tanda tangan. Coba lagi.');
+                return;
+              }
+            }
+            
+            // Submit form via AJAX
+            var formData = new FormData(signatureForm);
+            var orderId = formData.get('order_id');
+            
+            var submitBtn = signatureForm.querySelector('button[type="submit"]');
+            var originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Menyimpan...';
+            
+            // Tentukan endpoint (gunakan endpoint driver untuk TTD dapur)
+            var endpoint = '/driver/orders/' + encodeURIComponent(orderId) + '/sign';
+            
+            fetch(endpoint, {
+              method: 'POST',
+              body: formData
+            })
+            .then(function(response) {
+              if (response.ok) return response.json();
+              return response.text().then(function(text) {
+                throw new Error(text || 'Server error');
+              });
+            })
+            .then(function(data) {
+              if (data && data.success) {
+                alert('Surat jalan berhasil disimpan!');
+                signatureModal.hide();
+                location.reload();
+              } else {
+                alert(data.message || 'Gagal menyimpan surat jalan.');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+              }
+            })
+            .catch(function(error) {
+              console.error('Error:', error);
+              alert('Terjadi kesalahan: ' + (error.message || error));
+              submitBtn.disabled = false;
+              submitBtn.innerHTML = originalText;
+            });
+          });
+        }
+
+        // ============================
+        //  VENDOR ORDER ACTIONS
+        // ============================
+        var isVendor = !{JSON.stringify(!!(currentUser && currentUser.role === 'vendor'))};
+        if (isVendor) {
+          // Process Order (update status)
+          document.querySelectorAll('.vendor-status-form').forEach(function(form) {
+            form.addEventListener('submit', function(e) {
+              e.preventDefault();
+              
+              if (!confirm('Konfirmasi akan menyiapkan pesanan ini?')) return;
+              
+              var submitBtn = form.querySelector('button[type="submit"]');
+              var originalText = submitBtn.innerHTML;
+              submitBtn.disabled = true;
+              submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Menyiapkan...';
+              
+              var formData = new FormData(form);
+              var orderId = formData.get('order_id') || form.getAttribute('action').split('/')[3];
+              
+              fetch('/vendor/orders/' + encodeURIComponent(orderId) + '/status', {
+                method: 'POST',
+                body: formData
+              })
+              .then(function(response) {
+                if (response.ok) return response.json();
+                return response.text().then(function(text) {
+                  throw new Error(text || 'Server error');
+                });
+              })
+              .then(function(data) {
+                if (data && data.success) {
+                  location.reload();
+                } else {
+                  alert(data.message || 'Gagal mengupdate status pesanan.');
+                  submitBtn.disabled = false;
+                  submitBtn.innerHTML = originalText;
+                }
+              })
+              .catch(function(error) {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan: ' + (error.message || error));
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+              });
+            });
+          });
+        }
+
+        // ============================
+        //  SHARED FUNCTIONALITY
+        // ============================
+        
+        // Auto-refresh notifications
+        var lastRefresh = Date.now();
+        var refreshInterval = setInterval(function() {
+          // Cek jika ada order baru setiap 30 detik
+          if (isDriver || isVendor) {
+            fetch('/api/orders/check-updates?last=' + lastRefresh, {
+              headers: { 'Accept': 'application/json' }
+            })
+            .then(function(response) {
+              if (!response.ok) return;
+              return response.json();
+            })
+            .then(function(data) {
+              if (data && data.has_updates) {
+                // Tampilkan notifikasi jika ada update
+                if (confirm('Ada pembaruan pesanan. Muat ulang halaman?')) {
+                  location.reload();
+                }
+                lastRefresh = Date.now();
+              }
+            })
+            .catch(function(error) {
+              console.error('Error checking updates:', error);
+            });
+          }
+        }, 30000); // Setiap 30 detik
+
+        // Clean up interval saat halaman ditutup
+        window.addEventListener('beforeunload', function() {
+          clearInterval(refreshInterval);
+        });
+
+        // Toast notification jika ada
+        var toastEl = document.getElementById('liveToast');
+        if (toastEl) {
+          var toast = new bootstrap.Toast(toastEl);
+          toast.show();
+        }
+
+        // Tooltip initialization
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+          return new bootstrap.Tooltip(tooltipTriggerEl);
         });
       });
     })();
