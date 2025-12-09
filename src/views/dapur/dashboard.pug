@@ -155,7 +155,7 @@ block content
                             each it in o.items
                               tr
                                 td= it.product_name
-                                td.text-center= it.qty
+                                td.text-center= parseInt(it.qty, 10) || 0
                                 td.text-end Rp #{Number(it.price || 0).toLocaleString('id-ID')}
                                 td.text-end Rp #{Number(it.subtotal || (Number(it.price || 0) * Number(it.qty || 0))).toLocaleString('id-ID')}
                       else
