@@ -9,6 +9,7 @@ const methodOverride = require('method-override');
 // ⬅️ tambahin ini
 const pool = require('./src/models/db');
 const { ensureAuthenticated } = require('./src/middleware/auth');
+const { replaceDatesInObject } = require('./src/lib/formatDate');
 
 const app = express();
 
@@ -26,6 +27,25 @@ app.use(session({
   saveUninitialized: false,
   cookie: { maxAge: 1000 * 60 * 60 * 8 }
 }));
+
+app.use((req, res, next) => {
+  const _render = res.render;
+  res.render = function (view, options = {}, callback) {
+    try {
+      // kalau options kosong, gunakan res.locals
+      const target = options && Object.keys(options).length ? options : res.locals;
+      if (target && typeof target === 'object') {
+        replaceDatesInObject(target);
+      }
+    } catch (e) {
+      // jangan ganggu render kalau terjadi error formatting
+      console.error('formatObjectDates error:', e && (e.message || e));
+    }
+    return _render.call(this, view, options, callback);
+  };
+  next();
+});
+
 app.use(flash());
 
 // make user + flash available in views

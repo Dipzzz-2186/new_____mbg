@@ -109,7 +109,8 @@ block content
                               | Rp #{Number(o.total || 0).toLocaleString('id-ID')}
                             .text-muted.small.d-flex.align-items-center.gap-2
                               i.bi.bi-calendar3.me-1
-                              - var createdAtFormatted = new Date(o.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' })
+                              - var rawCreated = o.created_at_raw || o.created_at;
+                              - var createdAtFormatted = rawCreated ? new Date(rawCreated).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }) : (o.created_at || '-');
                               span= createdAtFormatted
                                           
                       .col-md-5.text-md-end
