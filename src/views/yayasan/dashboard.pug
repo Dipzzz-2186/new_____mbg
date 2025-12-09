@@ -976,7 +976,9 @@ block content
             .info-box.info-box-success.mt-3
               i.bi.bi-calculator.me-2
               strong Total Order Semua Dapur: 
-              - var total = dapurRows.reduce((sum, d) => sum + (d.orders_count || 0), 0)
+              - var total = dapurRows.reduce((sum, d) => {
+              -   return sum + (parseInt(d.orders_count, 10) || 0)
+              - }, 0)
               = total
               |  pesanan
           else
