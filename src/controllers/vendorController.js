@@ -147,16 +147,20 @@ exports.getOrders = async (req, res) => {
          vos.order_id,
          vos.status AS vendor_status,
          o.total AS order_total,
+         o.status AS order_status,
          o.created_at AS order_created,
          o.user_id AS dapur_id,
          oi.id AS order_item_id,
          oi.product_id,
          oi.qty,
          oi.price,
+         oi.name AS oi_name,
          p.name AS product_name,
          vs.id AS shipment_id,
          vs.attachment_path,
          vs.sender_signature_path,
+         vs.delivery_note_path,
+         vs.tracking_number,
          dc.id AS delivery_confirmation_id,
          u.name AS dapur_name,
          u.phone AS dapur_phone,
@@ -184,7 +188,10 @@ exports.getOrders = async (req, res) => {
           order_total: r.order_total,
           created_at: r.order_created,
           vendor_status: r.vendor_status,
-          shipment_sent: !!(r.attachment_path || r.sender_signature_path),
+          order_status: r.order_status,            // <- important
+          shipment_id: r.shipment_id || null,
+          tracking_number: r.tracking_number || null, // <- important
+          shipment_sent: !!(r.attachment_path || r.sender_signature_path || r.delivery_note_path),
           delivery_confirmed: !!r.delivery_confirmation_id,
           // NEW: dapur contact
           dapur_name: r.dapur_name || '',
@@ -197,7 +204,7 @@ exports.getOrders = async (req, res) => {
       ord.items.push({
         order_item_id: r.order_item_id,
         product_id: r.product_id,
-        product_name: r.product_name,
+        product_name: r.oi_name || r.product_name || '-',
         qty: r.qty,
         price: r.price
       });

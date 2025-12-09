@@ -67,7 +67,7 @@ exports.getDriverOrders = async (req, res) => {
          ON vs.order_id = vos.order_id
          AND vs.vendor_id = vos.vendor_id
        LEFT JOIN delivery_confirmations dc
-         ON dc.order_id = o.id
+         ON dc.order_id = o.id AND dc.vendor_id = vos.vendor_id
        WHERE vos.vendor_id = ?
          AND p.vendor_id = ?
        ORDER BY o.created_at DESC, oi.id`,
@@ -496,8 +496,8 @@ exports.submitDapurSignature = async (req, res) => {
         }
 
         const [existingDc] = await conn.query(
-            'SELECT id FROM delivery_confirmations WHERE order_id = ? LIMIT 1 FOR UPDATE',
-            [orderId]
+            'SELECT id FROM delivery_confirmations WHERE order_id = ? AND vendor_id = ? LIMIT 1 FOR UPDATE',
+            [orderId, vendorId]
         );
         if (existingDc.length) {
             throw new Error('Konfirmasi pengiriman (tanda tangan dapur) sudah dicatat sebelumnya — tidak bisa diubah lagi');
