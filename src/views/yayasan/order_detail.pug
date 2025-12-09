@@ -317,11 +317,16 @@ block content
             i.bi.bi-arrow-left.me-2
             | Kembali
 
-          if order.status !== 'completed' && order.status === 'approved_yayasan'
+          // hanya tampilkan tombol jika yayasan sudah approve dan seluruh vendor sudah mengunggah surat jalan
+          if order.status === 'approved_yayasan' && allVendorsDone
             form.d-inline-block(method='post', action=`/yayasan/orders/${order.id}/complete`)
               button.btn.btn-success(type='submit')
                 i.bi.bi-check-circle-fill.me-2
                 | Tandai Selesai
+          else if order.status === 'approved_yayasan' && !allVendorsDone
+            button.btn.btn-outline-secondary.disabled(type='button' title='Tunggu semua vendor upload surat jalan')
+              i.bi.bi-info-circle.me-2
+              | Menunggu seluruh vendor
 
     //- Main Content
     .row.g-4

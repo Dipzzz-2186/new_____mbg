@@ -548,12 +548,28 @@ exports.orderDetail = async (req, res) => {
             [orderId]
         );
 
-        // map by vendor_id
-        const shipmentsByVendor = {};
-        for (const s of shipments) shipmentsByVendor[s.vendor_id] = s;
+      // setelah const [shipments] = await pool.query(...)
+      const shipmentsByVendor = {};
+      for (const s of shipments) shipmentsByVendor[String(s.vendor_id)] = s;
 
-        // render view: tambahkan shipmentsByVendor
-        return res.render('yayasan/order_detail', { order, items, deliveryConfirmation, shipmentsByVendor });
+      // ambil list vendor yang terlibat pada order ini (unique)
+      const vendorIdsSet = new Set(items.map(it => it.vendor_id).filter(v => v != null));
+      const vendorIds = Array.from(vendorIdsSet);
+
+      // hitung apakah semua vendor sudah punya delivery_note_path
+      let allVendorsDone = false;
+      if (vendorIds.length === 0) {
+        allVendorsDone = true; // edge case: nggak ada vendor
+      } else {
+        allVendorsDone = vendorIds.every(vid => {
+          const s = shipmentsByVendor[String(vid)];
+          return s && s.delivery_note_path; // vendor dianggap DONE hanya kalau ada delivery_note_path
+        });
+      }
+
+      // render view: kirim shipmentsByVendor + flag allVendorsDone
+      return res.render('yayasan/order_detail', { order, items, deliveryConfirmation, shipmentsByVendor, allVendorsDone });
+
     } catch (err) {
         console.error('orderDetail error:', err);
         req.flash('error', 'Gagal mengambil detail order');
