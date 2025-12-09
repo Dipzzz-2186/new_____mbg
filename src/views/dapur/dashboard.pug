@@ -103,19 +103,19 @@ block content
                       .col-md-7
                         .d-flex.align-items-center.gap-3.mb-3.mb-md-0
                           .order-number.text-white.fw-bold
-                            | ##{o.id}
+                            | #{o.id}
                           div
                             .fw-bold.fs-5.text-success.mb-1
-                              i.bi.bi-currency-dollar.me-1
                               | Rp #{Number(o.total || 0).toLocaleString('id-ID')}
                             .text-muted.small.d-flex.align-items-center.gap-2
-                              i.bi.bi-calendar3
-                              = o.created_at
-                      
+                              i.bi.bi-calendar3.me-1
+                              - var createdAtFormatted = new Date(o.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' })
+                              span= createdAtFormatted
+                                          
                       .col-md-5.text-md-end
-                        - let statusLabel = '';
-                        - let badgeClass = '';
-                        - let iconClass = '';
+                        - var statusLabel = '';
+                        - var badgeClass = '';
+                        - var iconClass = '';
 
                         if o.status === 'awaiting_yayasan'
                           - statusLabel = 'Menunggu Disetujui';
