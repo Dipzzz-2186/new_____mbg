@@ -695,20 +695,28 @@ block content
                               | Subtotal
                         tbody
                           - var orderSubtotal = 0
-                          each it in o.items
-                            - var subtotal = (Number(it.price || 0) * Number(it.qty || 0))
-                            - orderSubtotal += subtotal
-                            tr
-                              td
-                                .product-cell
-                                  .product-icon
-                                    i.bi.bi-box-seam
-                                  .product-name= it.product_name
-                              td.vendor-cell= it.vendor_name || ('Vendor #' + (it.vendor_id || 'N/A'))
-                              td.text-center
-                                .qty-badge= it.qty
-                              td.text-end.price-cell Rp #{Number(it.price || 0).toLocaleString('id-ID')}
-                              td.text-end.subtotal-cell Rp #{Number(subtotal || 0).toLocaleString('id-ID')}
+                        each it in o.items
+                          - var qtyInt = parseInt(it.qty, 10) || 0
+                          - var priceNum = Number(it.price || 0)
+                          - var subtotal = priceNum * qtyInt
+                          - orderSubtotal += subtotal
+
+                          tr
+                            td
+                              .product-cell
+                                .product-icon
+                                  i.bi.bi-box-seam
+                                .product-name= it.product_name
+
+                            td.vendor-cell= it.vendor_name || ('Vendor #' + (it.vendor_id || 'N/A'))
+
+                            td.text-center
+                              .qty-badge= qtyInt
+
+                            td.text-end.price-cell Rp #{priceNum.toLocaleString('id-ID')}
+
+                            td.text-end.subtotal-cell Rp #{subtotal.toLocaleString('id-ID')}
+
                     
                     //- Total Summary
                     .total-summary

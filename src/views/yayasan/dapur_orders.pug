@@ -138,8 +138,11 @@ block content
                                 span.text-muted= it.vendor_name
                               else
                                 span.text-muted.fst-italic Vendor ##{it.vendor_id || 'N/A'}
+
                             td.text-center
-                              span.badge.bg-light.text-dark= it.qty
+                              - var qtyInt = parseInt(it.qty, 10) || 0
+                              span.badge.bg-light.text-dark= qtyInt
+
                             td.text-end
                               span.fw-medium Rp #{Number(it.price).toLocaleString('id-ID')}
                 else

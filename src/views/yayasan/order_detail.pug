@@ -423,7 +423,8 @@ block content
                             i.bi.bi-person-circle.me-2(style='color: #28a745; font-size: 18px;')
                             span= it.vendor_name || ('Vendor #' + it.vendor_id)
                         td.text-center
-                          span.badge-custom(style='background: #e8f5eb; color: #28a745; border: 1px solid #d4edda;')= it.qty
+                          - var qtyInt = parseInt(it.qty, 10) || 0
+                          span.badge-custom(style='background: #e8f5eb; color: #28a745; border: 1px solid #d4edda;')= qtyInt
                         td.text-end
                           strong(style='color: #28a745;') Rp #{Number(it.price || 0).toLocaleString('id-ID')}
                         td.text-center
