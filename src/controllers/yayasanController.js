@@ -30,8 +30,11 @@ exports.dashboard = async (req, res) => {
      GROUP BY u.id, u.name, u.email`,
     [yayasanId, yayasanId]
   );
+  const [vendorRows] = await pool.query(
+    'SELECT id, name, email FROM users WHERE role = "vendor" ORDER BY name'
+  );
 
-  res.render('yayasan/dashboard', { dapurRows });
+  res.render('yayasan/dashboard', { dapurRows, vendorRows });
 };
 
 exports.createUser = async (req, res) => {

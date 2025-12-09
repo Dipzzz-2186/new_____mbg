@@ -1145,6 +1145,78 @@ block content
               i.bi.bi-inbox
             .empty-text Belum ada dapur yang terdaftar
 
+          //- Section: All Vendor List - Collapsible
+    .section-card.animate-fade-up.collapsible-section(style='animation-delay: 0.35s;')
+      .section-header
+        .section-icon
+          i.bi.bi-shop
+        div.flex-grow-1
+          .section-title Daftar Akun Vendor
+          .section-description Lihat semua vendor yang terdaftar di sistem
+        i.bi.bi-chevron-down.section-toggle-icon
+        .d-flex.align-items-center.gap-2
+          .info-tooltip.d-none.d-md-inline-flex
+            i.bi.bi-question-circle-fill
+            span.tooltip-text Daftar akun vendor yang bisa menerima dan menyiapkan bahan
+
+      .section-content
+        .info-box.info-box-info
+          i.bi.bi-eye.me-2
+          strong Cara Pakai: 
+          |  Gunakan daftar ini untuk mengecek vendor yang sudah terdaftar
+
+        if vendorRows && vendorRows.length
+          //- Desktop Table
+          .table-responsive
+            table.table-custom
+              thead
+                tr
+                  th
+                    i.bi.bi-person.me-2
+                    | Nama Vendor
+                  th
+                    i.bi.bi-envelope.me-2
+                    | Email
+                  th.text-center
+                    i.bi.bi-tag.me-2
+                    | Tipe Akun
+              tbody
+                each v in vendorRows
+                  tr
+                    td
+                      .d-flex.align-items-center.gap-3
+                        .user-avatar
+                          i.bi.bi-person-fill
+                        strong= v.name
+                    td.text-muted.small= v.email
+                    td.text-center
+                      span.count-badge Vendor
+
+          //- Mobile Cards
+          each v in vendorRows
+            .mobile-card
+              .mobile-card-header
+                .user-avatar
+                  i.bi.bi-person-fill
+                strong= v.name
+              .mobile-card-body
+                .mobile-card-row
+                  .mobile-card-label
+                    i.bi.bi-envelope.me-1
+                    | Email:
+                  .mobile-card-value.text-truncate= v.email
+                .mobile-card-row
+                  .mobile-card-label
+                    i.bi.bi-tag.me-1
+                    | Tipe:
+                  .count-badge Vendor
+        else
+          .empty-state
+            .empty-icon
+              i.bi.bi-inbox
+            .empty-text Belum ada vendor yang terdaftar
+
+
   //- JavaScript for Collapsible Sections - FIXED VERSION
    //- JavaScript for Collapsible Sections - DESKTOP & MOBILE
   script.
