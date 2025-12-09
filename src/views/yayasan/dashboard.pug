@@ -1146,6 +1146,7 @@ block content
             .empty-text Belum ada dapur yang terdaftar
 
   //- JavaScript for Collapsible Sections - FIXED VERSION
+   //- JavaScript for Collapsible Sections - DESKTOP & MOBILE
   script.
     document.addEventListener('DOMContentLoaded', function() {
       function setupCollapsible() {
@@ -1153,67 +1154,60 @@ block content
         const sections = document.querySelectorAll('.collapsible-section');
         
         sections.forEach(function(section, index) {
-          const header = section.querySelector('.section-header');
-          const content = section.querySelector('.section-content');
-          const icon = section.querySelector('.section-toggle-icon');
+          let header = section.querySelector('.section-header');
+          let content = section.querySelector('.section-content');
+          let icon   = section.querySelector('.section-toggle-icon');
           
           if (!header || !content || !icon) return;
-          
-          // Clear all existing classes first
+
+          // reset listener lama: clone header SELALU
+          const newHeader = header.cloneNode(true);
+          header.parentNode.replaceChild(newHeader, header);
+
+          header  = newHeader;
+          content = section.querySelector('.section-content');
+          icon    = section.querySelector('.section-toggle-icon');
+
+          // state awal
           content.classList.remove('collapsed');
           icon.classList.remove('collapsed');
-          
+
           if (isMobile) {
-            // Start with first two sections collapsed, third section expanded on mobile
+            // contoh: 2 section pertama collapsed di mobile
             if (index < 2) {
               content.classList.add('collapsed');
               icon.classList.add('collapsed');
             }
-            
-            // Remove old event listeners by cloning
-            const newHeader = header.cloneNode(true);
-            header.parentNode.replaceChild(newHeader, header);
-            
-            // Get new references after cloning
-            const newContent = section.querySelector('.section-content');
-            const newIcon = newHeader.querySelector('.section-toggle-icon');
-            
-            // Add click handler to the NEW header
-            newHeader.addEventListener('click', function(e) {
-              // Check if click is on form elements or buttons
-              const isFormElement = 
-                e.target.tagName === 'INPUT' || 
-                e.target.tagName === 'SELECT' || 
-                e.target.tagName === 'BUTTON' ||
-                e.target.tagName === 'TEXTAREA' ||
-                e.target.tagName === 'A';
-              
-              const isInsideForm = e.target.closest('form');
-              const isInsideButton = e.target.closest('.btn-custom');
-              const isInsideTooltip = e.target.closest('.info-tooltip');
-              
-              if (isFormElement || isInsideForm || isInsideButton || isInsideTooltip) {
-                return; // Don't toggle if clicking on form elements
-              }
-              
-              // Toggle collapsed state
-              newContent.classList.toggle('collapsed');
-              if (newIcon) {
-                  newIcon.classList.toggle('collapsed');
-                }
-            });
           } else {
-            // On desktop: ensure all sections are expanded
+            // desktop default: semuanya kebuka
             content.classList.remove('collapsed');
             icon.classList.remove('collapsed');
           }
+
+          header.addEventListener('click', function(e) {
+            const isFormElement =
+              e.target.tagName === 'INPUT' ||
+              e.target.tagName === 'SELECT' ||
+              e.target.tagName === 'BUTTON' ||
+              e.target.tagName === 'TEXTAREA' ||
+              e.target.tagName === 'A';
+
+            const isInsideForm    = e.target.closest('form');
+            const isInsideButton  = e.target.closest('.btn-custom');
+            const isInsideTooltip = e.target.closest('.info-tooltip');
+
+            if (isFormElement || isInsideForm || isInsideButton || isInsideTooltip) {
+              return;
+            }
+
+            content.classList.toggle('collapsed');
+            icon.classList.toggle('collapsed');
+          });
         });
       }
-      
-      // Initial setup
+
       setupCollapsible();
-      
-      // Re-setup on resize with debounce
+
       let resizeTimer;
       window.addEventListener('resize', function() {
         clearTimeout(resizeTimer);
