@@ -1218,14 +1218,12 @@ block content
 
 
   //- JavaScript for Collapsible Sections - FIXED VERSION
-   //- JavaScript for Collapsible Sections - DESKTOP & MOBILE
   script.
     document.addEventListener('DOMContentLoaded', function() {
       function setupCollapsible() {
-        const isMobile = window.innerWidth <= 768;
         const sections = document.querySelectorAll('.collapsible-section');
         
-        sections.forEach(function(section, index) {
+        sections.forEach(function(section) {
           let header = section.querySelector('.section-header');
           let content = section.querySelector('.section-content');
           let icon   = section.querySelector('.section-toggle-icon');
@@ -1240,21 +1238,9 @@ block content
           content = section.querySelector('.section-content');
           icon    = section.querySelector('.section-toggle-icon');
 
-          // state awal
-          content.classList.remove('collapsed');
-          icon.classList.remove('collapsed');
-
-          if (isMobile) {
-            // contoh: 2 section pertama collapsed di mobile
-            if (index < 2) {
-              content.classList.add('collapsed');
-              icon.classList.add('collapsed');
-            }
-          } else {
-            // desktop default: semuanya kebuka
-            content.classList.remove('collapsed');
-            icon.classList.remove('collapsed');
-          }
+          // 🔹 STATE AWAL: SEMUA TERTUTUP (desktop & mobile)
+          content.classList.add('collapsed');
+          icon.classList.add('collapsed');
 
           header.addEventListener('click', function(e) {
             const isFormElement =
@@ -1278,8 +1264,10 @@ block content
         });
       }
 
+      // initial setup
       setupCollapsible();
 
+      // re-setup on resize (biar kalau resize behaviournya tetap bener)
       let resizeTimer;
       window.addEventListener('resize', function() {
         clearTimeout(resizeTimer);
