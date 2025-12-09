@@ -102,7 +102,8 @@ block content
                       .item-name-compact
                         i.bi.bi-circle-fill.me-2
                         span= it.product_name
-                      .item-qty-compact #{it.qty}x
+                      - var qtyInt = parseInt(it.qty, 10) || 0
+                      .item-qty-compact #{qtyInt}x
               .card-compact-footer
                 // if order already completed — show final label and disable all actions
                 if o.order_status === 'completed'
