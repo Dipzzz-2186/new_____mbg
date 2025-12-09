@@ -616,11 +616,54 @@ block content
       }
     }
     
+    /* Collapsible Section */
+    .section-toggle-icon {
+      transition: transform 0.3s ease;
+      font-size: 20px;
+      color: #28a745;
+      display: none;
+      flex-shrink: 0;
+    }
+    
+    .section-content {
+      overflow: hidden;
+      transition: max-height 0.5s ease, opacity 0.3s ease;
+    }
+
     /* Responsive - Mobile */
     @media (max-width: 768px) {
       .dashboard-header {
         padding: 16px 0;
         margin-bottom: 16px;
+      }
+      
+      .section-card {
+        overflow: visible;
+      }
+      
+      .section-collapsible .section-header {
+        cursor: pointer;
+        user-select: none;
+      }
+      
+      .section-toggle-icon {
+        display: block;
+      }
+      
+      .section-toggle-icon.collapsed {
+        transform: rotate(-180deg);
+      }
+      
+      .section-content {
+        max-height: 5000px;
+        opacity: 1;
+      }
+      
+      .section-content.collapsed {
+        max-height: 0;
+        opacity: 0;
+        margin-top: 0;
+        padding-top: 0;
       }
       
       .header-icon-box {
@@ -988,18 +1031,160 @@ block content
               .empty-text Belum ada data dapur
 
     //- Section: All Dapur List
-    .section-card.animate-fade-up(style='animation-delay: 0.3s;')
+    .section-card.animate-fade-up.section-collapsible(style='animation-delay: 0.3s;')
       .section-header
         .section-icon
           i.bi.bi-list-check
         div.flex-grow-1
           .section-title Daftar Semua Dapur Terdaftar
           .section-description Kelola dan lihat detail setiap dapur
-        .info-tooltip
-          i.bi.bi-question-circle-fill
-          span.tooltip-text Klik tombol "Pesanan Dapur" untuk melihat semua order dari dapur tersebut
+        .d-flex.align-items-center.gap-2
+          .info-tooltip.d-none.d-md-inline-flex
+            i.bi.bi-question-circle-fill
+            span.tooltip-text Klik tombol "Pesanan Dapur" untuk melihat semua order dari dapur tersebut
+          i.bi.bi-chevron-down.section-toggle-icon
 
-      .info-box.info-box-info
-        i.bi.bi-eye.me-2
-        strong Cara Pakai: 
-        | Klik tombol
+      .section-content
+        .info-box.info-box-info
+          i.bi.bi-eye.me-2
+          strong Cara Pakai: 
+          | Klik tombol "Pesanan Dapur" untuk melihat riwayat order lengkap
+
+        if dapurRows && dapurRows.length
+          //- Desktop Table
+          .table-responsive
+            table.table-custom
+              thead
+                tr
+                  th
+                    i.bi.bi-person.me-2
+                    | Nama Dapur
+                  th
+                    i.bi.bi-envelope.me-2
+                    | Email
+                  th.text-center
+                    i.bi.bi-cart.me-2
+                    | Total Order
+                  th.text-center
+                    i.bi.bi-gear.me-2
+                    | Aksi
+              tbody
+                each d in dapurRows
+                  tr
+                    td
+                      .d-flex.align-items-center.gap-3
+                        .user-avatar
+                          i.bi.bi-person-fill
+                        strong= d.name
+                    td.text-muted.small= d.email
+                    td.text-center
+                      span.count-badge= d.orders_count || 0
+                    td.text-center
+                      a.btn-custom.btn-info-custom.btn-sm(
+                        href=`/yayasan/dapur/${d.id}/orders`
+                        style='padding: 10px 20px; font-size: 0.9rem; text-decoration: none;'
+                      )
+                        i.bi.bi-list-ul
+                        | Pesanan Dapur
+          
+          //- Mobile Cards
+          each d in dapurRows
+            .mobile-card
+              .mobile-card-header
+                .user-avatar
+                  i.bi.bi-person-fill
+                strong= d.name
+              .mobile-card-body
+                .mobile-card-row
+                  .mobile-card-label
+                    i.bi.bi-envelope.me-1
+                    | Email:
+                  .mobile-card-value.text-truncate= d.email
+                .mobile-card-row
+                  .mobile-card-label
+                    i.bi.bi-cart.me-1
+                    | Total Order:
+                  .count-badge= d.orders_count || 0
+              .mobile-card-actions
+                a.btn-custom.btn-info-custom.w-100(
+                  href=`/yayasan/dapur/${d.id}/orders`
+                  style='text-decoration: none;'
+                )
+                  i.bi.bi-list-ul
+                  | Lihat Pesanan Dapur
+        else
+          .empty-state
+            .empty-icon
+              i.bi.bi-inbox
+            .empty-text Belum ada dapur yang terdaftar
+
+  //- JavaScript for Collapsible Sections
+  script.
+    document.addEventListener('DOMContentLoaded', function() {
+      function setupCollapsible() {
+        const isMobile = window.innerWidth <= 768;
+        const sections = document.querySelectorAll('.section-collapsible');
+        
+        console.log('Setup collapsible, isMobile:', isMobile, 'sections:', sections.length);
+        
+        sections.forEach(function(section, index) {
+          const header = section.querySelector('.section-header');
+          const content = section.querySelector('.section-content');
+          const icon = section.querySelector('.section-toggle-icon');
+          
+          console.log('Section', index, '- header:', !!header, 'content:', !!content, 'icon:', !!icon);
+          
+          if (!header || !content || !icon) return;
+          
+          if (isMobile) {
+            // Start collapsed on mobile
+            content.classList.add('collapsed');
+            icon.classList.add('collapsed');
+            
+            console.log('Added collapsed class to section', index);
+            
+            // Remove old listeners
+            header.replaceWith(header.cloneNode(true));
+            const newHeader = section.querySelector('.section-header');
+            const newIcon = newHeader.querySelector('.section-toggle-icon');
+            const newContent = section.querySelector('.section-content');
+            
+            // Add click handler
+            newHeader.addEventListener('click', function(e) {
+              console.log('Header clicked, target:', e.target.tagName);
+              
+              // Prevent toggle if clicking on interactive elements
+              if (e.target.tagName === 'INPUT' || 
+                  e.target.tagName === 'SELECT' || 
+                  e.target.tagName === 'BUTTON' ||
+                  e.target.tagName === 'TEXTAREA' ||
+                  e.target.tagName === 'A' ||
+                  e.target.closest('form, a, button')) {
+                console.log('Ignoring click on interactive element');
+                return;
+              }
+              
+              newContent.classList.toggle('collapsed');
+              if (newIcon) newIcon.classList.toggle('collapsed');
+              
+              console.log('Toggled collapsed state');
+            });
+          } else {
+            // Ensure expanded on desktop
+            content.classList.remove('collapsed');
+            icon.classList.remove('collapsed');
+            console.log('Removed collapsed class from section', index, '(desktop)');
+          }
+        });
+      }
+      
+      // Setup on load
+      setupCollapsible();
+      
+      // Re-setup on resize with debounce
+      let resizeTimer;
+      window.addEventListener('resize', function() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(setupCollapsible, 250);
+      });
+    }); 
