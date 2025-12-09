@@ -27,6 +27,7 @@ exports.login = async (req, res) => {
         if (user.role === 'yayasan') return res.redirect('/yayasan/dashboard');
         if (user.role === 'vendor') return res.redirect('/vendor/dashboard');
         if (user.role === 'dapur') return res.redirect('/dapur/dashboard');
+        if (user.role === 'driver') return res.redirect('/driver/orders');
         res.redirect('/');
     } catch (err) {
         console.error(err);

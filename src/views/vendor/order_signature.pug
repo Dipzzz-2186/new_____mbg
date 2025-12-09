@@ -16,11 +16,15 @@ block content
       p.mb-1
         | Dapur: 
         b= order.dapur_name || 'Dapur'
+
       p.text-muted.mb-3
         | Total Order: Rp #{order.total.toLocaleString ? order.total.toLocaleString('id-ID') : order.total}
 
-      // ⬇️ TAMBAH enctype UNTUK FILE
-      form(method='post' action=`/vendor/orders/${order.id}/sign` enctype='multipart/form-data')
+      //- determine action depending on role (must be at same level as paragraphs)
+      - const isDriver = (typeof currentUser !== 'undefined') && currentUser && currentUser.role === 'driver';
+      - const signAction = isDriver ? `/driver/orders/${order.id}/sign` : `/vendor/orders/${order.id}/sign`;
+
+      form(method='post' action=signAction enctype='multipart/form-data')
         .row.g-3
           .col-md-6
             .mb-3
@@ -73,6 +77,7 @@ block content
           button.btn.btn-secondary(type='button' onclick='history.back()') Batal
           button.btn.btn-success.ms-2(type='submit') Simpan Surat Jalan
 
+  //- (rest of your script unchanged — keep it as-is)
   script.
     (function(){
       document.addEventListener('DOMContentLoaded', function(){

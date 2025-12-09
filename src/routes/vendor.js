@@ -50,4 +50,8 @@ router.post(
   vendorController.createVendorShipment
 );
 
+// router global di atas sudah: router.use(ensureRole('vendor'))
+router.get('/drivers', vendorController.listDrivers);
+router.post('/drivers', vendorController.createDriver);
+
 module.exports = router;

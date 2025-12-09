@@ -100,11 +100,13 @@ const yayasanRoutes = require('./src/routes/yayasan');
 const vendorRoutes = require('./src/routes/vendor');
 const dapurRoutes = require('./src/routes/dapur');
 const marketRoutes = require('./src/routes/marketplace');
+const driverRoutes = require('./src/routes/driver');
 
 app.use('/', authRoutes);
 app.use('/yayasan', yayasanRoutes);
 app.use('/vendor', vendorRoutes);
 app.use('/dapur', dapurRoutes);
+app.use('/driver', driverRoutes);
 
 // ⬅️ DI SINI: /market diproteksi login
 app.use('/market', ensureAuthenticated, marketRoutes);

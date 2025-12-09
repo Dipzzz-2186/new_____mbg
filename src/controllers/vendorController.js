@@ -1,6 +1,7 @@
 // src/controllers/vendorController.js
 const pool = require('../models/db');
 const multer = require('multer');
+const bcrypt = require('bcrypt');
 const path = require('path');
 const fs = require('fs');
 const { generateDeliveryNote } = require('../lib/deliveryNotePuppeteer');
@@ -36,6 +37,7 @@ exports.uploadSignature = signatureUpload.single('signature');
 exports.getDashboard = async (req, res) => {
   try {
     const vendorId = req.session.user.id;
+
     const [products] = await pool.query(
       'SELECT * FROM products WHERE vendor_id = ?',
       [vendorId]
@@ -48,10 +50,17 @@ exports.getDashboard = async (req, res) => {
     );
     const pendingCount = cntRows && cntRows[0] ? cntRows[0].cnt : 0;
 
+    // 🔹 ambil semua supir milik vendor ini
+    const [driverRows] = await pool.query(
+      'SELECT id, name, email FROM users WHERE role = "driver" AND vendor_id = ?',
+      [vendorId]
+    );
+
     return res.render('vendor/dashboard', {
       title: 'Dashboard Vendor',
       products,
-      pendingCount
+      pendingCount,
+      drivers: driverRows,   // 🔹 kirim ke view
     });
   } catch (err) {
     console.error('getDashboard error:', err);
@@ -135,27 +144,34 @@ exports.getOrders = async (req, res) => {
 
     const [rows] = await pool.query(
       `SELECT
-         vos.id AS vos_id,
          vos.order_id,
          vos.status AS vendor_status,
          o.total AS order_total,
-         o.status AS order_status,
-         o.user_id AS dapur_id,
          o.created_at AS order_created,
+         o.user_id AS dapur_id,
          oi.id AS order_item_id,
          oi.product_id,
          oi.qty,
          oi.price,
          p.name AS product_name,
-         vs.delivery_note_path
+         vs.id AS shipment_id,
+         vs.attachment_path,
+         vs.sender_signature_path,
+         dc.id AS delivery_confirmation_id,
+         u.name AS dapur_name,
+         u.phone AS dapur_phone,
+         u.address AS dapur_address
        FROM vendor_order_status vos
        JOIN orders o ON o.id = vos.order_id
+       JOIN users u ON u.id = o.user_id
        JOIN order_items oi ON oi.order_id = o.id
        JOIN products p ON p.id = oi.product_id
        LEFT JOIN vendor_shipments vs
-         ON vs.order_id = vos.order_id
-        AND vs.vendor_id = vos.vendor_id
-       WHERE vos.vendor_id = ? AND p.vendor_id = ?
+         ON vs.order_id = vos.order_id AND vs.vendor_id = vos.vendor_id
+       LEFT JOIN delivery_confirmations dc
+         ON dc.order_id = o.id
+       WHERE vos.vendor_id = ?
+         AND p.vendor_id = ?
        ORDER BY o.created_at DESC, oi.id`,
       [vendorId, vendorId]
     );
@@ -166,11 +182,14 @@ exports.getOrders = async (req, res) => {
         ordersMap.set(r.order_id, {
           order_id: r.order_id,
           order_total: r.order_total,
-          order_status: r.order_status,
-          dapur_id: r.dapur_id,
           created_at: r.order_created,
           vendor_status: r.vendor_status,
-          has_delivery_note: !!r.delivery_note_path, // ⬅️ FLAG BARU
+          shipment_sent: !!(r.attachment_path || r.sender_signature_path),
+          delivery_confirmed: !!r.delivery_confirmation_id,
+          // NEW: dapur contact
+          dapur_name: r.dapur_name || '',
+          dapur_phone: r.dapur_phone || '',
+          dapur_address: r.dapur_address || '',
           items: []
         });
       }
@@ -183,9 +202,8 @@ exports.getOrders = async (req, res) => {
         price: r.price
       });
     }
-
     const orders = Array.from(ordersMap.values());
-    return res.render('vendor/orders', { title: 'Pesanan Saya', orders });
+    return res.render('vendor/orders', { title: 'Pesanan', orders, currentUser: req.session.user, flash: req.flash && req.flash() });
   } catch (err) {
     console.error('getOrders error:', err);
     req.flash('error', 'Gagal mengambil pesanan');
@@ -199,9 +217,9 @@ exports.updateVendorOrderStatus = async (req, res) => {
   const orderId = req.params.orderId;
   const status = req.body.status;
 
-  const valid = new Set(['preparing', 'shipped']);
+  const valid = new Set(['preparing']);
   if (!valid.has(status)) {
-    req.flash('error', 'Status tidak valid (vendor hanya boleh: Siapkan atau Dikirim)');
+    req.flash('error', 'Status tidak valid (vendor hanya boleh: Siapkan)');
     return res.redirect('/vendor/orders');
   }
 
@@ -278,9 +296,10 @@ exports.createVendorShipment = async (req, res) => {
       throw new Error('Order sudah completed; tidak bisa kirim lagi');
     }
 
-    const shipped_at = req.body.shipped_at ? new Date(req.body.shipped_at) : null;
-    const plate_number = req.body.plate_number || null;
-    const sender_name = req.body.sender_name || null;
+    const shipped_at = req.body.shipped_at;
+    const plate = req.body.plate_number;
+    const driverName = driver.name;
+    const sender_name = req.body.sender_name || driverName;  // ⬅ default: nama supir
     const sender_contact = req.body.sender_contact || null;
     const note = req.body.note || null;
     const signatureDataUrl = req.body.signature_data || null;
@@ -399,8 +418,11 @@ exports.getSignatureForm = async (req, res) => {
 
     return res.render('vendor/order_signature', {
       title: `Tanda Tangan Dapur — Order #${orderId}`,
-      order
+      order,
+      currentUser: req.session.user,
+      flash: req.flash && req.flash()
     });
+
   } catch (err) {
     console.error('getSignatureForm error:', err);
     req.flash('error', 'Gagal membuka form tanda tangan dapur');
@@ -768,3 +790,47 @@ exports.deleteProduct = async (req, res) => {
   return res.redirect('/vendor/dashboard');
 };
 
+exports.listDrivers = async (req, res) => {
+  const vendorId = req.session.user.id;
+  const [rows] = await pool.query(
+    'SELECT id, name, email FROM users WHERE role = "driver" AND vendor_id = ?',
+    [vendorId]
+  );
+  res.render('vendor/drivers', { drivers: rows });
+};
+
+exports.createDriver = async (req, res) => {
+  try {
+    const vendorId = req.session.user.id;
+    const { name, email } = req.body;
+    let { password } = req.body;
+
+    if (!name || !email) {
+      req.flash('error', 'Nama dan email supir wajib diisi');
+      return res.redirect('/vendor/dashboard');
+    }
+
+    // kalau password kosong, pakai default
+    if (!password || !password.trim()) {
+      password = 'password123';
+    }
+
+    const hashed = await bcrypt.hash(password, 10);
+
+    await pool.query(
+      `INSERT INTO users (name, email, password, role, vendor_id)
+       VALUES (?, ?, ?, 'driver', ?)`,
+      [name, email, hashed, vendorId]
+    );
+
+    req.flash('success', 'Akun supir berhasil dibuat');
+    return res.redirect('/vendor/dashboard');
+  } catch (err) {
+    console.error('createDriver error:', err);
+    req.flash(
+      'error',
+      'Gagal membuat akun supir: ' + (err.sqlMessage || err.message)
+    );
+    return res.redirect('/vendor/dashboard');
+  }
+};

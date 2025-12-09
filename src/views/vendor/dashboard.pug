@@ -293,6 +293,67 @@ block content
               if typeof pendingCount !== 'undefined' && pendingCount > 0
                 span.notification-badge= pendingCount
 
+    // 🔹 SECTION KELOLA SUPIR
+    .mt-3.mb-4
+      .row.g-4
+        .col-lg-6
+          .card.shadow-sm.border-0.rounded-4
+            .card-body
+              h5.mb-3
+                i.bi.bi-truck-front.me-2
+                | Tambah Akun Supir
+              p.text-muted.small.mb-3
+                | Supir hanya bisa melihat pesanan vendor Anda yang sudah 
+                b disiapkan
+                |  dan mengubah statusnya menjadi 
+                b dikirim
+                | .
+
+              form(action='/vendor/drivers' method='post')
+                .mb-3
+                  label.form-label Nama Supir
+                  input.form-control(type='text' name='name' required placeholder='Contoh: Budi Saputra')
+                .mb-3
+                  label.form-label Email Supir
+                  input.form-control(type='email' name='email' required placeholder='supir@vendor.com')
+                .mb-3
+                  label.form-label
+                    | Password
+                    span.text-muted.ms-1 (kosongkan = 
+                      code password123
+                      | )
+                  input.form-control(type='text' name='password' placeholder='Opsional, default: password123')
+
+                button.btn.btn-success(type='submit')
+                  i.bi.bi-person-plus.me-1
+                  | Simpan Supir
+
+        .col-lg-6
+          .card.shadow-sm.border-0.rounded-4
+            .card-body
+              h5.mb-3
+                i.bi.bi-people.me-2
+                | Daftar Supir Anda
+              if drivers && drivers.length
+                table.table.table-sm.align-middle.mb-0
+                  thead
+                    tr
+                      th(scope='col') Nama
+                      th(scope='col') Email
+                  tbody
+                    each d in drivers
+                      tr
+                        td
+                          i.bi.bi-truck-front.me-2.text-success
+                          = d.name
+                        td.text-muted.small= d.email
+              else
+                .d-flex.align-items-center.gap-3
+                  i.bi.bi-inbox.fs-3.text-muted
+                  div
+                    div.text-muted.mb-0 Belum ada supir yang terdaftar
+                    small.text-muted Tambahkan supir pertama Anda melalui form di sebelah kiri.
+
     if products && products.length
       // ===== STATS =====
       .stats-row

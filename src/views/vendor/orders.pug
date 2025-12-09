@@ -1,106 +1,98 @@
-//- src/views/vendor/orders.pug
 extends ../layout
 
 block content
-  //- Header Section - Clean & Minimal
+  - const isDriver = currentUser && currentUser.role === 'driver';
+  - const isVendor = currentUser && currentUser.role === 'vendor';
+
   .vendor-dashboard-header
     .row.align-items-center.g-3
       .col-lg-7
-        .d-flex.align-items-center.gap-3
+        .d-flex.align-items-center.gap-3  
           .header-icon-box
             i.bi.bi-box-seam
           div
-            .dashboard-title Pesanan Saya
+            .dashboard-title= isDriver ? "Pesanan Untuk Dikirim" : "Pesanan Saya"
             .dashboard-subtitle
               i.bi.bi-truck.me-2
               | Kelola dan lacak pesanan produk Anda
       
       .col-lg-5.text-lg-end
         .action-buttons
-          a.btn-action.btn-outline-action(href='/vendor/dashboard' style='text-decoration: none;')
-            i.bi.bi-arrow-left
-            span Kembali ke Dashboard
+          if isVendor
+            a.btn-action.btn-outline-action(href='/vendor/dashboard')
+              i.bi.bi-arrow-left
+              span Kembali ke Dashboard
+          if isDriver
+            a.btn-action.btn-outline-action(href='/driver/dashboard')
+              i.bi.bi-arrow-left
+              span Kembali
 
   .container-fluid
-    //- Flash Messages Modern
     if flash && flash.success
-      .alert.alert-success.alert-dismissible.fade.show.shadow-sm.border-0.rounded-4.mb-4(role='alert')
+      .alert.alert-success.alert-dismissible.fade.show.shadow-sm(role='alert')
         .d-flex.align-items-center
           .alert-icon.me-3
             i.bi.bi-check-circle-fill
-          .flex-grow-1
-            strong.me-2 Berhasil!
-            = flash.success
-          button.btn-close(type='button' data-bs-dismiss='alert')
-    
+          .flex-grow-1 #{flash.success}
+        button.btn-close(type='button' data-bs-dismiss='alert')
+
     if flash && flash.error
-      .alert.alert-danger.alert-dismissible.fade.show.shadow-sm.border-0.rounded-4.mb-4(role='alert')
+      .alert.alert-danger.alert-dismissible.fade.show.shadow-sm(role='alert')
         .d-flex.align-items-center
           .alert-icon.me-3
             i.bi.bi-exclamation-triangle-fill
-          .flex-grow-1
-            strong.me-2 Gagal!
-            = flash.error
-          button.btn-close(type='button' data-bs-dismiss='alert')
+          .flex-grow-1 #{flash.error}
+        button.btn-close(type='button' data-bs-dismiss='alert')
 
-    //- Orders List
     if orders && orders.length
-      //- Summary Stats dengan Animasi
-      .stats-row
-        .row.g-4
-          .col-lg-4.col-md-6(style='animation-delay: 0.1s;')
-            .stat-card
-              .stat-icon-wrapper
-                i.bi.bi-cart-check
-              .stat-label Total Pesanan
-              .stat-value= orders.length
-              .stat-description= orders.length === 1 ? 'pesanan masuk' : 'pesanan masuk'
-          
-          .col-lg-4.col-md-6(style='animation-delay: 0.2s;')
-            .stat-card
-              .stat-icon-wrapper
-                i.bi.bi-clock-history
-              .stat-label Dalam Persiapan
-              .stat-value= orders.filter(o => o.vendor_status === 'preparing').length
-              .stat-description pesanan sedang disiapkan
-          
-          .col-lg-4.col-md-12(style='animation-delay: 0.3s;')
-            .stat-card
-              .stat-icon-wrapper
-                i.bi.bi-truck
-              .stat-label Sudah Dikirim
-              .stat-value= orders.filter(o => o.vendor_status === 'shipped').length
-              .stat-description pesanan dalam pengiriman
-
-      //- Orders Grid dengan Card Compact
       .row.g-4.mt-2
         each o, index in orders
-          .col-lg-4.col-md-6(style=`animation-delay: ${0.05 * index}s;`)
+          .col-lg-4.col-md-6(style=`animation-delay:${0.05 * index}s`)
             .order-card-compact.shadow-sm.h-100
-              //- Card Header
+              
               .card-compact-header
                 .d-flex.justify-content-between.align-items-start.mb-2
                   .order-id-compact
                     i.bi.bi-hash
                     span= o.order_id
-                  
-                  - var statusClass = o.vendor_status === 'shipped' ? 'success' : 'warning';
-                  - var statusIcon = o.vendor_status === 'shipped' ? 'truck' : 'clock-history';
+
+                  - // determine visual status: prefer order_status (completed) else vendor_status
+                  - var visualStatus = o.order_status === 'completed' ? 'completed' : o.vendor_status;
+                  - var statusClass = visualStatus === 'shipped' || visualStatus === 'completed' ? 'success' : 'warning';
                   .status-pill-compact(class=`status-${statusClass}`)
-                    i.bi(class=`bi-${statusIcon}`)
-                
+                    // icon: check-circle for completed, truck for shipped, clock-history otherwise
+                    if o.order_status === 'completed'
+                      i.bi.bi-check-circle-fill
+                    else
+                      i.bi(class=`bi-${o.vendor_status === 'shipped' ? 'truck' : 'clock-history'}`)
+
                 .order-date-compact
                   i.bi.bi-calendar3.me-1
                   span= o.created_at
-              
-              //- Card Body
+
               .card-compact-body
-                //- Total
                 .total-compact.mb-3
                   .total-label-compact Total
                   .total-value-compact Rp #{o.order_total.toLocaleString('id-ID')}
-                
-                //- Items Summary
+
+                // ── NEW: Info Dapur (pembeli)
+                .dapur-info.mb-3
+                  small.text-muted.mb-1 Dari:
+                  .dapur-card
+                    .d-flex.justify-content-between
+                      .dapur-left
+                        strong= o.dapur_name || '-'
+                        br
+                        small.text-muted #{o.dapur_address ? (o.dapur_address.length > 80 ? o.dapur_address.substring(0,80) + '...' : o.dapur_address) : '-'}
+                      .dapur-right.text-end
+                        small.text-muted No. Telp
+                        br
+                        if o.dapur_phone
+                          small.text-muted #{o.dapur_phone}
+                        else
+                          span.text-muted -
+                  hr
+
                 .items-compact
                   .items-title
                     i.bi.bi-box.me-1
@@ -111,42 +103,71 @@ block content
                         i.bi.bi-circle-fill.me-2
                         span= it.product_name
                       .item-qty-compact #{it.qty}x
-              
-              //- Card Footer
               .card-compact-footer
+                // if order already completed — show final label and disable all actions
                 if o.order_status === 'completed'
                   .completed-compact
-                    i.bi.bi-check-circle-fill.me-1
-                    span Selesai
+                    i.bi.bi-check-circle-fill.me-2
+                    | Pesanan Selesai
                 else
-                  - var disabled = (o.order_status === 'completed' || o.vendor_status === 'shipped') ? 'disabled' : false;
-                  form.vendor-status-form(method='post' action=`/vendor/orders/${o.order_id}/status`)
-                    select.form-select.form-select-sm.mb-2(name='status' data-order-id=o.order_id disabled=disabled)
-                      option(value='preparing' selected=(o.vendor_status==='preparing'))
-                        | 📦 Siapkan
-                      option(value='shipped' selected=(o.vendor_status==='shipped'))
-                        | 🚚 Kirim
-                    button.btn.btn-primary.btn-sm.w-100(type='submit' disabled=disabled)
-                      i.bi.bi-arrow-repeat.me-1
-                      | Update
-                    
-                    if o.vendor_status === 'shipped' && o.order_status !== 'completed' && !o.has_delivery_note
-                      a.btn.btn-outline-success.btn-sm.w-100.mt-2(href=`/vendor/orders/${o.order_id}/sign`)
-                        i.bi.bi-pencil.me-1
-                        | Edit Surat
+                  // ============================
+                  //      MODE VENDOR
+                  // ============================
+                  if isVendor
+                    - const disableVendor = (o.vendor_status === 'preparing' || o.vendor_status === 'shipped');
+
+                    if o.vendor_status === 'shipped'
+                      // jika sudah ada konfirmasi penerimaan, tunjukkan "Supir telah sampai"
+                      if o.delivery_confirmed
+                        .completed-compact
+                          i.bi.bi-truck.me-2
+                          | Supir telah sampai
+                      else
+                        .completed-compact
+                          i.bi.bi-truck.me-2
+                          | Dikirim oleh Supir
+                    else
+                      form.vendor-status-form(method="post" action=`/vendor/orders/${o.order_id}/status`)
+                        select.form-select.form-select-sm.mb-2(name="status" disabled=disableVendor)
+                          option(value="preparing" selected=(o.vendor_status==='preparing')) 📦 Siapkan
+                        button.btn.btn-primary.btn-sm.w-100(type="submit" disabled=disableVendor)
+                          i.bi.bi-arrow-repeat.me-1
+                          | Update
+
+                  // ============================
+                  //      MODE DRIVER
+                  // ============================
+                  if isDriver
+                    if o.vendor_status !== 'preparing'
+                      // shipped state: allow edit once if tracking_number not set and dapur belum konfirmasi
+                      if o.vendor_status === 'shipped'
+                        if !o.tracking_number && !o.delivery_confirmed
+                          a.btn.btn-outline-success.btn-sm.w-100(href=`/driver/orders/${o.order_id}/sign`)
+                            i.bi.bi-pencil.me-1
+                            | Edit Surat Jalan
+                        else
+                          button.btn.btn-outline-secondary.btn-sm.w-100(disabled)
+                            i.bi.bi-lock.me-1
+                            | Surat Jalan Sudah Dikirim
+                    else
+                      button.btn.btn-primary.btn-sm.w-100.btn-open-ship(
+                        type="button"
+                        data-order-id=o.order_id
+                      )
+                        i.bi.bi-send-check.me-2
+                        | Kirim Pesanan & Buat Surat Jalan
+
     else
-      //- Empty State Elegant
       .empty-state
         .empty-card
           .empty-icon
             i.bi.bi-inbox
-          .empty-title Belum Ada Pesanan
-          .empty-text Saat ini belum ada pesanan yang masuk untuk produk Anda
-          a.btn-action.btn-primary-action(href='/vendor/dashboard' style='text-decoration: none;')
-            i.bi.bi-arrow-left
-            span Kembali ke Dashboard
+          .empty-title Tidak Ada Pesanan
+          .empty-text Pesanan kosong untuk saat ini.
 
-  //- Modal: Surat Jalan dengan Design Modern
+  // ============================
+  //   MODAL SURAT JALAN (DRIVER)
+  // ============================
   .modal.fade#deliveryNoteModal(tabindex='-1' aria-hidden='true')
     .modal-dialog.modal-lg.modal-dialog-scrollable
       .modal-content.border-0
@@ -160,7 +181,6 @@ block content
           .modal-body.p-4
             input(type='hidden' name='order_id' id='dn-order-id')
             
-            //- Section dengan design card
             .form-section.mb-4
               .section-header.mb-3
                 i.bi.bi-truck.me-2(style='color: #28a745;')
@@ -178,7 +198,6 @@ block content
                       | No. Plat Kendaraan
                     input.form-control.form-control-lg(type='text' name='plate_number' id='dn-plate' placeholder='B 1234 ABC' required)
 
-            //- Data Pengirim
             .form-section.mb-4
               .section-header.mb-3
                 i.bi.bi-person-badge.me-2(style='color: #28a745;')
@@ -196,11 +215,10 @@ block content
                       | Kontak Pengirim
                     input.form-control.form-control-lg(type='text' name='sender_contact' id='dn-sender-contact' placeholder='0812xxxx' required)
 
-            //- Catatan & Lampiran
             .form-section.mb-4
               .section-header.mb-3
                 i.bi.bi-paperclip.me-2(style='color: #28a745;')
-                h6.fw-bold.mb-0.d-inline Catatan & Lampiran
+                h6.fw-bold.mb-0.d-inline Catatan & Foto Bukti
               .section-body
                 .mb-3
                   label.form-label
@@ -212,20 +230,20 @@ block content
                 .mb-0
                   label.form-label
                     i.bi.bi-file-earmark-arrow-up.me-2
-                    | Lampiran Surat Jalan
+                    | Foto Bukti
                     span.text-danger  *
                   input.form-control.form-control-lg(
                     type='file'
                     name='delivery_attachment'
                     id='dn-attachment'
-                    accept='.jpg,.jpeg,.png,.pdf'
+                    accept='image/*,.pdf'
+                    capture='environment'
                     required
                   )
                   .form-text
                     i.bi.bi-info-circle.me-1
                     | Format: JPG, PNG, atau PDF (Max 5MB)
 
-            //- Tanda Tangan
             .form-section.mb-0
               .section-header.mb-3
                 i.bi.bi-pen.me-2(style='color: #28a745;')
@@ -250,30 +268,20 @@ block content
               i.bi.bi-send-check.me-2
               | Kirim Surat Jalan
 
-  //- Enhanced Styles
+  //- CSS (sama seperti punyamu, tidak diubah)
   style.
     @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-    
     @keyframes float {
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-8px); }
     }
-    
     @keyframes pulse {
       0%, 100% { transform: scale(1); }
       50% { transform: scale(1.05); }
     }
-
-    /* Dashboard Header - Clean & Minimal */
     .vendor-dashboard-header {
       background: #ffffff;
       padding: 40px 0;
@@ -281,7 +289,6 @@ block content
       border-bottom: 1px solid #e8e8e8;
       animation: fadeInUp 0.6s ease-out;
     }
-    
     .header-icon-box {
       width: 64px;
       height: 64px;
@@ -296,14 +303,12 @@ block content
       transition: all 0.4s ease;
       flex-shrink: 0;
     }
-    
     .header-icon-box:hover {
       background: #28a745;
       color: white;
       transform: rotate(10deg) scale(1.1);
       border-color: #28a745;
     }
-    
     .dashboard-title {
       font-size: 2rem;
       color: #2c3e50;
@@ -311,20 +316,16 @@ block content
       margin-bottom: 6px;
       letter-spacing: -0.5px;
     }
-    
     .dashboard-subtitle {
       color: #6c757d;
       font-size: 1rem;
       margin: 0;
     }
-    
-    /* Action Buttons */
     .action-buttons {
       display: flex;
       gap: 12px;
       flex-wrap: wrap;
     }
-    
     .btn-action {
       padding: 14px 24px;
       border-radius: 10px;
@@ -337,29 +338,21 @@ block content
       gap: 10px;
       position: relative;
     }
-    
     .btn-action:hover {
       transform: translateY(-3px);
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
     }
-    
     .btn-outline-action {
       background: white;
       color: #6c757d;
       border: 2px solid #e8e8e8;
     }
-    
     .btn-outline-action:hover {
       background: #fafafa;
       border-color: #28a745;
       color: #28a745;
     }
-
-    /* Stat Cards - Elegant & Subtle */
-    .stats-row {
-      margin-bottom: 40px;
-    }
-    
+    .stats-row { margin-bottom: 40px; }
     .stat-card {
       background: #ffffff;
       border: 1px solid #e8e8e8;
@@ -371,7 +364,6 @@ block content
       animation: fadeInUp 0.6s ease-out;
       cursor: pointer;
     }
-    
     .stat-card::before {
       content: '';
       position: absolute;
@@ -383,17 +375,12 @@ block content
       transform: scaleX(0);
       transition: transform 0.4s ease;
     }
-    
-    .stat-card:hover::before {
-      transform: scaleX(1);
-    }
-    
+    .stat-card:hover::before { transform: scaleX(1); }
     .stat-card:hover {
       transform: translateY(-6px);
       box-shadow: 0 12px 28px rgba(40, 167, 69, 0.12);
       border-color: #28a745;
     }
-    
     .stat-icon-wrapper {
       width: 64px;
       height: 64px;
@@ -408,14 +395,12 @@ block content
       border: 1px solid #e8e8e8;
       transition: all 0.3s ease;
     }
-    
     .stat-card:hover .stat-icon-wrapper {
       background: #28a745;
       color: white;
       transform: rotate(5deg) scale(1.05);
       border-color: #28a745;
     }
-    
     .stat-label {
       color: #6c757d;
       font-size: 0.9rem;
@@ -424,21 +409,17 @@ block content
       letter-spacing: 0.5px;
       margin-bottom: 10px;
     }
-    
     .stat-value {
       font-size: 2.2rem;
       font-weight: 700;
       color: #2c3e50;
       line-height: 1;
     }
-    
     .stat-description {
       color: #6c757d;
       font-size: 0.85rem;
       margin-top: 8px;
     }
-
-    /* Order Card Compact */
     .order-card-compact {
       background: white;
       border: 1px solid #e8e8e8;
@@ -454,7 +435,6 @@ block content
       box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
       border-color: #28a745;
     }
-    
     .card-compact-header {
       background: #f8f9fa;
       padding: 16px;
@@ -495,11 +475,7 @@ block content
       font-size: 0.8rem;
       margin-top: 8px;
     }
-    
-    .card-compact-body {
-      padding: 16px;
-      flex: 1;
-    }
+    .card-compact-body { padding: 16px; flex: 1; }
     .total-compact {
       background: #f0f9f3;
       border: 1px solid #e8e8e8;
@@ -521,9 +497,7 @@ block content
       font-weight: 700;
       line-height: 1;
     }
-    .items-compact {
-      margin-top: 16px;
-    }
+    .items-compact { margin-top: 16px; }
     .items-title {
       color: #6c757d;
       font-size: 0.85rem;
@@ -540,9 +514,7 @@ block content
       font-size: 0.85rem;
       border-bottom: 1px solid #f8f9fa;
     }
-    .item-compact:last-child {
-      border-bottom: none;
-    }
+    .item-compact:last-child { border-bottom: none; }
     .item-name-compact {
       display: flex;
       align-items: center;
@@ -561,7 +533,6 @@ block content
       font-weight: 600;
       font-size: 0.8rem;
     }
-    
     .card-compact-footer {
       padding: 16px;
       background: #fafafa;
@@ -593,16 +564,12 @@ block content
       font-weight: 600;
       transition: all 0.2s ease;
     }
-    .card-compact-footer .btn:hover {
-      transform: translateY(-1px);
-    }
+    .card-compact-footer .btn:hover { transform: translateY(-1px); }
     .card-compact-footer .btn-primary {
       background: #28a745;
       border: none;
     }
-    .card-compact-footer .btn-primary:hover {
-      background: #218838;
-    }
+    .card-compact-footer .btn-primary:hover { background: #218838; }
     .card-compact-footer .btn-outline-success {
       border: 2px solid #28a745;
       color: #28a745;
@@ -611,11 +578,7 @@ block content
       background: #28a745;
       color: white;
     }
-
-    /* Empty State - Elegant */
-    .empty-state {
-      padding: 80px 20px;
-    }
+    .empty-state { padding: 80px 20px; }
     .empty-card {
       max-width: 600px;
       margin: 0 auto;
@@ -652,11 +615,7 @@ block content
       background: #28a745;
       color: white;
     }
-    .btn-primary-action:hover {
-      background: #218838;
-    }
-
-    /* Modal Sections - Fix Scroll */
+    .btn-primary-action:hover { background: #218838; }
     .modal-content {
       border-radius: 24px;
       max-height: 90vh;
@@ -689,8 +648,6 @@ block content
       color: #374151;
       margin-bottom: 8px;
     }
-
-    /* Signature Area */
     .signature-area {
       background: white;
       border: 3px dashed #e5e7eb;
@@ -711,8 +668,6 @@ block content
       justify-content: space-between;
       align-items: center;
     }
-
-    /* Alert Icons */
     .alert-icon {
       width: 40px;
       height: 40px;
@@ -741,55 +696,49 @@ block content
       background: rgba(220, 53, 69, 0.15);
       color: #dc3545;
     }
-
-    /* Responsive */
     @media (max-width: 992px) {
       .action-buttons {
         width: 100%;
       }
-      
       .btn-action {
         flex: 1;
         justify-content: center;
       }
     }
-    
     @media (max-width: 768px) {
       .vendor-dashboard-header {
         padding: 30px 0;
       }
-      
       .dashboard-title {
         font-size: 1.6rem;
       }
-      
       .header-icon-box {
         width: 56px;
         height: 56px;
         font-size: 24px;
       }
-      
       .stat-card {
         padding: 24px;
       }
-      
       .stat-value {
         font-size: 1.8rem;
       }
-      
       .order-card-compact {
         margin-bottom: 16px;
       }
-      
       .total-value-compact {
         font-size: 1.3rem;
       }
     }
 
-  //- JavaScript
+  //- JS: khusus driver untuk modal surat jalan
   script.
     (function(){
+      var isDriver = !{JSON.stringify(!!(currentUser && currentUser.role === 'driver'))};
+
       document.addEventListener('DOMContentLoaded', function(){
+        if (!isDriver) return;
+
         var deliveryModalEl = document.getElementById('deliveryNoteModal');
         if (!deliveryModalEl) return;
         var deliveryModal = new bootstrap.Modal(deliveryModalEl, { backdrop: true });
@@ -886,41 +835,19 @@ block content
           return yyyy + '-' + mm + '-' + dd + 'T' + hh + ':' + mi;
         }
 
-        document.querySelectorAll('form.vendor-status-form').forEach(function(form){
-          form.addEventListener('submit', function(ev){
-            ev.preventDefault();
-            var sel = form.querySelector('select[name="status"]');
-            var value = sel ? sel.value : null;
-            var orderId = sel ? sel.getAttribute('data-order-id') : null;
-            if (value === 'shipped') {
-              dnOrderId.value = orderId;
-              dnShippedAt.value = nowLocalInputValue();
-              dnTitle.innerHTML = '<i class="bi bi-file-earmark-text me-2" style="color: #28a745;"></i>Surat Jalan — Order #' + orderId;
-              if (sigCanvas && sigCtx) {
-                sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
-                hasDrawn = false;
-                if (sigInput) sigInput.value = '';
-              }
-              deliveryModal.show();
-            } else {
-              fetch(form.action, {
-                method: 'POST',
-                headers: { 'Accept': 'application/json' },
-                body: new URLSearchParams(new FormData(form))
-              }).then(function(resp){
-                var ct = resp.headers.get('content-type') || '';
-                if (resp.ok) {
-                  if (ct.indexOf('application/json') !== -1) {
-                    return resp.json().then(function(){ location.reload(); });
-                  }
-                  location.reload();
-                  return;
-                }
-                return resp.text().then(function(t){ throw new Error(t || 'Network error'); });
-              }).catch(function(err){
-                alert('Gagal mengubah status: ' + (err.message || err));
-              });
+        // tombol Kirim Pesanan (driver)
+        document.querySelectorAll('.btn-open-ship').forEach(function(btn){
+          btn.addEventListener('click', function(){
+            var orderId = btn.getAttribute('data-order-id');
+            dnOrderId.value = orderId;
+            dnShippedAt.value = nowLocalInputValue();
+            dnTitle.innerHTML = '<i class="bi bi-file-earmark-text me-2" style="color: #28a745;"></i>Surat Jalan — Order #' + orderId;
+            if (sigCanvas && sigCtx) {
+              sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
+              hasDrawn = false;
+              if (sigInput) sigInput.value = '';
             }
+            deliveryModal.show();
           });
         });
 
@@ -945,7 +872,7 @@ block content
           var originalText = submitBtn.innerHTML;
           submitBtn.disabled = true;
           submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Mengirim...';
-          fetch('/vendor/orders/' + encodeURIComponent(orderId) + '/ship', {
+          fetch('/driver/orders/' + encodeURIComponent(orderId) + '/ship', {
             method: 'POST',
             body: fd
           }).then(function(resp){
