@@ -252,6 +252,55 @@ block content
       line-height: 1.4;
     }
 
+    /* Collapsible Sections */
+    .collapsible-section .section-header {
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+      padding-right: 40px;
+    }
+    
+    .collapsible-section .section-toggle-icon {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      transition: transform 0.3s ease;
+      font-size: 20px;
+      color: #28a745;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      background: #f8f9fa;
+      flex-shrink: 0;
+    }
+    
+    .collapsible-section .section-toggle-icon:hover {
+      background: #e9ecef;
+    }
+    
+    .collapsible-section .section-toggle-icon.collapsed {
+      transform: translateY(-50%) rotate(-180deg);
+    }
+    
+    .collapsible-section .section-content {
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      max-height: 5000px;
+      opacity: 1;
+    }
+    
+    .collapsible-section .section-content.collapsed {
+      max-height: 0;
+      opacity: 0;
+      margin-top: 0;
+      padding-top: 0;
+      overflow: hidden;
+    }
+
     /* Info Box Variants */
     .info-box {
       background: #f8f9fa;
@@ -616,20 +665,6 @@ block content
       }
     }
     
-    /* Collapsible Section */
-    .section-toggle-icon {
-      transition: transform 0.3s ease;
-      font-size: 20px;
-      color: #28a745;
-      display: none;
-      flex-shrink: 0;
-    }
-    
-    .section-content {
-      overflow: hidden;
-      transition: max-height 0.5s ease, opacity 0.3s ease;
-    }
-
     /* Responsive - Mobile */
     @media (max-width: 768px) {
       .dashboard-header {
@@ -641,29 +676,12 @@ block content
         overflow: visible;
       }
       
-      .section-collapsible .section-header {
-        cursor: pointer;
-        user-select: none;
+      .collapsible-section .section-toggle-icon {
+        display: flex;
       }
       
-      .section-toggle-icon {
-        display: block;
-      }
-      
-      .section-toggle-icon.collapsed {
-        transform: rotate(-180deg);
-      }
-      
-      .section-content {
-        max-height: 5000px;
-        opacity: 1;
-      }
-      
-      .section-content.collapsed {
-        max-height: 0;
-        opacity: 0;
-        margin-top: 0;
-        padding-top: 0;
+      .collapsible-section .section-header::after {
+        display: none;
       }
       
       .header-icon-box {
@@ -800,6 +818,11 @@ block content
         padding-left: 16px;
         padding-right: 16px;
       }
+      
+      /* Hide info-tooltip in collapsible section headers on mobile */
+      .collapsible-section .section-header .info-tooltip {
+        display: none;
+      }
     }
     
     /* Extra small devices */
@@ -885,164 +908,168 @@ block content
               | Informasi detail
 
     .row
-      //- Section: Create Account
+      //- Section: Create Account - Collapsible
       .col-lg-6.col-12.mb-4
-        .section-card.animate-fade-up(style='animation-delay: 0.2s;')
+        .section-card.animate-fade-up.collapsible-section(style='animation-delay: 0.2s;')
           .section-header
             .section-icon
               i.bi.bi-person-plus-fill
             div.flex-grow-1
               .section-title Buat Akun Baru
               .section-description Daftarkan vendor atau dapur baru
-            .info-tooltip
+            i.bi.bi-chevron-down.section-toggle-icon
+            .info-tooltip.d-none.d-md-inline-flex
               i.bi.bi-question-circle-fill
               span.tooltip-text Form ini untuk mendaftarkan user baru (vendor atau dapur) yang akan menggunakan sistem
 
-          .info-box.info-box-success
-            i.bi.bi-lightbulb-fill.me-2
-            strong Tips: 
-            | Vendor = yang menjual bahan, Dapur = yang memasak makanan
+          .section-content
+            .info-box.info-box-success
+              i.bi.bi-lightbulb-fill.me-2
+              strong Tips: 
+              | Vendor = yang menjual bahan, Dapur = yang memasak makanan
 
-          form(action="/yayasan/create-user" method="post")
-            .form-group-custom
-              .label-wrapper
-                label.form-label-custom
-                  i.bi.bi-person
-                  | Nama Lengkap
-                span.required-badge Wajib
-              input.form-control-custom(type="text" name="name" placeholder="Contoh: Budi Santoso" required)
-              .input-hint
-                i.bi.bi-info-circle
-                | Masukkan nama lengkap vendor atau dapur
+            form(action="/yayasan/create-user" method="post")
+              .form-group-custom
+                .label-wrapper
+                  label.form-label-custom
+                    i.bi.bi-person
+                    | Nama Lengkap
+                  span.required-badge Wajib
+                input.form-control-custom(type="text" name="name" placeholder="Contoh: Budi Santoso" required)
+                .input-hint
+                  i.bi.bi-info-circle
+                  | Masukkan nama lengkap vendor atau dapur
 
-            .form-group-custom
-              .label-wrapper
-                label.form-label-custom
-                  i.bi.bi-envelope
-                  | Email
-                span.required-badge Wajib
-              input.form-control-custom(type="email" name="email" placeholder="Contoh: budi@email.com" required)
-              .input-hint
-                i.bi.bi-info-circle
-                | Email ini digunakan untuk login
+              .form-group-custom
+                .label-wrapper
+                  label.form-label-custom
+                    i.bi.bi-envelope
+                    | Email
+                  span.required-badge Wajib
+                input.form-control-custom(type="email" name="email" placeholder="Contoh: budi@email.com" required)
+                .input-hint
+                  i.bi.bi-info-circle
+                  | Email ini digunakan untuk login
 
-            .form-group-custom
-              .label-wrapper
-                label.form-label-custom
-                  i.bi.bi-shield-check
-                  | Pilih Tipe
-                span.required-badge Pilih satu
-              select.form-control-custom(name="role")
-                option(value="vendor") 🏪 Vendor (Penjual Bahan)
-                option(value="dapur") 👨‍🍳 Dapur (Pembuat Makanan)
-              .input-hint
-                i.bi.bi-info-circle
-                | Pilih sesuai kebutuhan
+              .form-group-custom
+                .label-wrapper
+                  label.form-label-custom
+                    i.bi.bi-shield-check
+                    | Pilih Tipe
+                  span.required-badge Pilih satu
+                select.form-control-custom(name="role")
+                  option(value="vendor") 🏪 Vendor (Penjual Bahan)
+                  option(value="dapur") 👨‍🍳 Dapur (Pembuat Makanan)
+                .input-hint
+                  i.bi.bi-info-circle
+                  | Pilih sesuai kebutuhan
 
-            .form-group-custom
-              .label-wrapper
-                label.form-label-custom
-                  i.bi.bi-key
-                  | Password
-                span.required-badge(style='background: #fff9f0; color: #856404; border-color: #ffeaa7;') Opsional
-              input.form-control-custom(type="text" name="password" placeholder="Kosongkan untuk password default")
-              .info-box.info-box-warning.mt-2
-                i.bi.bi-info-circle.me-2
-                small Jika dikosongkan, password otomatis: 
-                  strong password123
+              .form-group-custom
+                .label-wrapper
+                  label.form-label-custom
+                    i.bi.bi-key
+                    | Password
+                  span.required-badge(style='background: #fff9f0; color: #856404; border-color: #ffeaa7;') Opsional
+                input.form-control-custom(type="text" name="password" placeholder="Kosongkan untuk password default")
+                .info-box.info-box-warning.mt-2
+                  i.bi.bi-info-circle.me-2
+                  small Jika dikosongkan, password otomatis: 
+                    strong password123
 
-            button.btn-custom.btn-primary-custom.w-100(type="submit")
-              i.bi.bi-plus-circle
-              span Buat Akun User Baru
+              button.btn-custom.btn-primary-custom.w-100(type="submit")
+                i.bi.bi-plus-circle
+                span Buat Akun User Baru
 
-      //- Section: Statistics
+      //- Section: Statistics - Collapsible
       .col-lg-6.col-12.mb-4
-        .section-card.animate-slide-right(style='animation-delay: 0.2s;')
+        .section-card.animate-slide-right.collapsible-section(style='animation-delay: 0.2s;')
           .section-header
             .section-icon(style='background: #f0f4ff; color: #4361ee;')
               i.bi.bi-graph-up
             div.flex-grow-1
               .section-title Statistik Dapur
               .section-description Ringkasan aktivitas semua dapur
-            .info-tooltip
+            i.bi.bi-chevron-down.section-toggle-icon
+            .info-tooltip.d-none.d-md-inline-flex
               i.bi.bi-question-circle-fill
               span.tooltip-text Menampilkan jumlah order yang sudah dibuat oleh setiap dapur
 
-          .info-box.info-box-info
-            i.bi.bi-graph-up.me-2
-            strong Info: 
-            | Angka menunjukkan berapa kali dapur membuat pesanan
+          .section-content
+            .info-box.info-box-info
+              i.bi.bi-graph-up.me-2
+              strong Info: 
+              | Angka menunjukkan berapa kali dapur membuat pesanan
 
-          if dapurRows && dapurRows.length
-            //- Desktop Table
-            .table-responsive
-              table.table-custom
-                thead
-                  tr
-                    th
-                      i.bi.bi-person.me-2
-                      | Nama Dapur
-                    th
-                      i.bi.bi-envelope.me-2
-                      | Email
-                    th.text-center
-                      i.bi.bi-cart.me-2
-                      | Order
-                tbody
-                  each d in dapurRows
+            if dapurRows && dapurRows.length
+              //- Desktop Table
+              .table-responsive
+                table.table-custom
+                  thead
                     tr
-                      td
-                        strong= d.name
-                      td.text-muted.small= d.email
-                      td.text-center
-                        span.count-badge= d.orders_count || 0
-            
-            //- Mobile Cards
-            each d in dapurRows
-              .mobile-card
-                .mobile-card-header
-                  .user-avatar
-                    i.bi.bi-person-fill
-                  strong= d.name
-                .mobile-card-body
-                  .mobile-card-row
-                    .mobile-card-label
-                      i.bi.bi-envelope.me-1
-                      | Email:
-                    .mobile-card-value= d.email
-                  .mobile-card-row
-                    .mobile-card-label
-                      i.bi.bi-cart.me-1
-                      | Order:
-                    .count-badge= d.orders_count || 0
-            
-            .info-box.info-box-success.mt-3
-              i.bi.bi-calculator.me-2
-              strong Total Order Semua Dapur: 
-              - var total = dapurRows.reduce((sum, d) => {
-              -   return sum + (parseInt(d.orders_count, 10) || 0)
-              - }, 0)
-              = total
-              |  pesanan
-          else
-            .empty-state
-              .empty-icon
-                i.bi.bi-inbox
-              .empty-text Belum ada data dapur
+                      th
+                        i.bi.bi-person.me-2
+                        | Nama Dapur
+                      th
+                        i.bi.bi-envelope.me-2
+                        | Email
+                      th.text-center
+                        i.bi.bi-cart.me-2
+                        | Order
+                  tbody
+                    each d in dapurRows
+                      tr
+                        td
+                          strong= d.name
+                        td.text-muted.small= d.email
+                        td.text-center
+                          span.count-badge= d.orders_count || 0
+              
+              //- Mobile Cards
+              each d in dapurRows
+                .mobile-card
+                  .mobile-card-header
+                    .user-avatar
+                      i.bi.bi-person-fill
+                    strong= d.name
+                  .mobile-card-body
+                    .mobile-card-row
+                      .mobile-card-label
+                        i.bi.bi-envelope.me-1
+                        | Email:
+                      .mobile-card-value= d.email
+                    .mobile-card-row
+                      .mobile-card-label
+                        i.bi.bi-cart.me-1
+                        | Order:
+                      .count-badge= d.orders_count || 0
+              
+              .info-box.info-box-success.mt-3
+                i.bi.bi-calculator.me-2
+                strong Total Order Semua Dapur: 
+                - var total = dapurRows.reduce((sum, d) => {
+                -   return sum + (parseInt(d.orders_count, 10) || 0)
+                - }, 0)
+                = total
+                |  pesanan
+            else
+              .empty-state
+                .empty-icon
+                  i.bi.bi-inbox
+                .empty-text Belum ada data dapur
 
-    //- Section: All Dapur List
-    .section-card.animate-fade-up.section-collapsible(style='animation-delay: 0.3s;')
+    //- Section: All Dapur List - Collapsible
+    .section-card.animate-fade-up.collapsible-section(style='animation-delay: 0.3s;')
       .section-header
         .section-icon
           i.bi.bi-list-check
         div.flex-grow-1
           .section-title Daftar Semua Dapur Terdaftar
           .section-description Kelola dan lihat detail setiap dapur
+        i.bi.bi-chevron-down.section-toggle-icon
         .d-flex.align-items-center.gap-2
           .info-tooltip.d-none.d-md-inline-flex
             i.bi.bi-question-circle-fill
             span.tooltip-text Klik tombol "Pesanan Dapur" untuk melihat semua order dari dapur tersebut
-          i.bi.bi-chevron-down.section-toggle-icon
 
       .section-content
         .info-box.info-box-info
@@ -1118,67 +1145,72 @@ block content
               i.bi.bi-inbox
             .empty-text Belum ada dapur yang terdaftar
 
-  //- JavaScript for Collapsible Sections
+  //- JavaScript for Collapsible Sections - FIXED VERSION
   script.
     document.addEventListener('DOMContentLoaded', function() {
       function setupCollapsible() {
         const isMobile = window.innerWidth <= 768;
-        const sections = document.querySelectorAll('.section-collapsible');
-        
-        console.log('Setup collapsible, isMobile:', isMobile, 'sections:', sections.length);
+        const sections = document.querySelectorAll('.collapsible-section');
         
         sections.forEach(function(section, index) {
           const header = section.querySelector('.section-header');
           const content = section.querySelector('.section-content');
           const icon = section.querySelector('.section-toggle-icon');
           
-          console.log('Section', index, '- header:', !!header, 'content:', !!content, 'icon:', !!icon);
-          
           if (!header || !content || !icon) return;
           
+          // Clear all existing classes first
+          content.classList.remove('collapsed');
+          icon.classList.remove('collapsed');
+          
           if (isMobile) {
-            // Start collapsed on mobile
-            content.classList.add('collapsed');
-            icon.classList.add('collapsed');
+            // Start with first two sections collapsed, third section expanded on mobile
+            if (index < 2) {
+              content.classList.add('collapsed');
+              icon.classList.add('collapsed');
+            }
             
-            console.log('Added collapsed class to section', index);
+            // Remove old event listeners by cloning
+            const newHeader = header.cloneNode(true);
+            header.parentNode.replaceChild(newHeader, header);
             
-            // Remove old listeners
-            header.replaceWith(header.cloneNode(true));
-            const newHeader = section.querySelector('.section-header');
-            const newIcon = newHeader.querySelector('.section-toggle-icon');
+            // Get new references after cloning
             const newContent = section.querySelector('.section-content');
+            const newIcon = newHeader.querySelector('.section-toggle-icon');
             
-            // Add click handler
+            // Add click handler to the NEW header
             newHeader.addEventListener('click', function(e) {
-              console.log('Header clicked, target:', e.target.tagName);
+              // Check if click is on form elements or buttons
+              const isFormElement = 
+                e.target.tagName === 'INPUT' || 
+                e.target.tagName === 'SELECT' || 
+                e.target.tagName === 'BUTTON' ||
+                e.target.tagName === 'TEXTAREA' ||
+                e.target.tagName === 'A';
               
-              // Prevent toggle if clicking on interactive elements
-              if (e.target.tagName === 'INPUT' || 
-                  e.target.tagName === 'SELECT' || 
-                  e.target.tagName === 'BUTTON' ||
-                  e.target.tagName === 'TEXTAREA' ||
-                  e.target.tagName === 'A' ||
-                  e.target.closest('form, a, button')) {
-                console.log('Ignoring click on interactive element');
-                return;
+              const isInsideForm = e.target.closest('form');
+              const isInsideButton = e.target.closest('.btn-custom');
+              const isInsideTooltip = e.target.closest('.info-tooltip');
+              
+              if (isFormElement || isInsideForm || isInsideButton || isInsideTooltip) {
+                return; // Don't toggle if clicking on form elements
               }
               
+              // Toggle collapsed state
               newContent.classList.toggle('collapsed');
-              if (newIcon) newIcon.classList.toggle('collapsed');
-              
-              console.log('Toggled collapsed state');
+              if (newIcon) {
+                  newIcon.classList.toggle('collapsed');
+                }
             });
           } else {
-            // Ensure expanded on desktop
+            // On desktop: ensure all sections are expanded
             content.classList.remove('collapsed');
             icon.classList.remove('collapsed');
-            console.log('Removed collapsed class from section', index, '(desktop)');
           }
         });
       }
       
-      // Setup on load
+      // Initial setup
       setupCollapsible();
       
       // Re-setup on resize with debounce
@@ -1187,4 +1219,4 @@ block content
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(setupCollapsible, 250);
       });
-    }); 
+    });
