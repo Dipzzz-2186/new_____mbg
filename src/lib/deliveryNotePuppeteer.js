@@ -279,8 +279,8 @@ function buildHtml({ order, items, vendor, signatureDataUrl, proofDataUrl }) {
           <div class="header-left">
             <div class="company-name">MBG</div>
             <div class="company-address">
-              ${vendorAddress || 'Alamat perusahaan / gudang'}<br/>
-              Telp: ${vendorPhone || '-'}
+              Jl. Tanjung Duren Barat III No.12B, RT.7/RW.5, Tj. Duren Utara, Kec. Grogol petamburan, Kota Jakarta Barat, Daerah Khusus Ibukota Jakarta 11470<br/>
+              Telp: 0855-1888-190
             </div>
           </div>
           <div class="header-right">
