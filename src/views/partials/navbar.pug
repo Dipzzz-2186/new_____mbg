@@ -218,7 +218,7 @@ nav.navbar.navbar-light.sticky-top(
                     .fw-semibold= currentUser.name || 'User'
                     .small.text-muted
                       i.bi.bi-shield-check.me-1
-                      = currentUser.role
+                      = currentUser.role = currentUser.role_display
 
             li
               hr.dropdown-divider

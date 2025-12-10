@@ -21,8 +21,43 @@ exports.login = async (req, res) => {
             return res.redirect('/login');
         }
         // remove password before storing in session
+        // remove password before storing in session
         delete user.password;
-        req.session.user = user;
+
+        // build session user object
+        const sessionUser = {
+            id: user.id,
+            name: user.name,
+            role: user.role,
+            vendor_id: user.vendor_id
+        };
+
+        if (sessionUser.role === 'driver' && sessionUser.vendor_id) {
+            try {
+                // first try vendors table (in case you later add it)
+                let vrows = [];
+                try {
+                    [vrows] = await pool.query('SELECT name FROM vendors WHERE id = ? LIMIT 1', [sessionUser.vendor_id]);
+                } catch (e) {
+                    // vendors table might not exist -> fallback ke users
+                    // console.warn('vendors table not found, fallback to users table');
+                    [vrows] = await pool.query('SELECT name FROM users WHERE id = ? AND role = ? LIMIT 1', [sessionUser.vendor_id, 'vendor']);
+                }
+
+                sessionUser.vendor_name = (vrows && vrows.length) ? vrows[0].name : null;
+                sessionUser.role_display = sessionUser.vendor_name ? `driver ${sessionUser.vendor_name}` : 'driver';
+            } catch (e) {
+                // jika apapun gagal, jangan crash login - pakai default role label
+                console.error('failed to resolve vendor name for driver:', e && (e.message || e));
+                sessionUser.vendor_name = null;
+                sessionUser.role_display = 'driver';
+            }
+        } else {
+            sessionUser.role_display = sessionUser.role;
+        }
+
+        req.session.user = sessionUser;
+
         req.flash('success', 'Login berhasil');
         if (user.role === 'yayasan') return res.redirect('/yayasan/dashboard');
         if (user.role === 'vendor') return res.redirect('/vendor/dashboard');
