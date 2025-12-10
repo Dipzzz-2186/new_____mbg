@@ -137,14 +137,25 @@ block content
     }
     
     .badge-notification {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      min-width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
       background: #dc3545;
-      color: white;
-      padding: 3px 8px;
-      border-radius: 12px;
-      font-size: 0.8rem;
+      color: white; 
+      border-radius: 999px;
+      font-size: 0.75rem;
       font-weight: 700;
+      border: 2px solid #ffffff;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
       animation: pulse 2s infinite;
     }
+
 
     /* Info Box */
     .info-guide {
@@ -658,6 +669,8 @@ block content
         width: 100%;
         justify-content: center;
         min-width: unset;
+        position: relative;
+        overflow: hidden;
       }
       
       .section-card {
@@ -871,10 +884,14 @@ block content
             .dashboard-subtitle Kelola vendor dan dapur dengan mudah
         
         .action-buttons-wrapper
-          a.btn-action-main.btn-action-warning(href='/yayasan/pending' style='text-decoration: none;')
+          a.btn-action-main.btn-action-warning(
+            href='/yayasan/pending'
+            style='text-decoration: none; position: relative;'
+          )
             i.bi.bi-hourglass-split
             span Lihat Order Menunggu
-            if typeof pendingCount !== 'undefined' && pendingCount > 0
+
+            if pendingCount && pendingCount > 0
               span.badge-notification= pendingCount
 
           a.btn-action-main.btn-action-primary(href='/yayasan/delivery-confirmations' style='text-decoration: none;')

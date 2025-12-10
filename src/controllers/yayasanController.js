@@ -34,7 +34,13 @@ exports.dashboard = async (req, res) => {
     'SELECT id, name, email FROM users WHERE role = "vendor" ORDER BY name'
   );
 
-  res.render('yayasan/dashboard', { dapurRows, vendorRows });
+  const [pendingRows] = await pool.query(
+    'SELECT COUNT(*) AS pendingCount FROM orders WHERE yayasan_id = ? AND status = ?',
+    [yayasanId, 'awaiting_yayasan']
+  );
+  const pendingCount = pendingRows[0]?.pendingCount || 0;
+
+  res.render('yayasan/dashboard', { dapurRows, vendorRows, pendingCount });
 };
 
 exports.createUser = async (req, res) => {
