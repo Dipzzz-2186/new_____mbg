@@ -34,43 +34,45 @@ exports.getDriverOrders = async (req, res) => {
         }
         const vendorId = driver.vendor_id;
 
-        // ambil orders + apakah ada vendor_shipments + apakah ada delivery_confirmations + info dapur (user)
+        // FROM (existing query) ... WHERE vos.vendor_id = ? AND p.vendor_id = ? ORDER BY ...
+        // TO:
         const [rows] = await pool.query(
             `SELECT
-         vos.id AS vos_id,
-         vos.order_id,
-         vos.status AS vendor_status,
-         o.total AS order_total,
-         o.status AS order_status,
-         o.user_id AS dapur_id,
-         o.created_at AS order_created,
-         oi.id AS order_item_id,
-         oi.product_id,
-         oi.qty,
-         oi.price,
-         p.name AS product_name,
-         vs.id AS shipment_id,
-         vs.attachment_path,
-         vs.sender_signature_path,
-         vs.delivery_note_path,
-         vs.tracking_number,
-         (CASE WHEN dc.id IS NOT NULL THEN 1 ELSE 0 END) AS delivery_confirmed,
-         u.name AS dapur_name,
-         u.phone AS dapur_phone,
-         u.address AS dapur_address
-       FROM vendor_order_status vos
-       JOIN orders o ON o.id = vos.order_id
-       JOIN users u ON u.id = o.user_id
-       JOIN order_items oi ON oi.order_id = o.id
-       JOIN products p ON p.id = oi.product_id
-       LEFT JOIN vendor_shipments vs
-         ON vs.order_id = vos.order_id
-         AND vs.vendor_id = vos.vendor_id
-       LEFT JOIN delivery_confirmations dc
-         ON dc.order_id = o.id AND dc.vendor_id = vos.vendor_id
-       WHERE vos.vendor_id = ?
-         AND p.vendor_id = ?
-       ORDER BY o.created_at DESC, oi.id`,
+     vos.id AS vos_id,
+     vos.order_id,
+     vos.status AS vendor_status,
+     o.total AS order_total,
+     o.status AS order_status,
+     o.user_id AS dapur_id,
+     o.created_at AS order_created,
+     oi.id AS order_item_id,
+     oi.product_id,
+     oi.qty,
+     oi.price,
+     p.name AS product_name,
+     vs.id AS shipment_id,
+     vs.attachment_path,
+     vs.sender_signature_path,
+     vs.delivery_note_path,
+     vs.tracking_number,
+     (CASE WHEN dc.id IS NOT NULL THEN 1 ELSE 0 END) AS delivery_confirmed,
+     u.name AS dapur_name,
+     u.phone AS dapur_phone,
+     u.address AS dapur_address
+   FROM vendor_order_status vos
+   JOIN orders o ON o.id = vos.order_id
+   JOIN users u ON u.id = o.user_id
+   JOIN order_items oi ON oi.order_id = o.id
+   JOIN products p ON p.id = oi.product_id
+   LEFT JOIN vendor_shipments vs
+     ON vs.order_id = vos.order_id
+     AND vs.vendor_id = vos.vendor_id
+   LEFT JOIN delivery_confirmations dc
+     ON dc.order_id = o.id AND dc.vendor_id = vos.vendor_id
+   WHERE vos.vendor_id = ?
+     AND p.vendor_id = ?
+     AND vos.status <> 'pending'
+   ORDER BY o.created_at DESC, oi.id`,
             [vendorId, vendorId]
         );
 
@@ -143,6 +145,9 @@ exports.createDriverShipment = async (req, res) => {
             [orderId, vendorId]
         );
         if (!vos.length) throw new Error('Order tidak untuk vendor ini');
+        if (vos[0].status === 'pending') {
+            throw new Error('Order belum siap dikirim (status: pending)');
+        }
 
         // ambil shipment existing (lock)
         const [existingShipmentRows] = await conn.query(
@@ -292,6 +297,14 @@ exports.getSignatureForm = async (req, res) => {
             req.flash && req.flash('error', 'Order tidak ditemukan atau bukan milik vendor Anda');
             return res.redirect('/driver/orders');
         }
+        const [vosRows] = await pool.query(
+            'SELECT status FROM vendor_order_status WHERE order_id = ? AND vendor_id = ? LIMIT 1',
+            [orderId, vendorId]
+        );
+        if (!vosRows.length || vosRows[0].status === 'pending') {
+            req.flash && req.flash('error', 'Order belum siap untuk ditandatangani (status: pending)');
+            return res.redirect('/driver/orders');
+        }
 
         const order = rows[0];
         return res.render('vendor/order_signature', {
@@ -341,6 +354,13 @@ exports.submitDapurSignature = async (req, res) => {
        LIMIT 1`,
             [orderId, vendorId]
         );
+        const [vosRows] = await conn.query(
+            'SELECT status FROM vendor_order_status WHERE order_id = ? AND vendor_id = ? LIMIT 1 FOR UPDATE',
+            [orderId, vendorId]
+        );
+        if (!vosRows.length || vosRows[0].status === 'pending') {
+            throw new Error('Order belum siap untuk konfirmasi penerimaan (status: pending)');
+        }
 
         if (!ordRows.length) {
             throw new Error('Order tidak ditemukan atau bukan milik vendor Anda');
