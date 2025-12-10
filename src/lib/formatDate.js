@@ -1,23 +1,65 @@
 // src/lib/formatDate.js
 const ID_LOCALE = 'id-ID';
+const WIB_TIMEZONE = 'Asia/Jakarta'; // WIB
 
 const dateTimeFormatter = new Intl.DateTimeFormat(ID_LOCALE, {
     day: '2-digit', month: 'short', year: 'numeric',
-    hour: '2-digit', minute: '2-digit'
+    hour: '2-digit', minute: '2-digit',
+    timeZone: WIB_TIMEZONE
 });
 const dateFormatter = new Intl.DateTimeFormat(ID_LOCALE, {
-    day: '2-digit', month: 'short', year: 'numeric'
+    day: '2-digit', month: 'short', year: 'numeric',
+    timeZone: WIB_TIMEZONE
 });
 const timeFormatter = new Intl.DateTimeFormat(ID_LOCALE, {
-    hour: '2-digit', minute: '2-digit'
+    hour: '2-digit', minute: '2-digit',
+    timeZone: WIB_TIMEZONE
 });
 
+/**
+ * toDate:
+ * - if value is Date -> return Date (if valid)
+ * - if value is numeric -> treat as ms since epoch
+ * - if value looks like MySQL datetime "YYYY-MM-DD HH:MM:SS" -> treat as UTC
+ * - otherwise try `new Date(value)` and return null if invalid
+ */
 function toDate(value) {
-    if (!value) return null;
+    if (!value && value !== 0) return null;
     if (value instanceof Date) return isNaN(value.getTime()) ? null : value;
-    // handle mysql date-like strings / numbers
-    const d = new Date(value);
-    return isNaN(d.getTime()) ? null : d;
+
+    // numeric timestamp (seconds or ms)
+    if (typeof value === 'number') {
+        // if it's seconds (10 digits), convert to ms
+        if (value > 0 && value < 1e11) return new Date(value * 1000);
+        return new Date(value);
+    }
+
+    if (typeof value === 'string') {
+        // common MySQL format: "YYYY-MM-DD HH:MM:SS" OR "YYYY-MM-DD"
+        // treat as UTC by converting to "YYYY-MM-DDTHH:MM:SSZ"
+        const mysqlDateTime = /^(\d{4}-\d{2}-\d{2})[ T](\d{2}:\d{2}:\d{2})(?:\.\d+)?$/;
+        const mysqlDateOnly = /^(\d{4}-\d{2}-\d{2})$/;
+        let s = value.trim();
+
+        if (mysqlDateTime.test(s)) {
+            s = s.replace(' ', 'T') + 'Z'; // force UTC
+            const d = new Date(s);
+            return isNaN(d.getTime()) ? null : d;
+        }
+
+        if (mysqlDateOnly.test(s)) {
+            // date-only — interpret as midnight UTC
+            s = s + 'T00:00:00Z';
+            const d = new Date(s);
+            return isNaN(d.getTime()) ? null : d;
+        }
+
+        // fallback: try Date constructor (may interpret according to environment)
+        const d = new Date(s);
+        return isNaN(d.getTime()) ? null : d;
+    }
+
+    return null;
 }
 
 function formatDateTime(value) {
@@ -36,8 +78,6 @@ function formatTime(value) {
 /**
  * Mutate object/array: replace date-like properties with formatted strings.
  * Keeps original raw value under key + '_raw' if not already present.
- *
- * Use when you want views to keep using the same property names (e.g. created_at).
  */
 function replaceDatesInObject(obj, opts = {}) {
     const dateKeyRegex = opts.regex || /(date|at|created|updated|arrived|shipped|time)$/i;
@@ -63,11 +103,9 @@ function replaceDatesInObject(obj, opts = {}) {
                     if (dt) {
                         const fmt = formatDateTime(dt) || formatDate(dt) || formatTime(dt);
                         const rawKey = `${key}_raw`;
-                        // preserve original raw value if not already preserved
                         if (!Object.prototype.hasOwnProperty.call(value, rawKey)) {
                             value[rawKey] = val;
                         }
-                        // replace the original property with formatted string
                         value[key] = fmt;
                     }
                 }
@@ -76,7 +114,6 @@ function replaceDatesInObject(obj, opts = {}) {
                 if (val && typeof val === 'object') walker(val);
             } catch (e) {
                 // ignore to avoid breaking rendering
-                // console.warn('replaceDatesInObject warn', e && e.message);
             }
         }
     }
