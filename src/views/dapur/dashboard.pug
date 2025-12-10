@@ -85,20 +85,24 @@ block content
       //- RECENT ORDERS
       .col-lg-8
         .card.border-0.shadow-sm.orders-card
-          .card-header.bg-white.border-0.p-4.d-flex.justify-content-between.align-items-center
+          .card-header.bg-white.border-0.p-4.d-flex.justify-content-between.align-items-center.flex-wrap.gap-3
             h4.mb-0.fw-semibold.text-dark
               i.bi.bi-clock-history.me-2.text-primary
               | Riwayat Pesanan
             if recentOrders && recentOrders.length
               span.badge.bg-light.text-dark.px-3.py-2
                 i.bi.bi-list-ul.me-1
-                = recentOrders.length + ' pesanan'
+                span#totalOrdersCount= recentOrders.length + ' pesanan'
           
           .card-body.p-4
             if recentOrders && recentOrders.length
-              .orders-list
+              .orders-list#ordersList
                 each o, idx in recentOrders
-                  .order-item.mb-3.p-4.border.rounded-3(data-index=idx)
+                  .order-item.mb-3.p-4.border.rounded-3(
+                    data-index=idx
+                    data-order-id=o.id
+                    style="display: none;"
+                  )
                     .row.align-items-center.g-3
                       .col-md-7
                         .d-flex.align-items-center.gap-3.mb-3.mb-md-0
@@ -161,13 +165,39 @@ block content
                                 td.text-end Rp #{Number(it.subtotal || (Number(it.price || 0) * Number(it.qty || 0))).toLocaleString('id-ID')}
                       else
                         .text-muted.small.mt-2 Tidak ada item untuk order ini.
-                                  
-              //- Load More
-              if recentOrders.length >= 5
-                .text-center.mt-4.pt-4.border-top
-                  a.btn.btn-outline-primary.px-4.py-2(href="/dapur/orders")
-                    span Lihat Semua Pesanan
-                    i.bi.bi-arrow-right.ms-2
+              
+              //- Pagination Controls
+              .pagination-wrapper.mt-4.pt-4.border-top
+                .d-flex.justify-content-between.align-items-center.flex-wrap.gap-3
+                  //- Page Info
+                  .page-info
+                    span.text-muted.small
+                      | Menampilkan 
+                      strong#currentPageStart 1
+                      |  - 
+                      strong#currentPageEnd 4
+                      |  dari 
+                      strong#totalOrders= recentOrders.length
+                      |  pesanan
+                  
+                  //- Pagination Buttons
+                  .pagination-controls.d-flex.align-items-center.gap-2
+                    button.btn.btn-outline-secondary.btn-sm.px-3#btnPrevPage(disabled)
+                      i.bi.bi-chevron-left.me-1
+                      span.d-none.d-sm-inline Sebelumnya
+                    
+                    .page-numbers.d-flex.gap-2#pageNumbers
+                      //- Will be populated by JavaScript
+                    
+                    button.btn.btn-outline-secondary.btn-sm.px-3#btnNextPage
+                      span.d-none.d-sm-inline Selanjutnya
+                      i.bi.bi-chevron-right.ms-1
+              
+              //- View All Link
+              .text-center.mt-4
+                a.btn.btn-outline-primary.px-4.py-2(href="/dapur/orders")
+                  span Lihat Semua Pesanan
+                  i.bi.bi-arrow-right.ms-2
             else
               .empty-state.text-center.py-5
                 .empty-icon.mb-4
@@ -402,13 +432,21 @@ block content
       background: #fafafa;
       border: 2px solid #e5e7eb !important;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      opacity: 0;
-      transform: translateX(-30px);
     }
     
-    .order-item.visible {
-      opacity: 1;
-      transform: translateX(0);
+    .order-item.fade-in {
+      animation: orderFadeIn 0.4s ease-out forwards;
+    }
+    
+    @keyframes orderFadeIn {
+      from {
+        opacity: 0;
+        transform: translateX(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
     }
     
     .order-item:hover {
@@ -433,6 +471,68 @@ block content
     
     .order-item:hover .order-number {
       transform: scale(1.1) rotate(-5deg);
+    }
+    
+    /* Pagination Styles */
+    .pagination-wrapper {
+      animation: fadeInUp 0.5s ease-out;
+    }
+    
+    .page-info {
+      font-size: 0.9rem;
+    }
+    
+    .pagination-controls button {
+      border-radius: 8px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      border: 2px solid #e5e7eb;
+    }
+    
+    .pagination-controls button:not(:disabled):hover {
+      background: var(--primary-green);
+      color: white;
+      border-color: var(--primary-green);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+    
+    .pagination-controls button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .page-btn {
+      min-width: 38px;
+      height: 38px;
+      border: 2px solid #e5e7eb;
+      background: white;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .page-btn:hover {
+      background: #f8f9fa;
+      border-color: var(--primary-green);
+      color: var(--primary-green);
+      transform: translateY(-2px);
+    }
+    
+    .page-btn.active {
+      background: var(--primary-green);
+      color: white;
+      border-color: var(--primary-green);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+    
+    .page-btn.dots {
+      border: none;
+      pointer-events: none;
     }
     
     /* Badges */
@@ -489,8 +589,8 @@ block content
     .avatar-circle .avatar-img {
       width: 100%;
       height: 100%;
-      object-fit: cover;          /* biar nggak gepeng */
-      display: block;             /* hilangin jarak inline img */
+      object-fit: cover;
+      display: block;
     }
     .account-card:hover .avatar-circle {
       transform: scale(1.05);
@@ -602,6 +702,31 @@ block content
       .avatar-circle { width: 75px; height: 75px; font-size: 2.5rem; }
       .order-number { width: 44px; height: 44px; font-size: 0.85rem; }
       .action-icon { width: 42px; height: 42px; font-size: 1.2rem; }
+      
+      .pagination-wrapper {
+        flex-direction: column;
+        align-items: stretch !important;
+      }
+      
+      .page-info {
+        text-align: center;
+        margin-bottom: 12px;
+      }
+      
+      .pagination-controls {
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      
+      .pagination-controls button {
+        font-size: 0.85rem;
+      }
+      
+      .page-btn {
+        min-width: 34px;
+        height: 34px;
+        font-size: 0.85rem;
+      }
     }
     
     /* Card Shadows on Hover */
@@ -613,6 +738,153 @@ block content
   script.
     (function(){
       document.addEventListener('DOMContentLoaded', function(){
+        // Pagination Configuration
+        var ITEMS_PER_PAGE = 4;
+        var currentPage = 1;
+        var orderItems = Array.from(document.querySelectorAll('.order-item'));
+        var totalPages = Math.ceil(orderItems.length / ITEMS_PER_PAGE);
+        
+        // Elements
+        var btnPrev = document.getElementById('btnPrevPage');
+        var btnNext = document.getElementById('btnNextPage');
+        var pageNumbers = document.getElementById('pageNumbers');
+        var currentPageStart = document.getElementById('currentPageStart');
+        var currentPageEnd = document.getElementById('currentPageEnd');
+        var totalOrders = document.getElementById('totalOrders');
+        
+        // Initialize pagination
+        function initPagination() {
+          if (orderItems.length === 0) return;
+          
+          renderPageNumbers();
+          showPage(1);
+          
+          // Event listeners
+          if (btnPrev) {
+            btnPrev.addEventListener('click', function() {
+              if (currentPage > 1) {
+                showPage(currentPage - 1);
+              }
+            });
+          }
+          
+          if (btnNext) {
+            btnNext.addEventListener('click', function() {
+              if (currentPage < totalPages) {
+                showPage(currentPage + 1);
+              }
+            });
+          }
+        }
+        
+        // Show specific page
+        function showPage(page) {
+          currentPage = page;
+          
+          // Hide all items first
+          orderItems.forEach(function(item) {
+            item.style.display = 'none';
+            item.classList.remove('fade-in');
+          });
+          
+          // Calculate range
+          var start = (page - 1) * ITEMS_PER_PAGE;
+          var end = Math.min(start + ITEMS_PER_PAGE, orderItems.length);
+          
+          // Show items for current page with animation
+          for (var i = start; i < end; i++) {
+            setTimeout(function(index) {
+              orderItems[index].style.display = 'block';
+              setTimeout(function() {
+                orderItems[index].classList.add('fade-in');
+              }, 50);
+            }, (i - start) * 100, i);
+          }
+          
+          // Update page info
+          if (currentPageStart) currentPageStart.textContent = start + 1;
+          if (currentPageEnd) currentPageEnd.textContent = end;
+          
+          // Update button states
+          if (btnPrev) {
+            btnPrev.disabled = (page === 1);
+          }
+          if (btnNext) {
+            btnNext.disabled = (page === totalPages);
+          }
+          
+          // Update page numbers
+          renderPageNumbers();
+          
+          // Scroll to top of orders list smoothly
+          var ordersList = document.getElementById('ordersList');
+          if (ordersList) {
+            ordersList.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+        }
+        
+        // Render page number buttons
+        function renderPageNumbers() {
+          if (!pageNumbers) return;
+          
+          pageNumbers.innerHTML = '';
+          
+          // Always show first page
+          addPageButton(1);
+          
+          // Calculate range of pages to show
+          var startPage = Math.max(2, currentPage - 1);
+          var endPage = Math.min(totalPages - 1, currentPage + 1);
+          
+          // Add dots if needed
+          if (startPage > 2) {
+            addDotsButton();
+          }
+          
+          // Add middle pages
+          for (var i = startPage; i <= endPage; i++) {
+            addPageButton(i);
+          }
+          
+          // Add dots if needed
+          if (endPage < totalPages - 1) {
+            addDotsButton();
+          }
+          
+          // Always show last page if more than 1 page
+          if (totalPages > 1) {
+            addPageButton(totalPages);
+          }
+        }
+        
+        // Add page button
+        function addPageButton(pageNum) {
+          var btn = document.createElement('button');
+          btn.className = 'page-btn';
+          btn.textContent = pageNum;
+          
+          if (pageNum === currentPage) {
+            btn.classList.add('active');
+          }
+          
+          btn.addEventListener('click', function() {
+            showPage(pageNum);
+          });
+          
+          pageNumbers.appendChild(btn);
+        }
+        
+        // Add dots button
+        function addDotsButton() {
+          var dots = document.createElement('span');
+          dots.className = 'page-btn dots';
+          dots.textContent = '...';
+          pageNumbers.appendChild(dots);
+        }
+        
+        // Initialize pagination
+        initPagination();
+        
         // Fade-in animations for stat cards
         var statCards = document.querySelectorAll('.stat-card');
         statCards.forEach(function(card, index){
@@ -632,14 +904,6 @@ block content
           setTimeout(function(){
             card.classList.add('visible');
           }, 500 + (index * 120));
-        });
-
-        // Fade-in animations for order items
-        var orderItems = document.querySelectorAll('.order-item');
-        orderItems.forEach(function(item, index){
-          setTimeout(function(){
-            item.classList.add('visible');
-          }, 800 + (index * 100));
         });
 
         // Animate progress bars
@@ -666,7 +930,6 @@ block content
 
           statCards.forEach(function(card) { observer.observe(card); });
           mainCards.forEach(function(card) { observer.observe(card); });
-          orderItems.forEach(function(item) { observer.observe(item); });
         }
 
         // Smooth scroll to top button
