@@ -103,6 +103,8 @@ nav.navbar.navbar-light.sticky-top(
                       ? "/dapur/dashboard"
                       : currentUser.role === 'vendor'
                       ? "/vendor/dashboard"
+                      : currentUser.role === 'driver'
+                      ? "/driver/orders"
                       : "/yayasan/dashboard")
               )
                 i.bi.bi-speedometer2.me-3
@@ -227,6 +229,8 @@ nav.navbar.navbar-light.sticky-top(
                       ? "/dapur/dashboard"
                       : currentUser.role === 'vendor'
                       ? "/vendor/dashboard"
+                      : currentUser.role === 'driver'
+                      ? "/driver/orders"
                       : "/yayasan/dashboard")
               )
                 i.bi.bi-speedometer2.me-3
