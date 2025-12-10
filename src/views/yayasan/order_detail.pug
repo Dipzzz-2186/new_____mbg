@@ -500,7 +500,7 @@ block content
                         i.bi.bi-calendar-check.me-2.mt-1(style='color: #28a745;')
                         div.flex-grow-1
                           small.text-muted.d-block.mb-1 Tanggal Kirim
-                          strong.small= (s.shipped_at ? (new Date(s.shipped_at)).toLocaleString('id-ID') : '-')
+                          strong.small= s.shipped_at ? s.shipped_at : '-'
                     
                     .info-row(style='padding: 12px 0;')
                       .d-flex.align-items-start.mb-2
