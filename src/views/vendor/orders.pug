@@ -903,13 +903,10 @@ block content
   script.
     (function(){
       var isDriver = !{JSON.stringify(!!(currentUser && currentUser.role === 'driver'))};
+      var isVendor = !{JSON.stringify(!!(currentUser && currentUser.role === 'vendor'))};
 
       document.addEventListener('DOMContentLoaded', function(){
         if (!isDriver) return;
-
-        // ============================
-        //  MODAL SURAT JALAN (KIRIM PESANAN)
-        // ============================
         var deliveryModalEl = document.getElementById('deliveryNoteModal');
         if (deliveryModalEl) {
           var deliveryModal = new bootstrap.Modal(deliveryModalEl, { backdrop: true });
@@ -1046,19 +1043,19 @@ block content
             fetch('/driver/orders/' + encodeURIComponent(orderId) + '/ship', {
               method: 'POST',
               body: fd
-            }).then(function(resp){
-              if (resp.ok) return resp.json();
-              return resp.text().then(function(t){ throw new Error(t||'Server error'); });
-            }).then(function(json){
-              if (json && json.success) {
-                deliveryModal.hide();
-                location.reload();
-              } else {
-                alert('Gagal submit surat jalan: ' + (json && json.error ? json.error : 'Unknown'));
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = originalText;
+            })
+            .then(function(resp){
+              if (!resp.ok) {
+                return resp.text().then(function(t){
+                  throw new Error(t || 'Server error');
+                });
               }
-            }).catch(function(err){
+
+              // ✅ sukses, ga usah parse JSON
+              deliveryModal.hide();
+              location.reload();
+            })
+            .catch(function(err){
               alert('Gagal submit surat jalan: ' + (err.message || err));
               submitBtn.disabled = false;
               submitBtn.innerHTML = originalText;
@@ -1274,21 +1271,16 @@ block content
               body: formData
             })
             .then(function(response) {
-              if (response.ok) return response.json();
-              return response.text().then(function(text) {
-                throw new Error(text || 'Server error');
-              });
-            })
-            .then(function(data) {
-              if (data && data.success) {
-                alert('Surat jalan berhasil disimpan!');
-                signatureModal.hide();
-                location.reload();
-              } else {
-                alert(data.message || 'Gagal menyimpan surat jalan.');
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = originalText;
+              if (!response.ok) {
+                return response.text().then(function(text) {
+                  throw new Error(text || 'Server error');
+                });
               }
+
+              // ✅ sukses, langsung reload
+              alert('Surat jalan berhasil disimpan!');
+              signatureModal.hide();
+              location.reload();
             })
             .catch(function(error) {
               console.error('Error:', error);
@@ -1298,7 +1290,6 @@ block content
             });
           });
         }
-
         // ============================
         //  VENDOR ORDER ACTIONS
         // ============================
@@ -1324,19 +1315,14 @@ block content
                 body: formData
               })
               .then(function(response) {
-                if (response.ok) return response.json();
-                return response.text().then(function(text) {
-                  throw new Error(text || 'Server error');
-                });
-              })
-              .then(function(data) {
-                if (data && data.success) {
-                  location.reload();
-                } else {
-                  alert(data.message || 'Gagal mengupdate status pesanan.');
-                  submitBtn.disabled = false;
-                  submitBtn.innerHTML = originalText;
+                if (!response.ok) {
+                  return response.text().then(function(text) {
+                    throw new Error(text || 'Server error');
+                  });
                 }
+
+                // ✅ sukses: reload supaya status & badge ke-update
+                location.reload();
               })
               .catch(function(error) {
                 console.error('Error:', error);
@@ -1347,6 +1333,7 @@ block content
             });
           });
         }
+
 
         // ============================
         //  SHARED FUNCTIONALITY

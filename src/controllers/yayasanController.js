@@ -264,6 +264,8 @@ exports.deliveryConfirmations = async (req, res) => {
   }
 };
 
+// src/controllers/yayasanController.js
+
 exports.getDapurOrders = async (req, res) => {
   try {
     const yayasanId = req.session.user.id;
@@ -294,7 +296,9 @@ exports.getDapurOrders = async (req, res) => {
 
     const orderIds = orders.map(o => o.id);
     let itemsMap = new Map();
+
     if (orderIds.length) {
+      // ambil item + vendor
       const [items] = await pool.query(
         `SELECT 
            oi.order_id, 
@@ -311,18 +315,56 @@ exports.getDapurOrders = async (req, res) => {
          ORDER BY oi.order_id, oi.id`,
         [orderIds]
       );
+
       for (const it of items) {
         if (!itemsMap.has(it.order_id)) itemsMap.set(it.order_id, []);
         itemsMap.get(it.order_id).push(it);
       }
+
+      // 🔹 ambil data pengiriman vendor (surat jalan)
+      const [shipments] = await pool.query(
+        `SELECT order_id, vendor_id, delivery_note_path
+         FROM vendor_shipments
+         WHERE order_id IN (?)`,
+        [orderIds]
+      );
+
+      // map: "orderId:vendorId" -> shipment
+      const shipmentMap = new Map();
+      for (const s of shipments) {
+        shipmentMap.set(`${s.order_id}:${s.vendor_id}`, s);
+      }
+
+      const ordersWithItems = orders.map(o => {
+        const items = itemsMap.get(o.id) || [];
+
+        // vendor unik yang terlibat di order ini
+        const vendorIdsSet = new Set(
+          items.map(it => it.vendor_id).filter(v => v != null)
+        );
+        const vendorIds = Array.from(vendorIdsSet);
+
+        let allDeliveryNotesDone = false;
+        if (vendorIds.length > 0) {
+          allDeliveryNotesDone = vendorIds.every(vid => {
+            const s = shipmentMap.get(`${o.id}:${vid}`);
+            return s && s.delivery_note_path; // vendor OK kalau punya delivery_note_path
+          });
+        }
+
+        return {
+          ...o,
+          items,
+          allDeliveryNotesDone
+        };
+      });
+
+      return res.render('yayasan/dapur_orders', { dapur, orders: ordersWithItems });
     }
 
-    const ordersWithItems = orders.map(o => ({
-      ...o,
-      items: itemsMap.get(o.id) || []
-    }));
+    // kalau ga ada order
+    return res.render('yayasan/dapur_orders', { dapur, orders: [] });
 
-    return res.render('yayasan/dapur_orders', { dapur, orders: ordersWithItems });
   } catch (err) {
     console.error('getDapurOrders error:', err);
     req.flash('error', 'Gagal mengambil pesanan dapur');

@@ -261,16 +261,21 @@ exports.updateVendorOrderStatus = async (req, res) => {
 
     await conn.commit();
     conn.release();
+
     req.flash('success', 'Status pesanan vendor diperbarui');
     return res.redirect('/vendor/orders');
   } catch (err) {
     await conn.rollback();
     conn.release();
     console.error('updateVendorOrderStatus error:', err);
-    req.flash('error', 'Gagal memperbarui status: ' + (err.sqlMessage || err.message));
+    req.flash(
+      'error',
+      'Gagal memperbarui status: ' + (err.sqlMessage || err.message)
+    );
     return res.redirect('/vendor/orders');
   }
 };
+
 
 // ========== KIRIM SURAT JALAN (PHASE 1 – VENDOR KIRIM BARANG) ==========
 exports.createVendorShipment = async (req, res) => {
@@ -304,9 +309,9 @@ exports.createVendorShipment = async (req, res) => {
     }
 
     const shipped_at = req.body.shipped_at;
-    const plate = req.body.plate_number;
-    const driverName = driver.name;
-    const sender_name = req.body.sender_name || driverName;  // ⬅ default: nama supir
+    const plate_number = req.body.plate_number;
+    // sementara: pakai nama pengirim dari form saja
+    const sender_name = req.body.sender_name;
     const sender_contact = req.body.sender_contact || null;
     const note = req.body.note || null;
     const signatureDataUrl = req.body.signature_data || null;
@@ -314,6 +319,7 @@ exports.createVendorShipment = async (req, res) => {
     if (!shipped_at || !plate_number || !sender_name) {
       throw new Error('Field shipped_at, plate_number, dan sender_name wajib diisi');
     }
+
 
     // FILE SEKARANG OPSIONAL
     const file = req.file;
