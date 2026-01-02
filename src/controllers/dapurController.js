@@ -35,6 +35,20 @@ exports.dashboard = async (req, res) => {
           break;
       }
     });
+    const totalOrders =
+      pendingCount +
+      approveCount +
+      rejectedCount +
+      completedCount;
+
+    // helper aman
+    const percent = (val) =>
+      totalOrders > 0 ? Math.round((val / totalOrders) * 100) : 0;
+
+    const pendingPercent = percent(pendingCount);
+    const approvePercent = percent(approveCount);
+    const rejectedPercent = percent(rejectedCount);
+    const completedPercent = percent(completedCount);
 
     // ========== 5 ORDER TERBARU UNTUK RIWAYAT ==========
     const [orders] = await pool.query(
@@ -83,7 +97,11 @@ exports.dashboard = async (req, res) => {
       pendingCount,
       approveCount,
       rejectedCount,
-      completedCount
+      completedCount,
+      pendingPercent,
+      approvePercent,
+      rejectedPercent,
+      completedPercent
     });
   } catch (err) {
     console.error(err);
@@ -152,7 +170,7 @@ exports.addToCart = async (req, res) => {
 
       // Kalau request dari AJAX → balikin JSON saja
       if (req.xhr || req.headers['x-requested-with'] === 'XMLHttpRequest' ||
-          (req.headers.accept && req.headers.accept.includes('application/json'))) {
+        (req.headers.accept && req.headers.accept.includes('application/json'))) {
         return res.status(401).json({ success: false, message: msg });
       }
 
@@ -160,13 +178,13 @@ exports.addToCart = async (req, res) => {
       return res.redirect('/login');
     }
 
- const productId = req.body.product_id;
+    const productId = req.body.product_id;
 
-// qty Wajib integer minimal 1
-let qty = parseInt(req.body.qty, 10);
-if (isNaN(qty) || qty < 1) {
-  qty = 1;
-}
+    // qty Wajib integer minimal 1
+    let qty = parseInt(req.body.qty, 10);
+    if (isNaN(qty) || qty < 1) {
+      qty = 1;
+    }
 
     const [prodRows] = await pool.query(
       'SELECT id, price FROM products WHERE id = ?',
@@ -176,7 +194,7 @@ if (isNaN(qty) || qty < 1) {
       const msg = 'Produk tidak ditemukan';
 
       if (req.xhr || req.headers['x-requested-with'] === 'XMLHttpRequest' ||
-          (req.headers.accept && req.headers.accept.includes('application/json'))) {
+        (req.headers.accept && req.headers.accept.includes('application/json'))) {
         return res.status(404).json({ success: false, message: msg });
       }
 
@@ -236,7 +254,7 @@ if (isNaN(qty) || qty < 1) {
 
     // Kalau dari AJAX → balikin JSON
     if (req.xhr || req.headers['x-requested-with'] === 'XMLHttpRequest' ||
-        (req.headers.accept && req.headers.accept.includes('application/json'))) {
+      (req.headers.accept && req.headers.accept.includes('application/json'))) {
       return res.json({
         success: true,
         message: successMsg,
@@ -252,7 +270,7 @@ if (isNaN(qty) || qty < 1) {
     const msg = 'Gagal menambahkan ke keranjang';
 
     if (req.xhr || req.headers['x-requested-with'] === 'XMLHttpRequest' ||
-        (req.headers.accept && req.headers.accept.includes('application/json'))) {
+      (req.headers.accept && req.headers.accept.includes('application/json'))) {
       return res.status(500).json({ success: false, message: msg });
     }
 

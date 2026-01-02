@@ -29,7 +29,9 @@ exports.login = async (req, res) => {
             id: user.id,
             name: user.name,
             role: user.role,
-            vendor_id: user.vendor_id
+            vendor_id: user.vendor_id,
+            phone: user.phone,
+            address: user.address
         };
 
         if (sessionUser.role === 'driver' && sessionUser.vendor_id) {

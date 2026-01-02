@@ -33,7 +33,7 @@ block content
               .stat-icon.stat-icon-warning
                 i.bi.bi-clock-history
             .progress.mt-3(style="height: 5px; background: #f1f5f9;")
-              .progress-bar.bg-warning(style="width: 75%;")
+              .progress-bar.bg-warning(style=`width: ${pendingPercent}%;`)
 
       // DISETUJUI
       .col-md-6.col-xl-3
@@ -48,7 +48,7 @@ block content
               .stat-icon.stat-icon-primary
                 i.bi.bi-shield-check
             .progress.mt-3(style="height: 5px; background: #f1f5f9;")
-              .progress-bar.bg-primary(style="width: 100%;")
+              .progress-bar.bg-primary(style=`width: ${approvePercent}%;`)
 
       // DITOLAK
       .col-md-6.col-xl-3
@@ -63,7 +63,7 @@ block content
               .stat-icon.stat-icon-danger
                 i.bi.bi-slash-circle
             .progress.mt-3(style="height: 5px; background: #f1f5f9;")
-              .progress-bar.bg-danger(style="width: 100%;")
+              .progress-bar.bg-danger(style=`width: ${rejectedPercent}%;`)
 
       // SELESAI
       .col-md-6.col-xl-3
@@ -78,7 +78,7 @@ block content
               .stat-icon.stat-icon-success
                 i.bi.bi-check2-all
             .progress.mt-3(style="height: 5px; background: #f1f5f9;")
-              .progress-bar.bg-success(style="width: 90%;")
+              .progress-bar.bg-success(style=`width: ${completedPercent}%;`)
 
 
     .row.g-4
@@ -97,11 +97,9 @@ block content
           .card-body.p-4
             if recentOrders && recentOrders.length
               .orders-list#ordersList
-                each o, idx in recentOrders
+                each o in recentOrders.slice(0, 5)
                   .order-item.mb-3.p-4.border.rounded-3(
-                    data-index=idx
                     data-order-id=o.id
-                    style="display: none;"
                   )
                     .row.align-items-center.g-3
                       .col-md-7
@@ -165,33 +163,6 @@ block content
                                 td.text-end Rp #{Number(it.subtotal || (Number(it.price || 0) * Number(it.qty || 0))).toLocaleString('id-ID')}
                       else
                         .text-muted.small.mt-2 Tidak ada item untuk order ini.
-              
-              //- Pagination Controls
-              .pagination-wrapper.mt-4.pt-4.border-top
-                .d-flex.justify-content-between.align-items-center.flex-wrap.gap-3
-                  //- Page Info
-                  .page-info
-                    span.text-muted.small
-                      | Menampilkan 
-                      strong#currentPageStart 1
-                      |  - 
-                      strong#currentPageEnd 4
-                      |  dari 
-                      strong#totalOrders= recentOrders.length
-                      |  pesanan
-                  
-                  //- Pagination Buttons
-                  .pagination-controls.d-flex.align-items-center.gap-2
-                    button.btn.btn-outline-secondary.btn-sm.px-3#btnPrevPage(disabled)
-                      i.bi.bi-chevron-left.me-1
-                      span.d-none.d-sm-inline Sebelumnya
-                    
-                    .page-numbers.d-flex.gap-2#pageNumbers
-                      //- Will be populated by JavaScript
-                    
-                    button.btn.btn-outline-secondary.btn-sm.px-3#btnNextPage
-                      span.d-none.d-sm-inline Selanjutnya
-                      i.bi.bi-chevron-right.ms-1
               
               //- View All Link
               .text-center.mt-4
@@ -738,153 +709,7 @@ block content
   script.
     (function(){
       document.addEventListener('DOMContentLoaded', function(){
-        // Pagination Configuration
-        var ITEMS_PER_PAGE = 4;
-        var currentPage = 1;
-        var orderItems = Array.from(document.querySelectorAll('.order-item'));
-        var totalPages = Math.ceil(orderItems.length / ITEMS_PER_PAGE);
-        
-        // Elements
-        var btnPrev = document.getElementById('btnPrevPage');
-        var btnNext = document.getElementById('btnNextPage');
-        var pageNumbers = document.getElementById('pageNumbers');
-        var currentPageStart = document.getElementById('currentPageStart');
-        var currentPageEnd = document.getElementById('currentPageEnd');
-        var totalOrders = document.getElementById('totalOrders');
-        
-        // Initialize pagination
-        function initPagination() {
-          if (orderItems.length === 0) return;
-          
-          renderPageNumbers();
-          showPage(1);
-          
-          // Event listeners
-          if (btnPrev) {
-            btnPrev.addEventListener('click', function() {
-              if (currentPage > 1) {
-                showPage(currentPage - 1);
-              }
-            });
-          }
-          
-          if (btnNext) {
-            btnNext.addEventListener('click', function() {
-              if (currentPage < totalPages) {
-                showPage(currentPage + 1);
-              }
-            });
-          }
-        }
-        
-        // Show specific page
-        function showPage(page) {
-          currentPage = page;
-          
-          // Hide all items first
-          orderItems.forEach(function(item) {
-            item.style.display = 'none';
-            item.classList.remove('fade-in');
-          });
-          
-          // Calculate range
-          var start = (page - 1) * ITEMS_PER_PAGE;
-          var end = Math.min(start + ITEMS_PER_PAGE, orderItems.length);
-          
-          // Show items for current page with animation
-          for (var i = start; i < end; i++) {
-            setTimeout(function(index) {
-              orderItems[index].style.display = 'block';
-              setTimeout(function() {
-                orderItems[index].classList.add('fade-in');
-              }, 50);
-            }, (i - start) * 100, i);
-          }
-          
-          // Update page info
-          if (currentPageStart) currentPageStart.textContent = start + 1;
-          if (currentPageEnd) currentPageEnd.textContent = end;
-          
-          // Update button states
-          if (btnPrev) {
-            btnPrev.disabled = (page === 1);
-          }
-          if (btnNext) {
-            btnNext.disabled = (page === totalPages);
-          }
-          
-          // Update page numbers
-          renderPageNumbers();
-          
-          // Scroll to top of orders list smoothly
-          var ordersList = document.getElementById('ordersList');
-          if (ordersList) {
-            ordersList.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-          }
-        }
-        
-        // Render page number buttons
-        function renderPageNumbers() {
-          if (!pageNumbers) return;
-          
-          pageNumbers.innerHTML = '';
-          
-          // Always show first page
-          addPageButton(1);
-          
-          // Calculate range of pages to show
-          var startPage = Math.max(2, currentPage - 1);
-          var endPage = Math.min(totalPages - 1, currentPage + 1);
-          
-          // Add dots if needed
-          if (startPage > 2) {
-            addDotsButton();
-          }
-          
-          // Add middle pages
-          for (var i = startPage; i <= endPage; i++) {
-            addPageButton(i);
-          }
-          
-          // Add dots if needed
-          if (endPage < totalPages - 1) {
-            addDotsButton();
-          }
-          
-          // Always show last page if more than 1 page
-          if (totalPages > 1) {
-            addPageButton(totalPages);
-          }
-        }
-        
-        // Add page button
-        function addPageButton(pageNum) {
-          var btn = document.createElement('button');
-          btn.className = 'page-btn';
-          btn.textContent = pageNum;
-          
-          if (pageNum === currentPage) {
-            btn.classList.add('active');
-          }
-          
-          btn.addEventListener('click', function() {
-            showPage(pageNum);
-          });
-          
-          pageNumbers.appendChild(btn);
-        }
-        
-        // Add dots button
-        function addDotsButton() {
-          var dots = document.createElement('span');
-          dots.className = 'page-btn dots';
-          dots.textContent = '...';
-          pageNumbers.appendChild(dots);
-        }
-        
-        // Initialize pagination
-        initPagination();
-        
+   
         // Fade-in animations for stat cards
         var statCards = document.querySelectorAll('.stat-card');
         statCards.forEach(function(card, index){
